@@ -44,7 +44,7 @@ export default function MainNav() {
       <nav
         ref={navRef}
         role="navigation"
-        className="flex items-center justify-center gap-32 max-w-7xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative"
+        className="flex items-center justify-center gap-32 max-w-7xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-fit"
         style={{ borderBottomWidth: "2px" }}
         onMouseLeave={handleMouseLeave}
       >
@@ -58,7 +58,7 @@ export default function MainNav() {
               onClick={() => setActiveIndex(i)}
               aria-current={activeIndex === i ? "page" : undefined}
               className={`relative z-10 cursor-pointer px-4 ${
-                activeIndex === i ? "font-semibold text-red-600" : ""
+                activeIndex === i ? "font-semibold text-red-600" : "text-white"
               }`}
             >
               {item}
@@ -83,7 +83,7 @@ export default function MainNav() {
                 onClick={() => setActiveIndex(index)}
                 aria-current={activeIndex === index ? "page" : undefined}
                 className={`relative z-10 cursor-pointer px-4 ${
-                  activeIndex === index ? "font-semibold text-red-600" : ""
+                  activeIndex === index ? "font-semibold text-red-600" : "text-white"
                 }`}
               >
                 {item}
