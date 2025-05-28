@@ -10,6 +10,7 @@
     "seed:news": "tsx src/scripts/seedNews.ts"
   },
   "dependencies": {
+    "@next/font": "^14.2.15",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
