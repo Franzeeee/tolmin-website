@@ -5,8 +5,8 @@ import Image from "next/image";
 import logo from '../../../public/tolmin-logo.png';
 
 const navItems = [
-  "Nav 1", "Nav 2", "Nav 3", "Nav 4",
-  "Nav 5", "Nav 6", "Nav 7", "Nav 8",
+  "DOMOV", "Sponzorji", "Nogometna šola", "Klub",
+  "Zgodovina","Člansko moštvo", "Arhiv", "Trgovina",
 ];
 
 export default function MainNav() {
@@ -18,7 +18,7 @@ export default function MainNav() {
     const navRect = navRef.current!.getBoundingClientRect();
     const left = element.getBoundingClientRect().left - navRect.left;
     const width = element.offsetWidth;
-    setUnderlineStyle({ left, width });
+    setUnderlineStyle({ left, width }); 
   };
 
   useEffect(() => {
@@ -44,12 +44,11 @@ export default function MainNav() {
       <nav
         ref={navRef}
         role="navigation"
-        className="flex items-center justify-center gap-32 max-w-7xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-fit"
-        style={{ borderBottomWidth: "2px" }}
+        className="flex items-center justify-between max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full"
         onMouseLeave={handleMouseLeave}
       >
-        {/* Left nav (first 4) */}
-        <div className="flex gap-5">
+        {/* Left nav */}
+        <div className="flex gap-7 flex-shrink-0 items-end">
           {navItems.slice(0, 4).map((item, i) => (
             <a
               key={i}
@@ -57,7 +56,7 @@ export default function MainNav() {
               onMouseEnter={handleMouseEnter}
               onClick={() => setActiveIndex(i)}
               aria-current={activeIndex === i ? "page" : undefined}
-              className={`relative z-10 cursor-pointer px-4 ${
+              className={`relative z-10 cursor-pointer px-2 ${
                 activeIndex === i ? "font-semibold text-red-600" : "text-white"
               }`}
             >
@@ -67,12 +66,12 @@ export default function MainNav() {
         </div>
 
         {/* Logo center */}
-        <div className="absolute left-1/2 top-2/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{top: "110%"}}>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none max-w-fit" style={{top: "110%"}}>
           <Image src={logo} alt="Tolmin Logo" width={100} height={50} />
         </div>
 
-        {/* Right nav (next 4) */}
-        <div className="flex gap-5">
+        {/* Right nav */}
+        <div className="flex gap-6 flex-shrink-0 items-end justify-content-end">
           {navItems.slice(4).map((item, i) => {
             const index = i + 4;
             return (
@@ -82,7 +81,7 @@ export default function MainNav() {
                 onMouseEnter={handleMouseEnter}
                 onClick={() => setActiveIndex(index)}
                 aria-current={activeIndex === index ? "page" : undefined}
-                className={`relative z-10 cursor-pointer px-4 ${
+                className={`relative z-10 cursor-pointer px-2 ${
                   activeIndex === index ? "font-semibold text-red-600" : "text-white"
                 }`}
               >
@@ -92,7 +91,7 @@ export default function MainNav() {
           })}
         </div>
 
-        {/* Sliding underline */}
+        {/* Underline */}
         <span
           className="absolute rounded-sm h-0.5 bg-red-600 transition-all duration-300"
           style={{
@@ -102,6 +101,7 @@ export default function MainNav() {
           }}
         />
       </nav>
+
     </div>
   );
 }
