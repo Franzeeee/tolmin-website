@@ -1,6 +1,9 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import logo from '../../../public/tolmin-logo.png'
+
 
 const navItems = ["Nav 1", "Nav 2", "Nav 3", "Nav 4"];
 
@@ -52,11 +55,12 @@ export default function MainNav() {
     <div className="w-full py-5 bg-red-fade text-black relative">
       <nav
         ref={navRef}
-        className="flex items-center justify-center gap-16 max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-600 relative"
+        className="flex items-center justify-center gap-32 w-fit max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative"
+        style={{borderBottomWidth: "2px"}}
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}
-        <div className="flex gap-8">
+        <div className="flex gap-6">
           {navItems.map((item, i) => (
             <a
               key={i}
@@ -73,10 +77,12 @@ export default function MainNav() {
         </div>
 
         {/* Logo */}
-        <div className="text-xl font-bold tracking-wide z-10">LOGO HERE</div>
+        <div className="absolute left-1/2 top-2/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+          <Image src={logo} alt="Tolmin Logo" width={100} height={50} />
+        </div>
 
         {/* Right nav */}
-        <div className="flex gap-8">
+        <div className="flex gap-6">
           {navItems.map((item, i) => (
             <a
               key={i + 100}
@@ -94,10 +100,11 @@ export default function MainNav() {
 
         {/* Sliding underline */}
         <span
-          className="absolute rounded-md -bottom-0.5 h-1 bg-red-600 transition-all duration-300"
+          className="absolute rounded-sm h-0.5 bg-red-600 transition-all duration-300"
           style={{
             left: underlineStyle.left,
             width: underlineStyle.width,
+            bottom: "-2px"
           }}
         />
       </nav>
