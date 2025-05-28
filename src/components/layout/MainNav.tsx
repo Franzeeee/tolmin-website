@@ -2,73 +2,63 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import logo from '../../../public/tolmin-logo.png'
+import logo from '../../../public/tolmin-logo.png';
 
-
-const navItems = ["Nav 1", "Nav 2", "Nav 3", "Nav 4"];
+const navItems = [
+  "Nav 1", "Nav 2", "Nav 3", "Nav 4",
+  "Nav 5", "Nav 6", "Nav 7", "Nav 8",
+];
 
 export default function MainNav() {
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
-  const [activeIndex, setActiveIndex] = useState(0); // default active tab is first
+  const [activeIndex, setActiveIndex] = useState(0);
   const navRef = useRef<HTMLDivElement>(null);
 
-  // Update underline to active tab on mount and activeIndex change
-  useEffect(() => {
-    if (!navRef.current) return;
-    const links = navRef.current.querySelectorAll('a');
-    if (links.length === 0) return;
-
-    const activeLink = links[activeIndex];
-    const navRect = navRef.current.getBoundingClientRect();
-    const left = activeLink.getBoundingClientRect().left - navRect.left;
-    const width = activeLink.offsetWidth;
+  const updateUnderline = (element: HTMLElement) => {
+    const navRect = navRef.current!.getBoundingClientRect();
+    const left = element.getBoundingClientRect().left - navRect.left;
+    const width = element.offsetWidth;
     setUnderlineStyle({ left, width });
+  };
+
+  useEffect(() => {
+    if (navRef.current) {
+      const links = navRef.current.querySelectorAll('a');
+      const activeLink = links[activeIndex] as HTMLElement;
+      if (activeLink) updateUnderline(activeLink);
+    }
   }, [activeIndex]);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!navRef.current) return;
-    const target = e.currentTarget;
-    const navRect = navRef.current.getBoundingClientRect();
-    const left = target.getBoundingClientRect().left - navRect.left;
-    const width = target.offsetWidth;
-    setUnderlineStyle({ left, width });
+    updateUnderline(e.currentTarget);
   };
 
   const handleMouseLeave = () => {
-    // On mouse leave, reset underline to active tab
-    if (!navRef.current) return;
-    const links = navRef.current.querySelectorAll('a');
-    if (links.length === 0) return;
-
-    const activeLink = links[activeIndex];
-    const navRect = navRef.current.getBoundingClientRect();
-    const left = activeLink.getBoundingClientRect().left - navRect.left;
-    const width = activeLink.offsetWidth;
-    setUnderlineStyle({ left, width });
-  };
-
-  const handleClick = (index: number) => {
-    setActiveIndex(index);
+    const links = navRef.current?.querySelectorAll('a');
+    const activeLink = links?.[activeIndex] as HTMLElement;
+    if (activeLink) updateUnderline(activeLink);
   };
 
   return (
     <div className="w-full py-5 bg-red-fade text-black relative">
       <nav
         ref={navRef}
-        className="flex items-center justify-center gap-32 w-fit max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative"
-        style={{borderBottomWidth: "2px"}}
+        role="navigation"
+        className="flex items-center justify-center gap-32 max-w-7xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative"
+        style={{ borderBottomWidth: "2px" }}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Left nav */}
-        <div className="flex gap-6">
-          {navItems.map((item, i) => (
+        {/* Left nav (first 4) */}
+        <div className="flex gap-5">
+          {navItems.slice(0, 4).map((item, i) => (
             <a
               key={i}
               href="#"
               onMouseEnter={handleMouseEnter}
-              onClick={() => handleClick(i)}
-              className={`relative z-10 cursor-pointer px-5 ${
-                i === activeIndex ? "font-semibold" : ""
+              onClick={() => setActiveIndex(i)}
+              aria-current={activeIndex === i ? "page" : undefined}
+              className={`relative z-10 cursor-pointer px-4 ${
+                activeIndex === i ? "font-semibold text-red-600" : ""
               }`}
             >
               {item}
@@ -76,26 +66,30 @@ export default function MainNav() {
           ))}
         </div>
 
-        {/* Logo */}
-        <div className="absolute left-1/2 top-2/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+        {/* Logo center */}
+        <div className="absolute left-1/2 top-2/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{top: "110%"}}>
           <Image src={logo} alt="Tolmin Logo" width={100} height={50} />
         </div>
 
-        {/* Right nav */}
-        <div className="flex gap-6">
-          {navItems.map((item, i) => (
-            <a
-              key={i + 100}
-              href="#"
-              onMouseEnter={handleMouseEnter}
-              onClick={() => handleClick(i)}
-              className={`relative z-10 cursor-pointer px-5 ${
-                i === activeIndex ? "font-semibold" : ""
-              }`}
-            >
-              {item}
-            </a>
-          ))}
+        {/* Right nav (next 4) */}
+        <div className="flex gap-5">
+          {navItems.slice(4).map((item, i) => {
+            const index = i + 4;
+            return (
+              <a
+                key={index}
+                href="#"
+                onMouseEnter={handleMouseEnter}
+                onClick={() => setActiveIndex(index)}
+                aria-current={activeIndex === index ? "page" : undefined}
+                className={`relative z-10 cursor-pointer px-4 ${
+                  activeIndex === index ? "font-semibold text-red-600" : ""
+                }`}
+              >
+                {item}
+              </a>
+            );
+          })}
         </div>
 
         {/* Sliding underline */}
@@ -104,7 +98,7 @@ export default function MainNav() {
           style={{
             left: underlineStyle.left,
             width: underlineStyle.width,
-            bottom: "-2px"
+            bottom: "-2px",
           }}
         />
       </nav>
