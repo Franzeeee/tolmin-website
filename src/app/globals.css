@@ -25,11 +25,11 @@ body {
 }
 
 .bg-red-fade {
-  background: transparent;
-  background: linear-gradient(
+ background: linear-gradient(
     180deg,
-    #9e030687 20%,
-    transparent 87%
+    #8e070987 0%,
+    #9a060848 40%,
+    transparent 100%
   );
   font-family: url("/public/fonts/Montserrat/Montserrat-VariableFont_wght.ttf"), Arial, Helvetica, sans-serif;
   text-transform: uppercase;
