@@ -28,7 +28,7 @@ body {
   background: transparent;
   background: linear-gradient(
     180deg,
-    #9e030687 7%,
+    #9e030687 20%,
     transparent 87%
   );
   font-family: url("/public/fonts/Montserrat/Montserrat-VariableFont_wght.ttf"), Arial, Helvetica, sans-serif;
@@ -44,4 +44,8 @@ body {
   background-position: center;
   height: 100vh;
   color: white;
+}
+
+.header-text {
+  margin-bottom: 5rem;
 }
