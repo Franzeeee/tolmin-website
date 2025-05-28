@@ -13,6 +13,7 @@
     "@next/font": "^14.2.15",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
+    "framer-motion": "^12.15.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
