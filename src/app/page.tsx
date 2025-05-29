@@ -103,7 +103,7 @@ export default function Page() {
                 className='relative p-5 h-full'
                 initial={{  opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                transition={{ duration: .6, ease: "easeOut" }}
+                transition={{ duration: .9, ease: "easeOut" }}
                 viewport={{ once: true }}
               >
                 <Image
@@ -126,7 +126,7 @@ export default function Page() {
                     className='flex-1 min-h-[100px] max-h-[135px] border-t-4 border-gray-200 pt-3 flex gap-4 text-black'
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1}}
-                    transition={{ duration: 0.5, ease: "easeOut", delay: idx * 0.2 }}
+                    transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
                     viewport={{ once: true }}
                   >
                     <Image
