@@ -24,16 +24,18 @@ export default function Page() {
         </div>
       </header>
       <main className='w-full h-fit max-w-[95rem]'>
-          <div className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden'>
+
+        {/* Match Section */}
+          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div>
-              <h1 className="text-4xl font-bold text-left text-black mt-8 uppercase">
-                Tekme <span className='font-normal'>NK tolmin</span>
+              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                Tekme <span className='font-semibold'>NK tolmin</span>
               </h1>
             </div>
 
             {/* Card Container */}
-            <div className='w-full h-fit max-h-[800px] mt-8 flex gap-4 overflow-visible'>
+            <div className='w-full h-fit max-h-[800px] mt-4 flex gap-4 overflow-visible'>
 
               {Array.from({ length: 3 }).map((_, idx) => (
                 <motion.div
@@ -84,7 +86,73 @@ export default function Page() {
               ))}
 
             </div>
-          </div>
+          </section>
+
+          {/* News Section */}
+          <section className='flex flex-col min-h-[400px] p-2 px-5 gap-4 overflow-hidden border-b-3 border-gray-200 pb-12 '>
+            {/* Header Title */}
+            <div>
+              <h1 className="text-4xl font-extrabold text-left text-black mt-2 uppercase">
+                Tekme <span className='font-semibold'>nedavne novice</span>
+              </h1>
+            </div>
+            
+            <div className='grid [grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
+              {/* Main News */}
+              <div className='relative p-5 h-full'>
+                <Image
+                  src='/news.png'
+                  alt="News Image"
+                  fill
+                  className='object-cover'
+                />
+                <div className='absolute w-full px-6 left-0 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50'>
+                  <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>NOVICE SPREMLJAJTE NA NAŠI FB IN IG STRANI</h1>
+                  <p className='text-right py-2'>May 22, 2025 </p>
+                </div>
+              </div>
+
+              {/* Additional News */}
+              <div className='flex gap-3 flex-col'>
+                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
+                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
+                  <div className='flex gap-1 flex-col'>
+                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+                  </div>
+                </div>
+
+                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
+                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
+                  <div className='flex gap-1 flex-col'>
+                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+                  </div>
+                </div>
+
+                                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
+                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
+                  <div className='flex gap-1 flex-col'>
+                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+                  </div>
+                </div>
+
+                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
+                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
+                  <div className='flex gap-1 flex-col'>
+                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+                  </div>
+                  
+                </div>
+                
+                <div className='border-t-3 border-gray-200 pt-3'>
+                  <button className='w-full bg-red-700 text-white p-2 poppins uppercase'>See more</button>
+                </div>
+              </div>
+            </div>
+          </section>
       </main>
     </div>
   );
