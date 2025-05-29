@@ -22,7 +22,7 @@ export default function Page() {
             <source src="/tolmin-header.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="absolute top-0 left-0 w-full h-full bg-black/25 z-10" />
+          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10" />
         <div className="flex items-center justify-center">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
