@@ -99,7 +99,13 @@ export default function Page() {
             
             <div className='grid [grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
               {/* Main News */}
-              <div className='relative p-5 h-full'>
+              <motion.div 
+                className='relative p-5 h-full'
+                initial={{  opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: .9, ease: "easeOut" }}
+                viewport={{ once: true }}
+              >
                 <Image
                   src='/news.png'
                   alt="News Image"
@@ -110,46 +116,37 @@ export default function Page() {
                   <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>NOVICE SPREMLJAJTE NA NAŠI FB IN IG STRANI</h1>
                   <p className='text-right py-2'>May 22, 2025 </p>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Additional News */}
               <div className='flex gap-3 flex-col'>
-                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
-                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
-                  <div className='flex gap-1 flex-col'>
-                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
-                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
-                  </div>
-                </div>
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <motion.div
+                    key={idx}
+                    className='flex-1 min-h-[100px] max-h-[135px] border-t-4 border-gray-200 pt-3 flex gap-4 text-black'
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1}}
+                    transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <Image
+                      src='/news.png'
+                      alt='Thumb'
+                      width={230}
+                      height={800}
+                      className='object-cover'
+                    />
+                    <div className='flex gap-1 flex-col'>
+                      <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                      <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+                    </div>
+                  </motion.div>
+                ))}
 
-                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
-                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
-                  <div className='flex gap-1 flex-col'>
-                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
-                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
-                  </div>
-                </div>
-
-                                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
-                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
-                  <div className='flex gap-1 flex-col'>
-                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
-                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
-                  </div>
-                </div>
-
-                <div className='flex-1 min-h-[100px] max-h-[135px]  border-t-3 border-gray-200 pt-3 flex gap-4 text-black'>
-                  <Image src='/news.png' alt='Thumb' width={230} height={800} className='object-cover' />
-                  <div className='flex gap-1 flex-col'>
-                    <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
-                    <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
-                  </div>
-                  
-                </div>
-                
-                <div className='border-t-3 border-gray-200 pt-3'>
+                <div className='border-t-4 border-gray-200 pt-3'>
                   <button className='w-full bg-red-700 text-white p-2 poppins uppercase'>See more</button>
                 </div>
+
               </div>
             </div>
           </section>
