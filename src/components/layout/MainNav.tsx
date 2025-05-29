@@ -40,11 +40,11 @@ export default function MainNav() {
   };
 
   return (
-    <div className="w-full py-5 bg-red-fade text-black relative">
+    <div className="w-full py-5 bg-red-fade text-black relative z-20">
       <nav
         ref={navRef}
         role="navigation"
-        className="flex items-center justify-between max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full"
+        className="flex items-center justify-between max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full z-20"
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}

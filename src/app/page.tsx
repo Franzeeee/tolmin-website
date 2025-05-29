@@ -11,13 +11,25 @@ export default function Page() {
     <div className="flex flex-col items-center justify-start min-h-screen">
       <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
         <MainNav />
+          {/* Background video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          >
+            <source src="/tolmin-header.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10" />
         <div className="flex items-center justify-center">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             whileInView={{ y: 0, opacity: .6 }}
-            transition={{ duration: .8, ease: "easeOut" }}
+            transition={{ duration: .6, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="text-9xl font-bold text-gray-100 opacity-60 header-text select-none"
+            className="text-9xl z-20 font-bold text-white opacity-60 header-text select-none"
           >
             NK TOLMIN
           </motion.h1>
@@ -43,7 +55,7 @@ export default function Page() {
                   className='flex-1 bg-gray-800 p-4 shadow-md flex flex-col md:min-h-[400px] gap-2 matches-card'
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: .6, ease: "easeOut", delay: idx * 0.2 }}
+                  transition={{ duration: .6, ease: "easeOut", delay: idx * 0.1 }}
                   viewport={{ once: true }}
                 >
                   {/* Title text */}
