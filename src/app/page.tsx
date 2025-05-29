@@ -55,7 +55,7 @@ export default function Page() {
                   className='flex-1 bg-gray-800 p-4 shadow-md flex flex-col md:min-h-[400px] gap-2 matches-card'
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: .6, ease: "easeOut", delay: idx * 0.2 }}
+                  transition={{ duration: .6, ease: "easeOut", delay: idx * 0.1 }}
                   viewport={{ once: true }}
                 >
                   {/* Title text */}
