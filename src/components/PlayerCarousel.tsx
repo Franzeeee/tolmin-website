@@ -98,7 +98,7 @@ const Carousel: React.FC = () => {
               className='relative p-5 h-full w-full'
               initial={{  opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: 1, ease: "easeOut", delay: i * 0.1 }}
               viewport={{ once: true, amount: .3 }}
             >
               <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
