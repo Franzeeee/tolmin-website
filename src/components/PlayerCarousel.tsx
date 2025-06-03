@@ -2,13 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import '../../public/styles/player-carousel.css';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 const Carousel: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
 
   const cardsPerPage = 4;
   const cards = ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7', 'Card 8'];
@@ -25,7 +23,7 @@ const Carousel: React.FC = () => {
     setActiveIndex(section);
   };
 
-  // Scroll to dot click
+  // Scroll to dot click or arrow
   const scrollToIndex = (index: number) => {
     const track = trackRef.current;
     if (!track) return;
@@ -37,66 +35,44 @@ const Carousel: React.FC = () => {
     });
   };
 
-  // Mouse/Touch drag logic
-  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
-    if (!trackRef.current) return;
-
-    setIsDragging(true);
-    setStartX(pageX - trackRef.current.offsetLeft);
-    setScrollLeft(trackRef.current.scrollLeft);
+  const scrollLeftHandler = () => {
+    const newIndex = Math.max(activeIndex - 1, 0);
+    scrollToIndex(newIndex);
   };
 
-  const handleMouseMove = (e: MouseEvent | TouchEvent) => {
-    if (!isDragging || !trackRef.current) return;
-
-    const pageX = 'touches' in e ? e.touches[0].pageX : (e as MouseEvent).pageX;
-    const x = pageX - trackRef.current.offsetLeft;
-    const walk = x - startX;
-    trackRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
+  const scrollRightHandler = () => {
+    const newIndex = Math.min(activeIndex + 1, totalPages - 1);
+    scrollToIndex(newIndex);
   };
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-
-    // Add scroll listener for active index tracking
     track.addEventListener('scroll', handleScroll);
-
-    // Add move listeners for drag
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchmove', handleMouseMove);
-    window.addEventListener('touchend', handleMouseUp);
 
     return () => {
       track.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleMouseMove);
-      window.removeEventListener('touchend', handleMouseUp);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, startX, scrollLeft, totalPages]);
+  }, [activeIndex, totalPages]);
 
   return (
-    <div className="carousel-container select-none">
-      <div
-        className="carousel-track"
-        ref={trackRef}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleMouseDown}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-      >
+    <div className="carousel-container select-none relative">
+      {/* Left Arrow */}
+      <button onClick={scrollLeftHandler} className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer">
+        <FaArrowLeft />
+      </button>
+
+      {/* Right Arrow */}
+      <button onClick={scrollRightHandler} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer">
+        <FaArrowRight />
+      </button>
+
+      <div className="carousel-track" ref={trackRef}>
         {cards.map((label, i) => (
           <div className="card text-black" key={i}>
-            <motion.div 
+            <motion.div
               className='relative p-5 h-full w-full'
-              initial={{  opacity: 0 }}
+              initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 1, ease: "easeOut", delay: i * 0.1 }}
               viewport={{ once: true, amount: .3 }}
@@ -119,6 +95,7 @@ const Carousel: React.FC = () => {
         ))}
       </div>
 
+      {/* Dots */}
       <div className="dots" style={{ textAlign: 'center', marginTop: '10px' }}>
         {Array.from({ length: totalPages }).map((_, index) => (
           <span
