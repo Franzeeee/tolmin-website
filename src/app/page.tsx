@@ -282,6 +282,16 @@ export default function Page() {
             </div>
             <PlayerCarousel />
           </section>
+
+          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+            {/* Header Title */}
+            <div className='mb-4'>
+              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                Trgovina
+              </h1>
+            </div>
+            <PlayerCarousel />
+          </section>
           
       </main>
     </div>
