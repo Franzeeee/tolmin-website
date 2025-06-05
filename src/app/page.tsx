@@ -2,14 +2,56 @@
 
 import React from 'react';
 import MainNav from '@/components/layout/MainNav';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import logo from '../../public/tolmin-logo.png'
 import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
+import { useState } from 'react';
+
+const slides = [
+  { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
+  { title: "Slide 2", date: "Tuesday, May 20", location: "Central Stadium" },
+  { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
+];
+
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    position: 'absolute',
+    width: '100%',
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    position: 'relative',
+    width: '100%',
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+    position: 'absolute',
+    width: '100%',
+  }),
+};
 
 export default function Page() {
+
   
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(0); // +1 or -1 for slide direction
+
+  const handleNext = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+  const handlePrev = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
@@ -53,52 +95,105 @@ export default function Page() {
             <div className='w-full h-fit max-h-[800px] mt-4 flex gap-4 overflow-visible'>
 
               {Array.from({ length: 3 }).map((_, idx) => (
-                <motion.div
-                  key={idx}
-                  className='flex-1 bg-gray-800 p-4 shadow-md flex flex-col md:min-h-[400px] gap-2 matches-card'
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: .6, ease: "easeOut", delay: idx * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  {/* Title text */}
-                  <div className='flex items-center flex-col justify-center p-2 font-semibold text-white uppercase'>
-                    <h1 className='text-3xl font-poppins'>PreJSJA</h1>
-                    <h2>SNL</h2>
-                  </div>
+                      <motion.div
+                        key={idx}
+                        className='flex-1 bg-gray-800 p-4 shadow-md flex flex-col md:min-h-[400px] gap-2 matches-card relative overflow-hidden'
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: .6, ease: "easeOut", delay: idx * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        {idx === 0 ? (
+                          <>
+                            {/* Carousel Title */}
+                            <div className='flex items-center flex-col justify-center p-2 font-semibold text-white uppercase'>
+                              <h1 className='text-5xl font-bold font-poppins'>PreJSJA</h1>
+                              <h2>SNL</h2>
+                            </div>
 
-                  {/* Logo and VS or Score */}
-                  <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
-                    <Image
-                      src={logo}
-                      alt="Team Logo"
-                      width={110}
-                      height={110}
-                      className='w-36 h-36 object-contain'
-                    />
-                    <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
-                      <p>VS</p>
-                    </div>
-                    <Image
-                      src={logo}
-                      alt="Team Logo"
-                      width={110}
-                      height={110}
-                      className='w-36 h-36 object-contain'
-                    />
-                  </div>
+                            {/* Slide Wrapper */}
+                            <div className='relative h-[250px]'>
+                              <AnimatePresence custom={direction} initial={false}>
+                                <motion.div
+                                  key={currentSlide}
+                                  className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center"
+                                  custom={direction}
+                                  variants={slideVariants}
+                                  initial="enter"
+                                  animate="center"
+                                  exit="exit"
+                                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                >
+                                  {/* Logos and VS */}
+                                  <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
+                                    <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                    <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
+                                      <p>VS</p>
+                                    </div>
+                                    <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  </div>
 
-                  {/* Date and Location */}
-                  <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                    <p className='font-semibold'>Monday, May 19, 12:00</p>
-                    <p className='text-sm font-thin'>Športni park Brajda</p>
-                  </div>
+                                  {/* Date and Location */}
+                                  <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
+                                    <p className='font-semibold'>{slides[currentSlide].date}, 12:00</p>
+                                    <p className='text-sm font-thin'>{slides[currentSlide].location}</p>
+                                  </div>
+                                </motion.div>
+                              </AnimatePresence>
+                            </div>
 
-                  <div className='min-h-16'>
+                            {/* Carousel Navigation */}
+                            <div className='flex justify-between items-center gap-4 mt-4'>
+                              <button onClick={handlePrev} className='text-white opacity-50 text-lg hover:opacity-100 w-10 text-start cursor-pointer font-extrabold'>⟨</button>
+                              <div className='flex gap-2'>
+                                {slides.map((_, i) => (
+                                  <div
+                                    key={i}
+                                    className={`h-2 w-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-gray-500 opacity-50'}`}
+                                  />
+                                ))}
+                              </div>
+                              <button onClick={handleNext} className='text-white opacity-50 hover:opacity-100 text-end w-10 cursor-pointer text-lg font-extrabold'>⟩</button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
 
-                  </div>
-                </motion.div>
-              ))}
+                            {idx == 1 ? (
+                              <>
+                                <div className='flex items-center flex-col justify-center p-2 font-semibold text-white uppercase mb-4'>
+                                  <h1 className='text-5xl font-bold font-poppins'>prihajajoče</h1>                              
+                                  <h2>SNL</h2>
+                                </div>
+                                <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
+                                  <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
+                                    <p>VS</p>
+                                  </div>
+                                  <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                </div>
+
+                                <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
+                                  <p className='font-semibold'>Monday, May 19, 12:00</p>
+                                  <p className='text-sm font-thin'>Športni park Brajda</p>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className='flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4'>
+                                  <h2 className='text-2xl'>SNL 3</h2>
+                                </div>
+                                <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
+                                  <h1 className='text-7xl text-center uppercase italic font-semibold leading-24 '>ligaška lestvica</h1>
+                                </div>
+                              </>
+                            )
+                              
+                            }
+                          </>
+                        )}
+                      </motion.div>
+                    ))}
 
             </div>
           </section>
