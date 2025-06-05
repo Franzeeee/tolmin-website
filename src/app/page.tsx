@@ -2,7 +2,7 @@
 
 import React from 'react';
 import MainNav from '@/components/layout/MainNav';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Image from 'next/image';
 import logo from '../../public/tolmin-logo.png'
 import PlayerCarousel from '../components/PlayerCarousel';
@@ -15,23 +15,23 @@ const slides = [
   { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
 ];
 
-const slideVariants = {
+const slideVariants : Variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
-    position: 'absolute' as const,
+    position: 'absolute',
     width: '100%',
   }),
   center: {
     x: 0,
     opacity: 1,
-    position: 'relative' as const,
+    position: 'relative',
     width: '100%',
   },
   exit: (direction: number) => ({
     x: direction < 0 ? 300 : -300,
     opacity: 0,
-    position: 'absolute' as const,
+    position: 'absolute',
     width: '100%',
   }),
 };
