@@ -84,7 +84,7 @@ const MerchItem: React.FC = () => {
                 height={300}
                 width={300}
               />
-                <div className="p-5">
+                <div className="p-5 pt-2">
                   <a href="#">
                       <h5 className="mb-2 text-lg text-center tracking-tight text-gray-700">Dres NK TKK Tolmin</h5>
                   </a>
