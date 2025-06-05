@@ -126,11 +126,11 @@ export default function Page() {
                                 >
                                   {/* Logos and VS */}
                                   <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
-                                    <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                    <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
                                     <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                       <p>VS</p>
                                     </div>
-                                    <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                    <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
                                   </div>
 
                                   {/* Date and Location */}
