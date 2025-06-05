@@ -9,6 +9,7 @@ import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
 
 export default function Page() {
+  
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
