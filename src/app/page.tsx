@@ -19,19 +19,19 @@ const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
-    position: 'absolute',
+    position: 'absolute' as const,
     width: '100%',
   }),
   center: {
     x: 0,
     opacity: 1,
-    position: 'relative',
+    position: 'relative' as const,
     width: '100%',
   },
   exit: (direction: number) => ({
     x: direction < 0 ? 300 : -300,
     opacity: 0,
-    position: 'absolute',
+    position: 'absolute' as const,
     width: '100%',
   }),
 };
