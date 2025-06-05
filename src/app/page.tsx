@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import logo from '../../public/tolmin-logo.png'
 import PlayerCarousel from '../components/PlayerCarousel';
+import MerchItem from '@/components/MerchItem';
 
 export default function Page() {
   return (
@@ -170,6 +171,18 @@ export default function Page() {
             </div>
           </section>
 
+
+          
+          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+            {/* Header Title */}
+            <div className='mb-4'>
+              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                Igralci
+              </h1>
+            </div>
+            <PlayerCarousel />
+          </section>
+
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div>
@@ -273,14 +286,15 @@ export default function Page() {
           </section>
 
 
+
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div className='mb-4'>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
-                Igralci
+                Trgovina
               </h1>
             </div>
-            <PlayerCarousel />
+            <MerchItem />
           </section>
           
       </main>
