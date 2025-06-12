@@ -12,6 +12,7 @@ const navItems = [
 export default function MainNav() {
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
 
   const updateUnderline = (element: HTMLElement) => {
@@ -29,6 +30,16 @@ export default function MainNav() {
     }
   }, [activeIndex]);
 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     updateUnderline(e.currentTarget);
   };
@@ -40,7 +51,7 @@ export default function MainNav() {
   };
 
   return (
-    <div className="w-full py-5 bg-red-fade text-black relative z-20">
+<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-20`}>
       <nav
         ref={navRef}
         role="navigation"
@@ -56,8 +67,8 @@ export default function MainNav() {
               onMouseEnter={handleMouseEnter}
               onClick={() => setActiveIndex(i)}
               aria-current={activeIndex === i ? "page" : undefined}
-              className={`relative z-10 cursor-pointer px-2 ${
-                activeIndex === i ? "font-semibold text-red-600" : "text-white"
+              className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 ${
+                activeIndex === i ? "font-semibold text-red-600" : isScrolled ? "text-gray-900" : "text-white" 
               }`}
             >
               {item}
@@ -66,8 +77,8 @@ export default function MainNav() {
         </div>
 
         {/* Logo center */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none max-w-fit" style={{top: "110%"}}>
-          <Image src={logo} alt="Tolmin Logo" width={100} height={50} />
+        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-20 pointer-events-none max-w-fit`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
+          <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={50} />
         </div>
 
         {/* Right nav */}
@@ -81,8 +92,8 @@ export default function MainNav() {
                 onMouseEnter={handleMouseEnter}
                 onClick={() => setActiveIndex(index)}
                 aria-current={activeIndex === index ? "page" : undefined}
-                className={`relative z-10 cursor-pointer px-2 ${
-                  activeIndex === index ? "font-semibold text-red-600" : "text-white"
+                className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 ${
+                activeIndex === index ? " text-red-600" : isScrolled ? "text-gray-900" : "text-white"
                 }`}
               >
                 {item}
@@ -93,7 +104,7 @@ export default function MainNav() {
 
         {/* Underline */}
         <span
-          className="absolute rounded-sm h-0.5 bg-red-600 transition-all duration-300"
+          className={`absolute ${isScrolled ? 'h-1 rounded-none' : 'h-0.5 rounded-sm'} bg-red-600 transition-all duration-300`}
           style={{
             left: underlineStyle.left,
             width: underlineStyle.width,
