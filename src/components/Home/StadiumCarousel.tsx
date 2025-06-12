@@ -8,7 +8,7 @@ const images = [
 ];
 
 function StadiumCarousel() {
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -19,8 +19,9 @@ function StadiumCarousel() {
       const nextIndex = (currentIndex + 1) % images.length;
       const child = container.children[nextIndex];
       if (child) {
+        const childElement = child as HTMLElement;
         container.scrollTo({
-          left: child.offsetLeft,
+          left: childElement.offsetLeft,
           behavior: 'smooth',
         });
       }
@@ -33,7 +34,7 @@ function StadiumCarousel() {
   return (
     <div
       ref={scrollRef}
-      className="flex gap-4 hide-scroll-arrows scroll-smooth"
+      className="flex hide-scroll-arrows scroll-smooth"
       style={{
         width: '100%',
         overflowX: 'auto',
@@ -56,7 +57,7 @@ function StadiumCarousel() {
             alt={`Image ${i}`}
             width={200}
             height={200}
-            className="w-full h-full object-contain p-4"
+            className="w-full h-full object-contain p-2 pb-3"
           />
         </div>
       ))}
