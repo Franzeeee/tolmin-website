@@ -412,7 +412,7 @@ export default function Page() {
           </section>
 
           <section className='w-full min-h-content h-96 max-h-[930px] p-2 px-5 overflow-hidden pb-12 bg-gray-950'>
-
+              
           </section>
       </main>
     </div>

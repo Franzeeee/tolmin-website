@@ -55,11 +55,11 @@ export default function MainNav() {
       <nav
         ref={navRef}
         role="navigation"
-        className="flex items-center justify-between max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full z-20"
+        className={`flex items-center ${isScrolled ? "justify-around gap-14" : "justify-between"} max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full z-20`}
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}
-        <div className="flex gap-7 flex-shrink-0 items-end">
+        <div className={`flex ${isScrolled ? " gap-8 " : " gap-7 "} flex-shrink-0 items-end`}>
           {navItems.slice(0, 4).map((item, i) => (
             <a
               key={i}
@@ -82,7 +82,7 @@ export default function MainNav() {
         </div>
 
         {/* Right nav */}
-        <div className="flex gap-6 flex-shrink-0 items-end justify-content-end">
+        <div className={`flex ${isScrolled ? " gap-8 " : " gap-7 "} flex-shrink-0 items-end`}>
           {navItems.slice(4).map((item, i) => {
             const index = i + 4;
             return (
