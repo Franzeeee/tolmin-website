@@ -88,3 +88,7 @@ body {
     rgba(141, 5, 5, 0.685) 100%
   );
 }
+
+.hide-scroll-arrows::-webkit-scrollbar-button {
+  display: none;
+}
