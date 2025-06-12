@@ -9,12 +9,14 @@ import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
 import { useState } from 'react';
 import Sponsors from '@/components/layout/Sponsors';
+import StadiumCarousel from '@/components/Home/StadiumCarousel';
 
 const slides = [
   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
   { title: "Slide 2", date: "Tuesday, May 20", location: "Central Stadium" },
   { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
 ];
+
 
 const slideVariants : Variants = {
   enter: (direction: number) => ({
@@ -400,7 +402,26 @@ export default function Page() {
             </div>
           </section>
 
-
+          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+            {/* Header Title */}
+            <div className='mb-4'>
+              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                Brajda
+              </h1>
+            </div>
+            <div className="w-full overflow-x-auto px-4 pb-6">
+              <StadiumCarousel />
+            </div>
+            <div className={`w-full p-2 px-7 poppins text-justify flex flex-col gap-4 text-gray-900`}> 
+                <p>
+                  <span className='font-bold text-black'>Športni park Brajda</span> je že dolga desetletja dom tolminskih nogometašev. V letu 1962 je Občinska zveza za telesno vzgojo v Tolminu finančno podprla izgradnjo novega stadiona, ki je bil svečano odprt leta 1967.
+                </p>
+                <p>
+                  Športni park Brajda meri 38.787 m2. Park obsega atletski in nogometni stadion, zunanja športna igrišča, teniški igrišči in spremljajoče objekte. Nogometni stadion ima glavno in pomožno nogometno igrišče. Tribuna ima 250 sedežev. Športni kompleks je namenjen šolski športni vzgoji, športni vadbi in tekmovanjem v atletiki, nogometu, malem nogometu, košarki, rokometu, tenisu in odbojki na mivki ter športni rekreaciji. Vsako leto športni park obišče 21.000 uporabnikov in obiskovalcev.
+                </p>
+                <p>Leta 2014 je bil nogometni stadion na Brajdi posodobljen za potrebe nastopanja članskega moštva v 2.SNL.</p>
+            </div>
+          </section>
 
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
             {/* Header Title */}
