@@ -28,7 +28,7 @@ export default function MainNav() {
       const activeLink = links[activeIndex] as HTMLElement;
       if (activeLink) updateUnderline(activeLink);
     }
-  }, [activeIndex]);
+  }, [activeIndex, isScrolled]);
 
 
   useEffect(() => {
