@@ -3,10 +3,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import logo from '../../../public/tolmin-logo.png';
+import Link from "next/link";
+import { usePathname } from 'next/navigation';
 
 const navItems = [
-  "DOMOV", "Sponzorji", "Nogometna šola", "Klub",
-  "Zgodovina","Člansko moštvo", "Arhiv", "Trgovina",
+  { name: "DOMOV", link: "/" },
+  { name: "Sponzorji", link: "/sponzorji" },
+  { name: "Nogometna šola", link: "/nogometna-sola" },
+  { name: "Klub", link: "/klub" },
+  { name: "Zgodovina", link: "/zgodovina" },
+  { name: "Člansko moštvo", link: "/clansko-mostvo" },
+  { name: "Arhiv", link: "/arhiv" },
+  { name: "Trgovina", link: "/trgovina" },
 ];
 
 export default function MainNav() {
@@ -14,6 +22,7 @@ export default function MainNav() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   const updateUnderline = (element: HTMLElement) => {
     const navRect = navRef.current!.getBoundingClientRect();
@@ -21,6 +30,15 @@ export default function MainNav() {
     const width = element.offsetWidth;
     setUnderlineStyle({ left, width }); 
   };
+
+  useEffect(() => {
+    const currentPath = pathname;
+    const foundIndex = navItems.findIndex((item) => item.link === currentPath);
+    if (foundIndex !== -1) {
+      setActiveIndex(foundIndex);
+    }
+  }, [pathname]);
+
 
   useEffect(() => {
     if (navRef.current) {
@@ -31,9 +49,10 @@ export default function MainNav() {
   }, [activeIndex, isScrolled]);
 
 
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -51,7 +70,7 @@ export default function MainNav() {
   };
 
   return (
-<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-20`}>
+<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-20 transition-colors duration-300 ease-in-out`}>
       <nav
         ref={navRef}
         role="navigation"
@@ -61,9 +80,9 @@ export default function MainNav() {
         {/* Left nav */}
         <div className={`flex ${isScrolled ? " gap-8 " : " gap-7 "} flex-shrink-0 items-end`}>
           {navItems.slice(0, 4).map((item, i) => (
-            <a
+            <Link
               key={i}
-              href="#"
+              href={item.link}
               onMouseEnter={handleMouseEnter}
               onClick={() => setActiveIndex(i)}
               aria-current={activeIndex === i ? "page" : undefined}
@@ -71,13 +90,13 @@ export default function MainNav() {
                 activeIndex === i ? "font-semibold text-red-600" : isScrolled ? "text-gray-900" : "text-white" 
               }`}
             >
-              {item}
-            </a>
+              {item.name}
+            </Link>
           ))}
         </div>
 
         {/* Logo center */}
-        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-20 pointer-events-none max-w-fit`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
+        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-20 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
           <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={50} />
         </div>
 
@@ -86,9 +105,9 @@ export default function MainNav() {
           {navItems.slice(4).map((item, i) => {
             const index = i + 4;
             return (
-              <a
+              <Link
                 key={index}
-                href="#"
+                href={item.link}
                 onMouseEnter={handleMouseEnter}
                 onClick={() => setActiveIndex(index)}
                 aria-current={activeIndex === index ? "page" : undefined}
@@ -96,8 +115,8 @@ export default function MainNav() {
                 activeIndex === index ? " text-red-600" : isScrolled ? "text-gray-900" : "text-white"
                 }`}
               >
-                {item}
-              </a>
+                {item.name}
+              </Link>
             );
           })}
         </div>

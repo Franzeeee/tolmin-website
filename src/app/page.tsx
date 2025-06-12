@@ -10,6 +10,8 @@ import MerchItem from '@/components/MerchItem';
 import { useState } from 'react';
 import Sponsors from '@/components/layout/Sponsors';
 import StadiumCarousel from '@/components/Home/StadiumCarousel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 const slides = [
   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
@@ -57,7 +59,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
-      <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
+      <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px] ">
         <MainNav />
           {/* Background video */}
           <video
@@ -83,7 +85,7 @@ export default function Page() {
           </motion.h1>
         </div>
       </header>
-      <main className='w-full h-fit max-w-[95rem] bg-gray-50'>
+      <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
 
         {/* Match Section */}
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
@@ -275,9 +277,12 @@ export default function Page() {
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div className='mb-4'>
-              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
-                Igralci
-              </h1>
+              <div className={`w-full flex items-end justify-between`}>
+                <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                  Igralci
+                </h1>
+                <p className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300`}>Prikaži vse <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </p>
+              </div>
             </div>
             <PlayerCarousel />
           </section>
@@ -426,9 +431,12 @@ export default function Page() {
           <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
             {/* Header Title */}
             <div className='mb-4'>
-              <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
-                Trgovina
-              </h1>
+              <div className={`w-full flex items-end justify-between`}>
+                <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
+                  Trgovina
+                </h1>
+                <p className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300`}>Obiščite trgovino <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </p>
+              </div>
             </div>
             <MerchItem />
           </section>

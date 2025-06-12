@@ -10,6 +10,9 @@
     "seed:news": "tsx src/scripts/seedNews.ts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@next/font": "^14.2.15",
     "@tanstack/react-query": "^5.80.6",
     "bcryptjs": "^3.0.2",
