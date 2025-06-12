@@ -58,12 +58,12 @@ const Carousel: React.FC = () => {
   return (
     <div className="carousel-container select-none relative">
       {/* Left Arrow */}
-      <button onClick={scrollLeftHandler} className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer">
+      <button onClick={scrollLeftHandler} className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer hover:text-white hover:bg-red-600 transition-colors duration-300">
         <FaArrowLeft />
       </button>
 
       {/* Right Arrow */}
-      <button onClick={scrollRightHandler} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer">
+      <button onClick={scrollRightHandler} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow text-black cursor-pointer hover:text-white hover:bg-red-600 transition-colors duration-300">
         <FaArrowRight />
       </button>
 
