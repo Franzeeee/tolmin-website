@@ -8,6 +8,7 @@ import logo from '../../public/tolmin-logo.png'
 import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
 import { useState } from 'react';
+import Sponsors from '@/components/layout/Sponsors';
 
 const slides = [
   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
@@ -68,7 +69,7 @@ export default function Page() {
             Your browser does not support the video tag.
           </video>
           <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]"/>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center h-screen max-h-[900px] z-20 relative">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             whileInView={{ y: 0, opacity: .6 }}
@@ -411,9 +412,7 @@ export default function Page() {
             <MerchItem />
           </section>
 
-          <section className='w-full min-h-content h-96 max-h-[930px] p-2 px-5 overflow-hidden pb-12 bg-gray-950'>
-              
-          </section>
+          <Sponsors />
       </main>
     </div>
   );

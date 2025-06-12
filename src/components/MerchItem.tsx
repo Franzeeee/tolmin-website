@@ -77,13 +77,15 @@ const MerchItem: React.FC = () => {
               transition={{ duration: 1, ease: "easeOut", delay: i * 0.1 }}
               viewport={{ once: true, amount: .3 }}
             >
-              <Image
-                src='/player1.png'
-                alt="News Image"
-                className='object-cover'
-                height={300}
-                width={300}
-              />
+              <div className={`w-full h-[350px] flex items-center justify-center bg-gray-200`}>
+                <Image
+                  src='/Merch/item1.png'
+                  alt="News Image"
+                  className='object-cover'
+                  height={250}
+                  width={250}
+                />
+              </div>
                 <div className="p-5 pt-2">
                   <a href="#">
                       <h5 className="mb-2 text-lg text-center tracking-tight text-gray-700">Dres NK TKK Tolmin</h5>

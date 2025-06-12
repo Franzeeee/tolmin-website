@@ -2,6 +2,7 @@
 
 // import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -51,6 +52,36 @@ export default function RootLayout({
               <p>
                 Legal notice and cookies | Website development
               </p>
+            </div>
+            <div>
+              <Image 
+                src="/logo/instagram.png"
+                alt="Instagram"
+                width={25}
+                height={25}
+                className="inline-block mr-2"
+              />
+              <Image 
+                src="/logo/facebook.png"
+                alt="Facebook"
+                width={25}
+                height={25}
+                className="inline-block mr-2"
+              />
+              <Image 
+                src="/logo/youtube.png"
+                alt="YouTube"
+                width={25}
+                height={25}
+                className="inline-block mr-2"
+              />
+              <Image 
+                src="/logo/linkedin.png"
+                alt="LinkedIn"
+                width={25}
+                height={25}
+                className="inline-block mr-2"
+              />
             </div>
           </div>
         </body>
