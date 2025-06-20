@@ -35,7 +35,7 @@ export default function page() {
       </header>
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
-
+        
         </section>
       </main>
     </div>

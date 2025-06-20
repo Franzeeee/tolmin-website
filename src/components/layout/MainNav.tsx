@@ -11,11 +11,22 @@ const navItems = [
   { name: "Sponzorji", link: "/sponzorji" },
   { name: "Nogometna šola", link: "/nogometna-sola" },
   { name: "Klub", link: "/klub" },
-  { name: "Zgodovina", link: "/zgodovina" },
-  { name: "Člansko moštvo", link: "/clansko-mostvo" },
+  { 
+    name: "Zgodovina", 
+    link: "/zgodovina",
+  },
+  { name: "Člansko moštvo", 
+    link: "/clansko-mostvo",
+    dropdown: [
+      { name: "Člansko moštvo – ekipa", link: "/clansko-mostvo" },
+      { name: "Tekme", link: "/zgodovina/milestones" },
+      { name: "Statistika", link: "/zgodovina/statistika" },
+    ]
+  },
   { name: "Arhiv", link: "/arhiv" },
   { name: "Trgovina", link: "/trgovina" },
 ];
+
 
 export default function MainNav() {
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
@@ -23,6 +34,9 @@ export default function MainNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // const [activeSubIndex, setActiveSubIndex] = useState<string | null>(null);
+
 
   const updateUnderline = (element: HTMLElement) => {
     const navRect = navRef.current!.getBoundingClientRect();
@@ -34,8 +48,18 @@ export default function MainNav() {
   useEffect(() => {
     const currentPath = pathname;
     const foundIndex = navItems.findIndex((item) => item.link === currentPath);
+    let subItemIndex = -1;
+
+    const foundMainIndex = navItems.findIndex((item) => {
+      if (item.dropdown) {
+        subItemIndex = item.dropdown.findIndex(subItem => subItem.link === currentPath);
+        return subItemIndex !== -1;
+      }
+      return false;
+    });
     if (foundIndex !== -1) {
       setActiveIndex(foundIndex);
+      console.log(foundMainIndex);
     }
   }, [pathname]);
 
@@ -43,14 +67,20 @@ export default function MainNav() {
   useEffect(() => {
     if (navRef.current) {
       const links = navRef.current.querySelectorAll('a');
-      const activeLink = links[activeIndex] as HTMLElement;
-      if (activeLink) updateUnderline(activeLink);
+      // If hovering, underline the hovered link
+      if (hoveredIndex !== null && links[hoveredIndex]) {
+        updateUnderline(links[hoveredIndex] as HTMLElement);
+      } else {
+        const activeLink = links[activeIndex] as HTMLElement;
+        if (activeLink) updateUnderline(activeLink);
+      }
     }
-  }, [activeIndex, isScrolled]);
+  }, [activeIndex, isScrolled, hoveredIndex]);
 
 
 
   useEffect(() => {
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -69,8 +99,17 @@ export default function MainNav() {
     if (activeLink) updateUnderline(activeLink);
   };
 
+  const restoreUnderlineToActive = () => {
+    const links = navRef.current?.querySelectorAll('a');
+    const activeLink = links?.[activeIndex] as HTMLElement;
+    if (activeLink) {
+      updateUnderline(activeLink);
+    }
+  };
+
+
   return (
-<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-20 transition-colors duration-300 ease-in-out`}>
+<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-40 transition-colors duration-300 ease-in-out`}>
       <nav
         ref={navRef}
         role="navigation"
@@ -96,27 +135,82 @@ export default function MainNav() {
         </div>
 
         {/* Logo center */}
-        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-20 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
+        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
           <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={50} />
         </div>
 
         {/* Right nav */}
-        <div className={`flex ${isScrolled ? " gap-8 " : " gap-7 "} flex-shrink-0 items-end`}>
+        <div className={`flex ${isScrolled ? "gap-8" : "gap-7"} flex-shrink-0 items-end relative`}>
           {navItems.slice(4).map((item, i) => {
             const index = i + 4;
+            const hasDropdown = item.dropdown && item.dropdown.length > 0;
+
             return (
-              <Link
+              <div
                 key={index}
-                href={item.link}
-                onMouseEnter={handleMouseEnter}
-                onClick={() => setActiveIndex(index)}
-                aria-current={activeIndex === index ? "page" : undefined}
-                className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 ${
-                activeIndex === index ? " text-red-600" : isScrolled ? "text-gray-900" : "text-white"
-                }`}
+                className="relative"
+                onMouseLeave={() => {
+                  // Add slight delay to allow for scrolling
+                  setTimeout(() => {
+                    if (hoveredIndex === index) {
+                      const dropdown = document.querySelector(`.dropdown-${index}`);
+                      if (!dropdown?.matches(':hover')) {
+                        setHoveredIndex(null);
+                        // restoreUnderlineToActive();
+                      }
+                    }
+                  }, 200);
+                }}
               >
-                {item.name}
-              </Link>
+                <Link
+                  href={item.link}
+                  onMouseEnter={(e) => {
+                    setHoveredIndex(index);
+                    handleMouseEnter(e);
+                  }}
+                  onClick={() => setActiveIndex(index)}
+                  aria-current={activeIndex === index ? "page" : undefined}
+                  className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${
+                    activeIndex === index ? "text-red-600" : isScrolled ? "text-gray-900" : "text-white"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+
+                {hasDropdown && hoveredIndex === index && (
+                  <div 
+                    className={`dropdown-${index} absolute top-full left-0 bg-white shadow-md z-30 w-48 mt-[.85rem]`}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => {
+                      // Only close if not hovering the parent item
+                      setTimeout(() => {
+                        const parent = document.querySelector(`[data-index="${index}"]`);
+                        if (!parent?.matches(':hover')) {
+                          setHoveredIndex(null);
+                          restoreUnderlineToActive();
+                        }
+                      }, 100);
+                    }}
+                  >
+                    {item.dropdown.map((subItem, subIndex) => {
+                      const isActive = subItem.link === pathname;
+                      return (
+                        <Link
+                          key={subIndex}
+                          href={subItem.link}
+                          className={`block px-4 py-3 text-sm ${
+                            isActive
+                              ? 'bg-red-500 text-white'
+                              : 'text-gray-700 hover:text-white hover:bg-red-500'
+                          }`}
+                        >
+                          {subItem.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
