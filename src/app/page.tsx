@@ -440,8 +440,6 @@ export default function Page() {
             </div>
             <MerchItem />
           </section>
-
-          <Sponsors />
       </main>
     </div>
   );

@@ -37,7 +37,7 @@ export default function Page() {
             transition={{
               repeat: Infinity,
               repeatType: "loop",
-              duration: 20,
+              duration: 16,
               ease: "linear"
             }}
             className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
@@ -89,9 +89,9 @@ export default function Page() {
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
             {Array.from({ length: 4 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -107,11 +107,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
@@ -127,9 +126,9 @@ export default function Page() {
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
             {Array.from({ length: 4 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -145,11 +144,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
@@ -165,9 +163,9 @@ export default function Page() {
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
             {Array.from({ length: 4 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -183,11 +181,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
@@ -203,9 +200,9 @@ export default function Page() {
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
             {Array.from({ length: 4 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -221,11 +218,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
@@ -240,10 +236,10 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 1 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
+            {Array.from({ length: 4 }).map((_, index) => (
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -259,11 +255,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
@@ -279,9 +274,9 @@ export default function Page() {
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
             {Array.from({ length: 4 }).map((_, index) => (
-              <div className="card text-black h-100" key={index}>
                 <motion.div
-                  className='relative p-5 h-full w-full'
+                  key={index}
+                  className='relative p-5 h-[430px] w-full'
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
@@ -297,11 +292,10 @@ export default function Page() {
                     className='object-cover'
                   />
                   <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-3 uppercase'>Altin</p>
+                    <p className='-mb-2 uppercase'>Altin</p>
                     <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
                   </div>
                 </motion.div>
-              </div>
             ))}
           </div>
         </section>
