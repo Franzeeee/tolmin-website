@@ -94,9 +94,12 @@ export default function MainNav() {
   };
 
   const handleMouseLeave = () => {
-    const links = navRef.current?.querySelectorAll('a');
-    const activeLink = links?.[activeIndex] as HTMLElement;
-    if (activeLink) updateUnderline(activeLink);
+    // Only restore if not hovering over any nav item or dropdown
+    if (!navRef.current?.matches(':hover')) {
+      const links = navRef.current?.querySelectorAll('a');
+      const activeLink = links?.[activeIndex] as HTMLElement;
+      if (activeLink) updateUnderline(activeLink);
+    }
   };
 
   const restoreUnderlineToActive = () => {
@@ -106,6 +109,9 @@ export default function MainNav() {
       updateUnderline(activeLink);
     }
   };
+
+
+  
 
 
   return (
@@ -150,16 +156,16 @@ export default function MainNav() {
                 key={index}
                 className="relative"
                 onMouseLeave={() => {
-                  // Add slight delay to allow for scrolling
                   setTimeout(() => {
-                    if (hoveredIndex === index) {
-                      const dropdown = document.querySelector(`.dropdown-${index}`);
-                      if (!dropdown?.matches(':hover')) {
-                        setHoveredIndex(null);
-                        // restoreUnderlineToActive();
-                      }
+                    const dropdown = document.querySelector(`.dropdown-${index}`);
+                    const isHoveringDropdown = dropdown?.matches(':hover');
+                    const isHoveringNav = navRef.current?.matches(':hover');
+                    
+                    if (!isHoveringDropdown && !isHoveringNav) {
+                      setHoveredIndex(null);
+                      restoreUnderlineToActive();
                     }
-                  }, 200);
+                  }, 100);
                 }}
               >
                 <Link
