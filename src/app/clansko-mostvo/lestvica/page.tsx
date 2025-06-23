@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -56,7 +55,7 @@ export default function Page() {
             }}
             className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
           >
-            Člansko moštvo - tekme
+            Člansko moštvo - Lestvica
           </motion.h1>
         </div>
       </header>
@@ -94,72 +93,59 @@ export default function Page() {
           </div>
         </section>
 
-        <section className='w-full min-h-content p-2 px-5 overflow-hidden pb-12'>
-          
-          <div className='w-full flex flex-col mb-12'>
-            <div className='border-b-2 border-gray-200 mb-4 pb-2'>
-              <h1 className="text-5xl font-bold text-left mt-2 uppercase text-gray-200">
-                May 2025
-              </h1>
+        <section className="w-full min-h-content p-2 px-5 overflow-hidden pb-20 poppins">
+            <div className="w-full overflow-auto">
+                <table className="w-full text-left border-collapse font-medium text-sm md:text-base border-t-8 border-red-600">
+                <thead>
+                    <tr className="bg-gray-900 text-white">
+                    <th colSpan={6} className="text-left px-4 py-3 text-sm md:text-base">
+                        2. SNL 2024/2025
+                    </th>
+                    </tr>
+                    <tr className="bg-gray-200 text-gray-700 border-t border-gray-300 uppercase text-xs md:text-sm">
+                    <th className="px-4 py-3">Ekipa</th>
+                    <th className="px-2 py-3">Tekem</th>
+                    <th className="px-2 py-3">Z</th>
+                    <th className="px-2 py-3">N</th>
+                    <th className="px-2 py-3">P</th>
+                    <th className="px-2 py-3">Točke</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {[
+                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
+                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
+                    ["TKK TOLMIN", 16, 14, 2, 4, 45],
+                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
+                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
+                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
+                    ["TKK TOLMIN", 16, 14, 2, 4, 45], // Highlight this row
+                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
+                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
+                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
+                    ["TKK TOLMIN", 16, 14, 2, 4, 45],
+                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
+                    ].map((team, idx) => (
+                    <tr
+                        key={idx}
+                        className={`border-b border-gray-200 ${
+                        team[0] === "TKK TOLMIN" && idx === 6
+                            ? "bg-red-600 text-white"
+                            : "bg-transparent text-gray-800"
+                        }`}
+                    >
+                        {team.map((val, i) => (
+                        <td key={i} className="px-4 py-3">
+                            {val}
+                        </td>
+                        ))}
+                    </tr>
+                    ))}
+                </tbody>
+                </table>
             </div>
-
-            <div className="w-full grid gap-4">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
-                >
-                  {/* Left: Match Info & Home Team */}
-                  <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
-                    <div className="w-full h-full">
-                      <div className="font-extrabold text-base">2. SNL</div>
-                      <div className="text-sm">
-                        SUN 25 MAY — 23:00 — ŠPORTNI PARK BRAJDA
-                      </div>
-                    </div>
-                    <div className="text-3xl flex items-end justify-end h-full md:absolute md:-bottom-0.5 md:left-0">
-                      NK TOLMIN
-                    </div>
-                  </div>
-
-                  {/* Center: Logos and Score */}
-                  <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src="/tolmin-logo.png"
-                        alt="NK Tolmin"
-                        width={50}
-                        height={50}
-                        className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                      />
-                      <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
-                        2 : 2
-                      </div>
-                      <Image
-                        src="/enemy-logo.png"
-                        alt="NK Dravinja"
-                        width={50}
-                        height={50}
-                        className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Right: Away Team */}
-                  <div className="text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
-                    NK DRAVINJA
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            
-
-
-          </div>
-
-          
         </section>
+
 
       </main>
     </div>
