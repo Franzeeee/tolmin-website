@@ -10,11 +10,13 @@ const navItems = [
   { name: "DOMOV", link: "/" },
   { name: "Sponzorji", link: "/sponzorji" },
   { name: "Nogometna šola", 
-    link: "/nogometna-sola",
+    link: "/nogometna-sola/mladinska-epike",
     dropdown: [
-      { name: "Mladinske ekipe", link: "/mladinske-ekipe" },
-      { name: "Vodstvo in trenerji", link: "vodstvo-in-trenerji" },
-      { name: "Aktivnosti in dokumenti", link: "Aktivnosti-in-dokumenti" }
+      { name: "Mladinske ekipe", link: "/nogometna-sola/mladinske-ekipe" },
+      { name: "Vodstvo in trenerji", link: "/nogometna-sola/vodstvo-in-trenerji" },
+      { name: "Aktivnosti in dokumenti", link: "/nogometna-sola/aktivnosti-in-dokumenti" },
+      { name: "Nogometni kamp 1.-7. razred", link: "/nogometna-sola/nogometni-kamp-1-7-razred" },
+      { name: "Nogometni kamp 6.-9. razred", link: "/nogometna-sola/nogometni-kamp-6-9-razred" }
     ]
   },
   { name: "Klub", link: "/klub" },
