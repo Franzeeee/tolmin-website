@@ -19,7 +19,7 @@ const navItems = [
     link: "/clansko-mostvo",
     dropdown: [
       { name: "Člansko moštvo – ekipa", link: "/clansko-mostvo" },
-      { name: "Tekme", link: "/zgodovina/milestones" },
+      { name: "Tekme", link: "/clansko-mostvo/tekme" },
       { name: "Statistika", link: "/zgodovina/statistika" },
     ]
   },
@@ -47,20 +47,19 @@ export default function MainNav() {
 
   useEffect(() => {
     const currentPath = pathname;
-    const foundIndex = navItems.findIndex((item) => item.link === currentPath);
+    const foundIndex = navItems.findIndex((item) => item.link === currentPath || (item.dropdown && item.dropdown.some(subItem => subItem.link === currentPath))); ;
     let subItemIndex = -1;
 
-    const foundMainIndex = navItems.findIndex((item) => {
+    navItems.findIndex((item) => {
       if (item.dropdown) {
         subItemIndex = item.dropdown.findIndex(subItem => subItem.link === currentPath);
         return subItemIndex !== -1;
       }
       return false;
     });
+    console.log(currentPath)
     if (foundIndex !== -1) {
-      setActiveIndex(foundIndex);
-      console.log(foundMainIndex);
-    }
+      setActiveIndex(foundIndex);    }
   }, [pathname]);
 
 
@@ -79,15 +78,16 @@ export default function MainNav() {
 
 
 
-  useEffect(() => {
-    
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+useEffect(() => {
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 20);
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  handleScroll();
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     updateUnderline(e.currentTarget);

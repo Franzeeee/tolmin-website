@@ -1,16 +1,30 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Page() {
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("Epika");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
-  const tabs = ["Epika", "Tekme", "Lestvica"];
+  const [tabs] = useState<{ name: string; link: string }[]>([
+    { name: "Epika", link: "/clansko-mostvo" },
+    { name: "Tekme", link: "/clansko-mostvo/tekme" },
+    { name: "Lestvica", link: "/clansko-mostvo/lestvica" }
+  ]);
+
+  useEffect(() => {
+    const foundTab = tabs.find((tab) => tab.link === pathname);
+    if (foundTab) {
+      setActiveTab(foundTab.name);
+    }
+  }, [pathname, tabs]);
 
   // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
@@ -50,19 +64,21 @@ export default function Page() {
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
           <div className='relative w-full p-3 flex flex-row items-center justify-between'>
-            <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800'>
+            <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none'>
               {tabs.map((tab) => (
                 <li
-                  key={tab}
+                  key={tab.name}
                   className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                    currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
+                    currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
                   }`}
-                  onClick={() => setActiveTab(tab)}
-                  onMouseEnter={() => setHoveredTab(tab)}
+                  onClick={() => setActiveTab(tab.name)}
+                  onMouseEnter={() => setHoveredTab(tab.name)}
                   onMouseLeave={() => setHoveredTab(null)}
                 >
-                  {tab}
-                  {currentTab === tab && (
+                  <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
+                    {tab.name}
+                  </Link>
+                  {currentTab === tab.name && (
                     <motion.div
                       layoutId="underline"
                       className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
@@ -305,3 +321,5 @@ export default function Page() {
     </div>
   );
 }
+
+
