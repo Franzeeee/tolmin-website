@@ -9,7 +9,14 @@ import { usePathname } from 'next/navigation';
 const navItems = [
   { name: "DOMOV", link: "/" },
   { name: "Sponzorji", link: "/sponzorji" },
-  { name: "Nogometna šola", link: "/nogometna-sola" },
+  { name: "Nogometna šola", 
+    link: "/nogometna-sola",
+    dropdown: [
+      { name: "Mladinske ekipe", link: "/mladinske-ekipe" },
+      { name: "Vodstvo in trenerji", link: "vodstvo-in-trenerji" },
+      { name: "Aktivnosti in dokumenti", link: "Aktivnosti-in-dokumenti" }
+    ]
+  },
   { name: "Klub", link: "/klub" },
   { 
     name: "Zgodovina", 
@@ -123,21 +130,79 @@ useEffect(() => {
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}
-        <div className={`flex ${isScrolled ? " gap-8 " : " gap-7 "} flex-shrink-0 items-end`}>
-          {navItems.slice(0, 4).map((item, i) => (
-            <Link
-              key={i}
-              href={item.link}
-              onMouseEnter={handleMouseEnter}
-              onClick={() => setActiveIndex(i)}
-              aria-current={activeIndex === i ? "page" : undefined}
-              className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 ${
-                activeIndex === i ? "font-semibold text-red-600" : isScrolled ? "text-gray-900" : "text-white" 
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className={`flex ${isScrolled ? "gap-8" : "gap-7"} flex-shrink-0 items-end relative`}>
+          {navItems.slice(0, 4).map((item, i) => {
+            const index = i;
+            const hasDropdown = item.dropdown && item.dropdown.length > 0;
+
+            return (
+              <div
+                key={index}
+                className="relative"
+                onMouseLeave={() => {
+                  setTimeout(() => {
+                    const dropdown = document.querySelector(`.dropdown-${index}`);
+                    const isHoveringDropdown = dropdown?.matches(':hover');
+                    const isHoveringNav = navRef.current?.matches(':hover');
+                    
+                    if (!isHoveringDropdown && !isHoveringNav) {
+                      setHoveredIndex(null);
+                      restoreUnderlineToActive();
+                    }
+                  }, 100);
+                }}
+              >
+                <Link
+                  href={item.link}
+                  onMouseEnter={(e) => {
+                    setHoveredIndex(index);
+                    handleMouseEnter(e);
+                  }}
+                  onClick={() => setActiveIndex(index)}
+                  aria-current={activeIndex === index ? "page" : undefined}
+                  className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${
+                    activeIndex === index ? "text-red-600" : isScrolled ? "text-gray-900" : "text-white"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+
+                {hasDropdown && hoveredIndex === index && (
+                  <div 
+                    className={`dropdown-${index} absolute top-full left-0 bg-white shadow-md z-30 w-48 mt-[.85rem]`}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => {
+                      // Only close if not hovering the parent item
+                      setTimeout(() => {
+                        const parent = document.querySelector(`[data-index="${index}"]`);
+                        if (!parent?.matches(':hover')) {
+                          setHoveredIndex(null);
+                          restoreUnderlineToActive();
+                        }
+                      }, 100);
+                    }}
+                  >
+                    {item.dropdown.map((subItem, subIndex) => {
+                      const isActive = subItem.link === pathname;
+                      return (
+                        <Link
+                          key={subIndex}
+                          href={subItem.link}
+                          className={`block px-4 py-3 text-sm ${
+                            isActive
+                              ? 'bg-red-500 text-white'
+                              : 'text-gray-700 hover:text-white hover:bg-red-500'
+                          }`}
+                        >
+                          {subItem.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Logo center */}
