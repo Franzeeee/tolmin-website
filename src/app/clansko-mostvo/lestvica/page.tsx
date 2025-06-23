@@ -104,11 +104,11 @@ export default function Page() {
                     </tr>
                     <tr className="bg-gray-200 text-gray-700 border-t border-gray-300 uppercase text-xs md:text-sm">
                     <th className="px-4 py-3">Ekipa</th>
-                    <th className="px-2 py-3">Tekem</th>
-                    <th className="px-2 py-3">Z</th>
-                    <th className="px-2 py-3">N</th>
-                    <th className="px-2 py-3">P</th>
-                    <th className="px-2 py-3">Točke</th>
+                    <th className="px-4 py-3 text-center">Tekem</th>
+                    <th className="px-4 py-3 text-center">Z</th>
+                    <th className="px-4 py-3 text-center">N</th>
+                    <th className="px-4 py-3 text-center">P</th>
+                    <th className="px-4 py-3 text-center">Točke</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,7 +135,7 @@ export default function Page() {
                         }`}
                     >
                         {team.map((val, i) => (
-                        <td key={i} className="px-4 py-3">
+                        <td key={i} className={`px-4 py-3 ${i !== 0 ? 'text-center' : ""}`}>
                             {val}
                         </td>
                         ))}
