@@ -45,7 +45,7 @@ export default function Page() {
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
         <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
           <motion.h1
-            initial={{ x: '100vw' }}
+            initial={{ x: '110vw' }}
             animate={{ x: '-120vw' }}
             transition={{
               repeat: Infinity,
