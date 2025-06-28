@@ -5,12 +5,14 @@ import Image from "next/image";
 import logo from '../../../public/tolmin-logo.png';
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 
 const navItems = [
   { name: "DOMOV", link: "/" },
   { name: "Sponzorji", link: "/sponzorji" },
   { name: "Nogometna šola", 
-    link: "/nogometna-sola/mladinska-epike",
+    link: "/nogometna-sola/mladinske-ekipe",
     dropdown: [
       { name: "Mladinske ekipe", link: "/nogometna-sola/mladinske-ekipe" },
       { name: "Vodstvo in trenerji", link: "/nogometna-sola/vodstvo-in-trenerji" },
@@ -37,6 +39,7 @@ const navItems = [
 ];
 
 
+
 export default function MainNav() {
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
   const [activeIndex, setActiveIndex] = useState(0);
@@ -45,7 +48,7 @@ export default function MainNav() {
   const pathname = usePathname();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   // const [activeSubIndex, setActiveSubIndex] = useState<string | null>(null);
-
+  const [isToggled, setIsToggled] = useState(false);
 
   const updateUnderline = (element: HTMLElement) => {
     const navRect = navRef.current!.getBoundingClientRect();
@@ -123,16 +126,16 @@ useEffect(() => {
   
 
 
-  return (
-<div className={`${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 pt-3" : "relative bg-red-fade text-black py-5"} w-full z-40 transition-colors duration-300 ease-in-out`}>
+  return (<>
+    <div className={`lg:block ${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 lg:pt-4" : "relative bg-red-fade text-black lg:py-5"} w-screen z-40 transition-colors duration-300 ease-in-out`}>
       <nav
         ref={navRef}
         role="navigation"
-        className={`flex items-center ${isScrolled ? "justify-around gap-14" : "justify-between"} max-w-6xl mx-auto px-4 pb-3 pt-4 border-b border-gray-400 relative w-full z-20`}
+        className={`flex items-center ${isScrolled ? "justify-between lg:gap-14" : "lg:justify-between justify-between"} max-w-6xl mx-auto px-3 py-5 md:px-9 lg:px-4 lg:pb-3 lg:pt-4 border-b border-gray-400 relative w-full z-20`}
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}
-        <div className={`flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
+        <div className={`hidden lg:flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
           {navItems.slice(0, 4).map((item, i) => {
             const index = i;
             const hasDropdown = item.dropdown && item.dropdown.length > 0;
@@ -207,13 +210,28 @@ useEffect(() => {
           })}
         </div>
 
+        {/* Left Nav Small */}
+        <div className={`lg:hidden flex-shrink-0 items-end relative`} onClick={() => setIsToggled(!isToggled)}>
+          <FontAwesomeIcon icon={isToggled ? faClose : faBars} className={`text-lg font-light border p-2 px-3 min-w- rounded-sm ${!isScrolled ? "text-red-50 bg-red border-gray-300" : 'text-gray-800 border-gray-400'}`}/>
+        </div>
+
         {/* Logo center */}
-        <div className={`${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
+        <div className={`hidden lg:inline ${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
           <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={50} />
         </div>
 
+        {/* Logo center Small Screens */}
+        <div className={`lg:hidden ${isScrolled ? "" : "  "} left-1/2 -translate-x-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`}>
+          <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 50 : 60} height={50} className="transition-all duration-200 ease-in-out"/>
+        </div>
+
+        {/* Small Screen right nav  */}
+        <div className={`lg:hidden ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
+          <p className={`uppercase ${isScrolled ? "text-black" : "text-red-50"}`}>Login</p>
+        </div>
+
         {/* Right nav */}
-        <div className={`flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
+        <div className={`hidden lg:flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
           {navItems.slice(4).map((item, i) => {
             const index = i + 4;
             const hasDropdown = item.dropdown && item.dropdown.length > 0;
@@ -290,7 +308,7 @@ useEffect(() => {
 
         {/* Underline */}
         <span
-          className={`absolute ${isScrolled ? 'h-1 rounded-none' : 'h-0.5 rounded-sm'} bg-red-600 transition-all duration-300`}
+          className={`hidden lg:inline absolute ${isScrolled ? 'h-1 rounded-none' : 'h-0.5 rounded-sm'} bg-red-600 transition-all duration-300`}
           style={{
             left: underlineStyle.left,
             width: underlineStyle.width,
@@ -298,7 +316,15 @@ useEffect(() => {
           }}
         />
       </nav>
+      <div className={`w-screen h-20 bg-white ${isToggled ? 'block absolute' : 'hidden'}`}>
 
+      </div>
     </div>
+
+
+
+    
+    </>
   );
+
 }

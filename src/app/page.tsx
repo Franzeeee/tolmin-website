@@ -57,8 +57,8 @@ export default function Page() {
 
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
-      <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px] ">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 ">
+      <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[500px] lg:max-h-[900px] overflow-hidden">
         <MainNav />
           {/* Background video */}
           <video
@@ -66,19 +66,19 @@ export default function Page() {
             loop
             muted
             playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
+            className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
           >
             <source src="/tolmin-header.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]"/>
-        <div className="flex items-center justify-center h-screen max-h-[900px] z-20 relative">
+          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]"/>
+        <div className="flex items-center justify-center h-screen max-h-[500px] lg:max-h-[900px] z-20 relative">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
             whileInView={{ y: 0, opacity: .6 }}
             transition={{ duration: .6, ease: "easeOut" }}
             viewport={{ once: true }}
-            className="text-9xl z-20 font-bold text-white opacity-60 header-text select-none"
+            className="text-6xl md:text-7xl lg:text-9xl z-20 font-bold text-white opacity-60 header-text select-none"
           >
             NK TOLMIN
           </motion.h1>
@@ -87,7 +87,7 @@ export default function Page() {
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
 
         {/* Match Section */}
-          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+          <section className='w-full min-h-content lg:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
@@ -96,7 +96,7 @@ export default function Page() {
             </div>
 
             {/* Card Container */}
-            <div className='w-full h-fit max-h-[800px] mt-4 flex gap-4 overflow-visible'>
+            <div className='w-full h-fit lg:max-h-[800px] mt-4 flex gap-4 overflow-visible flex-col lg:flex-row'>
 
               {Array.from({ length: 3 }).map((_, idx) => (
                       <motion.div
@@ -211,7 +211,7 @@ export default function Page() {
               </h1>
             </div>
             
-            <div className='grid [grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
+            <div className='grid [grid-template-rows:1fr_1fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
               {/* Main News */}
               <motion.div 
                 className='relative p-5 h-full'
@@ -250,8 +250,8 @@ export default function Page() {
                       height={800}
                       className='object-cover'
                     />
-                    <div className='flex gap-1 flex-col'>
-                      <p className='text-right text-xs text-gray-500'>May 22, 2025</p>
+                    <div className='flex gap-1 flex-col w-full'>
+                      <p className='text-left text-xs text-gray-500 lg:text-right'>May 22, 2025</p>
                       <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
                     </div>
                   </motion.div>
@@ -286,7 +286,7 @@ export default function Page() {
             <PlayerCarousel />
           </section>
 
-          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+          <section className='w-full min-h-content lg:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
@@ -294,7 +294,7 @@ export default function Page() {
               </h1>
             </div>
 
-            <div className='w-full h-fit max-h-[800px] mt-4 flex gap-6 overflow-visible'>
+            <div className='w-full h-fit lg:max-h-[800px] mt-4 flex gap-6 overflow-visible flex-col lg:flex-row'>
               
               <motion.div 
                 initial={{ opacity: 0 }}

@@ -34,7 +34,7 @@ function StadiumCarousel() {
   return (
     <div
       ref={scrollRef}
-      className="flex hide-scroll-arrows scroll-smooth"
+      className="flex hide-scroll-arrows scroll-smooth h-64 lg:h-auto"
       style={{
         width: '100%',
         overflowX: 'auto',

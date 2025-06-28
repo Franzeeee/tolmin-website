@@ -8,9 +8,28 @@ const Carousel: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const cardsPerPage = 4;
+  const [cardsPerPage, setCardsPerPage] = useState(4);
   const cards = ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7', 'Card 8'];
   const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+  useEffect(() => {
+  const updateCardsPerPage = () => {
+    const width = window.innerWidth;
+    if (width >= 1024) {
+      setCardsPerPage(4); // lg
+    } else if (width >= 768) {
+      setCardsPerPage(1); // md
+    } else {
+      setCardsPerPage(1); // sm
+    }
+  };
+
+  updateCardsPerPage(); // initial check
+
+  window.addEventListener('resize', updateCardsPerPage);
+  return () => window.removeEventListener('resize', updateCardsPerPage);
+}, []);
+  
 
   // Scroll detection for dots
   const handleScroll = () => {
@@ -67,7 +86,7 @@ const Carousel: React.FC = () => {
         <FaArrowRight />
       </button>
 
-      <div className="carousel-track" ref={trackRef}>
+      <div className="carousel-track md:h-[80vh] lg:h-[auto]" ref={trackRef}>
         {cards.map((label, i) => (
           <div className="card text-black" key={i}>
             <motion.div
