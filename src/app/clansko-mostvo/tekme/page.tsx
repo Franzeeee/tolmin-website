@@ -26,7 +26,6 @@ export default function Page() {
     }
   }, [pathname, tabs]);
 
-  // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
 
   return (
