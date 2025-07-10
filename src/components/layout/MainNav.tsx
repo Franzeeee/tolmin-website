@@ -127,15 +127,15 @@ useEffect(() => {
 
 
   return (<>
-    <div className={`lg:block ${isScrolled ? "bg-white text-black shadow-md fixed top-0 z-50 lg:pt-4" : "relative bg-red-fade text-black lg:py-5"} w-screen z-40 transition-colors duration-300 ease-in-out`}>
+    <div className={`lg:block ${isScrolled || isToggled ? "bg-white text-black shadow-md fixed top-0 z-50 lg:pt-4" : "relative bg-red-fade text-black lg:py-5"} w-screen z-40 transition-colors duration-300 ease-in-out`}>
       <nav
         ref={navRef}
         role="navigation"
-        className={`flex items-center ${isScrolled ? "justify-between lg:gap-14" : "lg:justify-between justify-between"} max-w-6xl mx-auto px-3 py-5 md:px-9 lg:px-4 lg:pb-3 lg:pt-4 border-b border-gray-400 relative w-full z-20`}
+        className={`flex items-center ${isScrolled || isToggled ? "justify-between lg:gap-14" : "lg:justify-between justify-between"} max-w-6xl mx-auto px-3 py-5 md:px-9 lg:px-4 lg:pb-3 lg:pt-4 border-b border-gray-400 relative w-full z-20`}
         onMouseLeave={handleMouseLeave}
       >
         {/* Left nav */}
-        <div className={`hidden lg:flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
+        <div className={`hidden lg:flex ${isScrolled || isToggled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
           {navItems.slice(0, 4).map((item, i) => {
             const index = i;
             const hasDropdown = item.dropdown && item.dropdown.length > 0;
@@ -212,7 +212,17 @@ useEffect(() => {
 
         {/* Left Nav Small */}
         <div className={`lg:hidden flex-shrink-0 items-end relative`} onClick={() => setIsToggled(!isToggled)}>
-          <FontAwesomeIcon icon={isToggled ? faClose : faBars} className={`text-lg font-light border p-2 px-3 min-w- rounded-sm ${!isScrolled ? "text-red-50 bg-red border-gray-300" : 'text-gray-800 border-gray-400'}`}/>
+          <FontAwesomeIcon 
+            icon={isToggled ? faClose : faBars} 
+            className={`text-lg font-light border p-2 px-3 min-w-4 rounded-sm ${
+              isToggled
+                ? "text-gray-800 border-gray-400"
+                : !isScrolled
+                  ? "text-red-50 bg-red border-gray-300"
+                  : "text-gray-800 border-gray-400"
+            }`}
+
+          />
         </div>
 
         {/* Logo center */}
@@ -222,12 +232,12 @@ useEffect(() => {
 
         {/* Logo center Small Screens */}
         <div className={`lg:hidden ${isScrolled ? "" : "  "} left-1/2 -translate-x-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`}>
-          <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 50 : 60} height={50} className="transition-all duration-200 ease-in-out"/>
+          <Image src={logo} alt="Tolmin Logo" width={isScrolled || isToggled ? 50 : 60} height={50} className="transition-all duration-200 ease-in-out"/>
         </div>
 
         {/* Small Screen right nav  */}
-        <div className={`lg:hidden ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
-          <p className={`uppercase ${isScrolled ? "text-black" : "text-red-50"}`}>Login</p>
+        <div className={`lg:hidden ${isScrolled || isToggled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
+            <p className={`uppercase ${isScrolled || isToggled ? "text-black" : "text-red-50"}`}>Login</p>
         </div>
 
         {/* Right nav */}
@@ -316,7 +326,7 @@ useEffect(() => {
           }}
         />
       </nav>
-      <div className={`w-screen h-20 bg-white ${isToggled ? 'block absolute' : 'hidden'}`}>
+      <div className={`w-screen h-60 bg-white ${isToggled ? 'block absolute' : 'hidden'}`}>
 
       </div>
     </div>
