@@ -211,7 +211,7 @@ export default function Page() {
               </h1>
             </div>
             
-            <div className='grid [grid-template-rows:1fr_1fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
+            <div className='grid [grid-template-rows:.8fr_1.2fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
               {/* Main News */}
               <motion.div 
                 className='relative p-5 h-full'
@@ -226,7 +226,7 @@ export default function Page() {
                   fill
                   className='object-cover'
                 />
-                <div className='absolute w-full px-6 left-0 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50'>
+                <div className='absolute w-full px-2 sm:px-6 left-0 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50'>
                   <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>NOVICE SPREMLJAJTE NA NAŠI FB IN IG STRANI</h1>
                   <p className='text-right py-2'>May 22, 2025 </p>
                 </div>
@@ -237,7 +237,7 @@ export default function Page() {
                 {Array.from({ length: 4 }).map((_, idx) => (
                   <motion.div
                     key={idx}
-                    className='flex-1 min-h-[100px] max-h-[135px] border-t-4 border-gray-200 pt-3 flex gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500'
+                    className='flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500'
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1}}
                     transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
