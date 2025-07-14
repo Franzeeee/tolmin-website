@@ -227,12 +227,12 @@ useEffect(() => {
 
         {/* Logo center */}
         <div className={`hidden lg:inline ${isScrolled ? "mt-5" : " top-1/2 "} left-1/2 -translate-x-1/2 -translate-y-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`} style={isScrolled ? { top: '0' } : { top: '110%' }}>
-          <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={50} />
+          <Image src={logo} alt="Tolmin Logo" width={isScrolled ? 60 : 100} height={isScrolled ? 60 : 100} />
         </div>
 
         {/* Logo center Small Screens */}
         <div className={`lg:hidden ${isScrolled ? "" : "  "} left-1/2 -translate-x-1/2 absolute z-30 pointer-events-none max-w-fit transition-all duration-200 ease-in-out`}>
-          <Image src={logo} alt="Tolmin Logo" width={isScrolled || isToggled ? 50 : 60} height={50} className="transition-all duration-200 ease-in-out"/>
+          <Image src={logo} alt="Tolmin Logo" width={isScrolled || isToggled ? 50 : 60} height={isScrolled ? 60 : 100} className="transition-all duration-200 ease-in-out"/>
         </div>
 
         {/* Small Screen right nav  */}
