@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getCollection } from '@/lib/mongodb'
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'
 
 export async function POST(request: Request) {
   try {
@@ -24,8 +25,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    // ✅ Success
-    return NextResponse.json({ message: 'Login successful', userId: user._id })
+    // ✅ Issue JWT
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },  // payload
+      process.env.JWT_SECRET as string,         // secret key from env
+      { expiresIn: '7d' }                       // token expiry
+    )
+
+    // Set httpOnly cookie
+    const response = NextResponse.json({ message: 'Login successful' })
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    })
+
+    return response
   } catch (error) {
     console.error('❌ Error in login:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
