@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { verifyAuthToken } from '@/lib/auth'
 
 export async function GET() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
 
   if (!token) {
