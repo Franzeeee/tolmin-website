@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/solid'
+import { TrashIcon, PlusIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
@@ -199,7 +199,6 @@ export default function SponsorPage() {
                         </td>
                         <td className="px-4 py-4 text-black">{s.name}</td>
                         <td className="px-4 py-4 flex gap-2">
-                            <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700 cursor-pointer"><TrashIcon className="h-5 w-5" /></button>
                         </td>
                     </tr>
@@ -257,7 +256,6 @@ export default function SponsorPage() {
                         </td>
                         <td className="px-4 py-4 text-black">{s.name}</td>
                         <td className="px-4 py-4 flex gap-2 cursor-pointer">
-                            <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5" /></button>
                         </td>
                     </tr>
@@ -311,7 +309,6 @@ export default function SponsorPage() {
                     <tr key={s._id}>
                         <td className="px-4 py-4 text-black">{s.name}</td>
                         <td className="px-4 py-4 flex gap-2 cursor-pointer">
-                            <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5" /></button>
                         </td>
                     </tr>
