@@ -22,7 +22,7 @@ export default function LoginForm() {
           icon: "success"
         })
         // ✅ redirect on client if you like:
-        window.location.href = '/'
+        window.location.href = '/admin/dashboard'
       }
       setEmail('')
       setPassword('')

@@ -13,5 +13,5 @@ export default async function AdminPage() {
   }
 
   // authenticated → redirect to dashboard
-  redirect('/')
+  redirect('/admin/dashboard')
 }

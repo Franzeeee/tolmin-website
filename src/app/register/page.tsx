@@ -11,7 +11,7 @@ export default async function LoginPage() {
     const user = verifyAuthToken(token)
     if (user) {
       // ✅ already logged in → redirect
-      redirect('/')
+      redirect('/admin')
     }
   }
 
