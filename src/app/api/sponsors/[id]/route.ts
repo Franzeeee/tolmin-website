@@ -5,23 +5,20 @@ import { ObjectId } from 'mongodb'
 // DELETE sponsor by ID
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
-    const sponsorsCollection = await getCollection('sponsors')
-    if (!sponsorsCollection) {
-      console.error('❌ Failed to connect to DB')
-      return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
-    }
+    const coll = await getCollection('sponsors')
+    if (!coll) throw new Error('DB connection failed')
 
-    const result = await sponsorsCollection.deleteOne({ _id: new ObjectId(context.params.id) })
+    const result = await coll.deleteOne({ _id: new ObjectId(id) })
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: 'Sponsor not found' }, { status: 404 })
     }
-
     return NextResponse.json({ message: 'Sponsor deleted' })
-  } catch (error) {
-    console.error('❌ Error in DELETE /api/sponsors/[id]:', error)
+  } catch (err) {
+    console.error('❌ DELETE /api/sponsors/[id]:', err)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
@@ -29,37 +26,33 @@ export async function DELETE(
 // UPDATE sponsor by ID
 export async function PUT(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const body = await request.json()
     const { name, logoUrl } = body
-
     if (!name || !logoUrl) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const sponsorsCollection = await getCollection('sponsors')
-    if (!sponsorsCollection) {
-      console.error('❌ Failed to connect to DB')
-      return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
-    }
+    const coll = await getCollection('sponsors')
+    if (!coll) throw new Error('DB connection failed')
 
-    const result = await sponsorsCollection.updateOne(
-      { _id: new ObjectId(context.params.id) },
+    const result = await coll.updateOne(
+      { _id: new ObjectId(id) },
       { $set: { name, logoUrl } }
     )
-
     if (result.matchedCount === 0) {
       return NextResponse.json({ error: 'Sponsor not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ 
-      message: 'Sponsor updated', 
-      updatedCount: result.modifiedCount 
+    return NextResponse.json({
+      message: 'Sponsor updated',
+      updatedCount: result.modifiedCount,
     })
-  } catch (error) {
-    console.error('❌ Error in PUT /api/sponsors/[id]:', error)
+  } catch (err) {
+    console.error('❌ PUT /api/sponsors/[id]:', err)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
