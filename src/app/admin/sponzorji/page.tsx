@@ -5,7 +5,7 @@ import { verifyAuthToken } from '@/lib/auth'
 import SponsorPage from './SponsorPage';
 
 export default async function AdminPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
 
   if (!token || !verifyAuthToken(token)) {
