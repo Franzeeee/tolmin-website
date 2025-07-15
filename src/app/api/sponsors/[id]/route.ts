@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 // DELETE sponsor by ID
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const sponsorsCollection = await getCollection('sponsors')
@@ -14,7 +14,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
     }
 
-    const result = await sponsorsCollection.deleteOne({ _id: new ObjectId(context.params.id) })
+    const result = await sponsorsCollection.deleteOne({ _id: new ObjectId(params.id) })
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: 'Sponsor not found' }, { status: 404 })
     }
@@ -29,7 +29,7 @@ export async function DELETE(
 // UPDATE sponsor by ID
 export async function PUT(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await request.json()
@@ -46,7 +46,7 @@ export async function PUT(
     }
 
     const result = await sponsorsCollection.updateOne(
-      { _id: new ObjectId(context.params.id) },
+      { _id: new ObjectId(params.id) },
       { $set: { name, logoUrl } }
     )
 
