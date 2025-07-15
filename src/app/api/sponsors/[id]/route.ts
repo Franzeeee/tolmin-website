@@ -17,24 +17,24 @@ export async function DELETE(request: Request, context: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, context: { params: { id: string } }) {
-  try {
-    const body = await request.json()
-    const { name, logoUrl } = body
+// export async function PUT(request: Request, context: { params: { id: string } }) {
+//   try {
+//     const body = await request.json()
+//     const { name, logoUrl } = body
 
-    const sponsorsCollection = await getCollection('sponsors')
-    if (!sponsorsCollection) {
-      return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
-    }
+//     const sponsorsCollection = await getCollection('sponsors')
+//     if (!sponsorsCollection) {
+//       return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
+//     }
 
-    const updated = await sponsorsCollection.updateOne(
-      { _id: new ObjectId(context.params.id) },
-      { $set: { name, logoUrl } }
-    )
+//     const updated = await sponsorsCollection.updateOne(
+//       { _id: new ObjectId(context.params.id) },
+//       { $set: { name, logoUrl } }
+//     )
 
-    return NextResponse.json({ message: 'Sponsor updated', updatedCount: updated.modifiedCount })
-  } catch (error) {
-    console.error('❌ Error in PUT /api/sponsors/[id]:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-  }
-}
+//     return NextResponse.json({ message: 'Sponsor updated', updatedCount: updated.modifiedCount })
+//   } catch (error) {
+//     console.error('❌ Error in PUT /api/sponsors/[id]:', error)
+//     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+//   }
+// }
