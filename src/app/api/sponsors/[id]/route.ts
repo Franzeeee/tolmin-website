@@ -2,12 +2,10 @@ import { NextResponse } from 'next/server'
 import { getCollection } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
-type RouteContext = { params: Record<string, string> }
-
 // DELETE sponsor by ID
 export async function DELETE(
   request: Request,
-  { params }: RouteContext
+  { params }: { params: { id: string } }
 ) {
   try {
     const sponsorsCollection = await getCollection('sponsors')
@@ -31,7 +29,7 @@ export async function DELETE(
 // UPDATE sponsor by ID
 export async function PUT(
   request: Request,
-  { params }: RouteContext
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await request.json()
