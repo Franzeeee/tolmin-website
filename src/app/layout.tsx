@@ -44,8 +44,7 @@ export default function RootLayout({
         >
           {children}
           
-          {/* footer */}
-          <Sponsors />
+          {!window.location.pathname.startsWith('/admin') && <Sponsors />}
           <div className="w-full p-5 bg-red-600 text-gray-200 poppins flex items-center justify-between">
             <div className="flex gap-5 text-sm -mb-1">
               <p>
