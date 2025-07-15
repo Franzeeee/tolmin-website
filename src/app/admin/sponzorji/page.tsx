@@ -197,8 +197,8 @@ export default function SponsorPage() {
                         <td className="px-4 py-2">
                             <Image src={s.logoUrl || '/placeholder-logo.png'} alt={s.name} width={80} height={80} className="object-contain" />
                         </td>
-                        <td className="px-4 py-2 text-black">{s.name}</td>
-                        <td className="px-4 py-2 flex gap-2">
+                        <td className="px-4 py-4 text-black">{s.name}</td>
+                        <td className="px-4 py-4 flex gap-2">
                             <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700 cursor-pointer"><TrashIcon className="h-5 w-5" /></button>
                         </td>
@@ -255,8 +255,8 @@ export default function SponsorPage() {
                         <td className="px-4 py-2">
                             <Image src={s.logoUrl || '/placeholder-logo.png'} alt={s.name} width={80} height={80} className="object-contain" />
                         </td>
-                        <td className="px-4 py-2 text-black">{s.name}</td>
-                        <td className="px-4 py-2 flex gap-2 cursor-pointer">
+                        <td className="px-4 py-4 text-black">{s.name}</td>
+                        <td className="px-4 py-4 flex gap-2 cursor-pointer">
                             <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5" /></button>
                         </td>
@@ -309,8 +309,8 @@ export default function SponsorPage() {
                 }
                 return partnerSponsors.map(s => (
                     <tr key={s._id}>
-                        <td className="px-4 py-2 text-black">{s.name}</td>
-                        <td className="px-4 py-2 flex gap-2 cursor-pointer">
+                        <td className="px-4 py-4 text-black">{s.name}</td>
+                        <td className="px-4 py-4 flex gap-2 cursor-pointer">
                             <button className="text-gray-500 hover:text-gray-700"><PencilIcon className="h-5 w-5" /></button>
                             <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5" /></button>
                         </td>

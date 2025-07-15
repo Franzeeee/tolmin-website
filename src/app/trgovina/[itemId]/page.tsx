@@ -99,13 +99,13 @@ export default function Page() {
                     <span className="text-sm">Delite ta izdelek s prijatelji</span>
                     <div className="flex gap-2">
                         <a href="#" aria-label="Instagram">
-                        <img src="/instagram.svg" alt="Instagram" className="w-5 h-5" />
+                        <Image src="/instagram.svg" alt="Instagram" width={20} height={20} className="w-5 h-5" />
                         </a>
                         <a href="#" aria-label="Facebook">
-                        <img src="/facebook.svg" alt="Facebook" className="w-5 h-5" />
+                        <Image src="/facebook.svg" alt="Facebook" width={20} height={20} className="w-5 h-5" />
                         </a>
                         <a href="#" aria-label="LinkedIn">
-                        <img src="/linkedin.svg" alt="LinkedIn" className="w-5 h-5" />
+                        <Image src="/linkedin.svg" alt="LinkedIn" width={20} height={20} className="w-5 h-5" />
                         </a>
                     </div>
                     </div>
