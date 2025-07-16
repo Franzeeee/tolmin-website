@@ -16,7 +16,8 @@ export default function Page() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [tabs] = useState(["1921 – 1971", "1971 – 1995", "1995 – today", "Photo history"]);
-  const [tabContent] = useState([Tab1(), Tab2(), Tab3()]);
+  const [tabContent] = useState([Tab1, Tab2, Tab3, Tab3]);
+
 
   const currentTab = hoveredTab || activeTab;
 
@@ -77,7 +78,7 @@ export default function Page() {
               {tabs.map((tab, index) => (
                 <li
                   key={index}
-                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 uppercase ${
                     currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
                   }`}
                   onClick={() => setActiveTab(tab)}
@@ -100,7 +101,7 @@ export default function Page() {
         </section>
 
         <section className='w-full min-h-content p-2 px-5 pb-9 flex items-center justify-center'>
-          {tabContent[tabs.findIndex(tab => tab === activeTab)]}
+          {React.createElement(tabContent[tabs.findIndex(tab => tab === activeTab)])}
         </section>
       </main>
 

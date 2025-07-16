@@ -57,7 +57,7 @@ export default function Page() {
 
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 ">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
       <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[500px] lg:max-h-[900px] overflow-hidden">
         <MainNav />
           {/* Background video */}
