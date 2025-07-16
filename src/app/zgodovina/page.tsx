@@ -1,20 +1,40 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import MainNav from '@/components/layout/MainNav';
-import U7 from '@/components/Nogometna-Sola/U7';
-import U9 from '@/components/Nogometna-Sola/U9';
+import Tab1 from '@/components/Zgodovina/Tab1';
+import Tab2 from '@/components/Zgodovina/Tab2';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("1921 – 1971");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [tabs] = useState(["1921 – 1971", "1971 – 1995", "1995 – today", "Photo history"]);
-  const [tabContent] = useState([U7(), U9()])
+  const [tabContent] = useState([Tab1(), Tab2()]);
 
-  // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
+
+  // Handle scroll to toggle the button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll to top smoothly
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -51,7 +71,7 @@ export default function Page() {
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
           <div className='relative w-full p-3 flex flex-row items-center justify-between'>
-            <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none justify-center items-center w-full'>
+            <ul className='flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none justify-center items-center w-full'>
               {tabs.map((tab, index) => (
                 <li
                   key={index}
@@ -72,18 +92,26 @@ export default function Page() {
                   )}
                 </li>
               ))}
-              <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
-              </div>
-          </ul>
+              <div className="absolute left-0 right-0 bottom-2 h-[3px] bg-gray-300" />
+            </ul>
           </div>
         </section>
 
-        <section className='w-full min-h-content p-2 px-5 pb-9'>
-          {
-            tabContent[tabs.findIndex(tab => tab === activeTab)]
-          }
+        <section className='w-full min-h-content p-2 px-5 pb-9 flex items-center justify-center'>
+          {tabContent[tabs.findIndex(tab => tab === activeTab)]}
         </section>
       </main>
+
+      {/* Scroll to top floating button */}
+      <motion.button
+        onClick={scrollToTop}
+        initial={{ opacity: 0, y: 50 }}
+        animate={showScrollTop ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.3 }}
+        className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-3 rounded-full shadow-lg z-50"
+      >
+        <FontAwesomeIcon icon={faArrowUp} className="w-5 h-5 cursor-pointer" />
+      </motion.button>
     </div>
   );
 }
