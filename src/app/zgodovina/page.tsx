@@ -7,6 +7,8 @@ import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import MainNav from '@/components/layout/MainNav';
 import Tab1 from '@/components/Zgodovina/Tab1';
 import Tab2 from '@/components/Zgodovina/Tab2';
+import Tab3 from '@/components/Zgodovina/Tab3';
+
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("1921 – 1971");
@@ -14,7 +16,7 @@ export default function Page() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [tabs] = useState(["1921 – 1971", "1971 – 1995", "1995 – today", "Photo history"]);
-  const [tabContent] = useState([Tab1(), Tab2()]);
+  const [tabContent] = useState([Tab1(), Tab2(), Tab3()]);
 
   const currentTab = hoveredTab || activeTab;
 
