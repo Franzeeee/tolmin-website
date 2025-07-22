@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: 'Add User', href: '/admin/users/add' },
       ],
     },
-    { name: 'History', href: '/admin/history' },
+    { name: 'Photo History', href: '/admin/photo-history' },
     { name: 'Teams', href: '/admin/teams' },
     { name: 'Shop', href: '/admin/shop' },
   ]
