@@ -170,6 +170,16 @@ export default function Tab2() {
 
         </div>
 
+        <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins text-black border-t-2 border-gray-200 pt-10">
+            <a
+                href="https://www.nktolmin.si/wp-content/uploads/2014/08/Rezultati-NK-Tolmin-arhiv-1991-2014.pdf"
+                target="_blank"
+                className="m-auto px-6 py-3 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+            >
+                Rezultati NK Tolmin 1991-2014
+            </a>
+        </div>
+
 
 
 

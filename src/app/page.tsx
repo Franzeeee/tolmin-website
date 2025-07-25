@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import MainNav from '@/components/layout/MainNav';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Image from 'next/image';
-import logo from '../../public/tolmin-logo.png'
+import logo from '../../public/tolmin-logo.png';
 import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
-import { useState } from 'react';
 import StadiumCarousel from '@/components/Home/StadiumCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
@@ -18,8 +17,7 @@ const slides = [
   { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
 ];
 
-
-const slideVariants : Variants = {
+const slideVariants: Variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
     opacity: 0,
@@ -41,10 +39,8 @@ const slideVariants : Variants = {
 };
 
 export default function Page() {
-
-  
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0); // +1 or -1 for slide direction
+  const [direction, setDirection] = useState(0);
 
   const handleNext = () => {
     setDirection(1);
@@ -55,36 +51,34 @@ export default function Page() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 ">
-      <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[500px] lg:max-h-[900px] overflow-hidden">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
+      <header className="w-full relative h-[60vh] md:h-[80vh] lg:h-[100vh] max-h-[900px] overflow-hidden">
         <MainNav />
-          {/* Background video */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
-          >
-            <source src="/tolmin-header.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]"/>
-        <div className="flex items-center justify-center h-screen max-h-[500px] lg:max-h-[900px] z-20 relative">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src="/tolmin-header.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 bg-black opacity-60 z-10" />
+        <div className="flex items-center justify-center w-full h-full z-20 relative">
           <motion.h1
             initial={{ y: 100, opacity: 0 }}
-            whileInView={{ y: 0, opacity: .6 }}
-            transition={{ duration: .6, ease: "easeOut" }}
+            whileInView={{ y: 0, opacity: 0.6 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
             viewport={{ once: true }}
-            className="text-6xl md:text-7xl lg:text-9xl z-20 font-bold text-white opacity-60 header-text select-none"
+            className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold text-white text-center px-4 select-none"
           >
             NK TOLMIN
           </motion.h1>
         </div>
       </header>
-      <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
+      <main className="w-full h-fit max-w-screen-2xl bg-gray-50 border-t-4 border-red-600 px-2 sm:px-6 lg:px-10">
 
         {/* Match Section */}
           <section className='w-full min-h-content lg:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
@@ -203,19 +197,19 @@ export default function Page() {
           </section>
 
           {/* News Section */}
-          <section className='flex flex-col min-h-[400px] p-2 px-5 gap-4 overflow-hidden border-b-3 border-gray-200 pb-12 '>
+          <section className='flex flex-col min-h-[400px] p-2 px-5 gap-4 overflow-hidden border-b-3 border-gray-200 md:pb-12 '>
             {/* Header Title */}
             <div>
               <h1 className="text-4xl font-extrabold text-left text-black mt-2 uppercase">
                 Tekme <span className='font-semibold'>nedavne novice</span>
               </h1>
             </div>
-            
-            <div className='grid [grid-template-rows:.8fr_1.2fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-3'>
+
+            <div className='flex flex-col lg:grid [grid-template-rows:.8fr_1.2fr] md:[grid-template-rows:1fr_1fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-5'>
               {/* Main News */}
               <motion.div 
-                className='relative p-5 h-full'
-                initial={{  opacity: 0 }}
+                className='relative p-5 min-h-[400px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-[650px]'
+                initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: .9, ease: "easeOut" }}
                 viewport={{ once: true }}
@@ -224,7 +218,8 @@ export default function Page() {
                   src='/news.png'
                   alt="News Image"
                   fill
-                  className='object-cover'
+                  className='object-cover w-full h-full'
+                  style={{ objectFit: 'cover' }}
                 />
                 <div className='absolute w-full px-2 sm:px-6 left-0 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50'>
                   <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>NOVICE SPREMLJAJTE NA NAŠI FB IN IG STRANI</h1>
@@ -234,38 +229,38 @@ export default function Page() {
 
               {/* Additional News */}
               <div className='flex gap-3 flex-col'>
-                {Array.from({ length: 4 }).map((_, idx) => (
-                  <motion.div
-                    key={idx}
-                    className='flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500'
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1}}
-                    transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
-                    viewport={{ once: true }}
-                  >
-                    <Image
-                      src='/news.png'
-                      alt='Thumb'
-                      width={230}
-                      height={800}
-                      className='object-cover'
-                    />
-                    <div className='flex gap-1 flex-col w-full'>
-                      <p className='text-left text-xs text-gray-500 lg:text-right'>May 22, 2025</p>
-                      <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
-                    </div>
-                  </motion.div>
-                ))}
-
-                <div className='border-t-4 border-gray-200 pt-3'>
-                    <motion.button
-                    whileHover={{ scale: 1.01, backgroundColor: "#b91c1c" }}
-                    whileTap={{ scale: 1 }}
-                    className='w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700'
-                    >
-                    See more
-                    </motion.button>
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <motion.div
+                key={idx}
+                className='flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500'
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1}}
+                transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
+                viewport={{ once: true }}
+                >
+                <Image
+                  src='/news.png'
+                  alt='Thumb'
+                  width={230}
+                  height={800}
+                  className='object-cover w-full sm:w-[200px]'
+                />
+                <div className='flex gap-1 flex-col w-full'>
+                  <p className='text-left text-xs text-gray-500 lg:text-right'>May 22, 2025</p>
+                  <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
                 </div>
+                </motion.div>
+              ))}
+
+              <div className='border-t-4 border-gray-200 pt-3'>
+                <motion.button
+                whileHover={{ scale: 1.01, backgroundColor: "#b91c1c" }}
+                whileTap={{ scale: 1 }}
+                className='w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700'
+                >
+                See more
+                </motion.button>
+              </div>
 
               </div>
             </div>
@@ -273,18 +268,17 @@ export default function Page() {
 
 
           
-          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
-            {/* Header Title */}
-            <div className='mb-4'>
-              <div className={`w-full flex items-end justify-between`}>
-                <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
-                  Igralci
-                </h1>
-                <p className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300`}>Prikaži vse <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </p>
-              </div>
-            </div>
-            <PlayerCarousel />
-          </section>
+<section className="w-full min-h-content p-2 overflow-hidden border-b-3 border-gray-200 pb-12">
+          <div className="mb-4 flex items-end justify-between">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-left text-black mt-4 uppercase">
+              Igralci
+            </h1>
+            <p className="text-gray-700 cursor-pointer hover:text-red-600 transition-colors duration-300 text-sm md:text-base">
+              Prikaži vse <FontAwesomeIcon className="text-xs" icon={faAngleRight} />
+            </p>
+          </div>
+          <PlayerCarousel />
+        </section>
 
           <section className='w-full min-h-content lg:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
