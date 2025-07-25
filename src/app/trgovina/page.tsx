@@ -16,7 +16,7 @@ interface Item {
 export default function Page() {
 
   const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<unknown>(null);
   const [items, setItems] = React.useState<Item[]>([]);
 
   useEffect(() => {
@@ -83,7 +83,9 @@ export default function Page() {
                 { isLoading ? (
                   <p className="text-lg text-gray-500">Loading items...</p>
                 ) : error ? (
-                  <p className="text-lg text-red-500">Error loading items: {error.message}</p>
+                  <p className="text-lg text-red-500">
+                    Error loading items: {error && typeof error === 'object' && 'message' in error ? (error as { message: string }).message : String(error)}
+                  </p>
                 ) : items.length === 0 ? (
                   <p className="text-lg text-gray-500">No items available.</p>
                 ) : (
