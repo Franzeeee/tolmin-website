@@ -25,7 +25,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     },
     { name: 'Photo History', href: '/admin/photo-history' },
     { name: 'Teams', href: '/admin/teams' },
-    { name: 'Shop', href: '/admin/shop' },
+    { name: 'Shop', submenu: [
+      { name: 'Shop Overview', href: '/admin/shop' },
+      { name: 'Orders', href: '/admin/shop/orders' },
+      { name: 'Customers', href: '/admin/shop/customers' },
+    ]},
   ]
 
   const handleLogout = () => {

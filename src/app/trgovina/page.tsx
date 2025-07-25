@@ -1,20 +1,41 @@
 'use client'
 
-import React, {  } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Image from 'next/image';
+import axios from 'axios';
+
+interface Item {
+  id: number;
+  name: string;
+  price: string;
+  img: string;
+}
 
 export default function Page() {
 
-    const items = [
-        { id: 1, title: "Dres NK TKK Tolmin", price: "5,00 €", image: "/Merch/item1.png" },
-        { id: 2, title: "Dres NK TKK Tolmin", price: "5,00 €", image: "/Merch/item1.png" },
-        { id: 3, title: "Dres NK TKK Tolmin", price: "3,00 €", image: "/Merch/item1.png" },
-        { id: 4, title: "Dres NK TKK Tolmin", price: "15,00 €", image: "/Merch/item1.png" },
-        { id: 5, title: "Dres NK TKK Tolmin", price: "40,00 €", image: "/Merch/item1.png" },
-        { id: 6, title: "Dres NK TKK Tolmin", price: "40,00 €", image: "/Merch/item1.png" },
-    ];
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [items, setItems] = React.useState<Item[]>([]);
+
+  useEffect(() => {
+    axios.get('/api/products')
+      .then(response => {
+          console.log('Items fetched:', response.data);
+            const mappedItems = response.data.map((item: Item & { _id?: number }) => ({
+            ...item,
+            id: item._id ?? item.id,
+            }));
+            setItems(mappedItems);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching items:', error);
+          setError(error);
+          setIsLoading(false);  
+        });
+    }, []);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -59,25 +80,35 @@ export default function Page() {
             </div>
 
              <div className="w-full py-8 px-4 flex flex-wrap justify-center gap-6 md:gap-8 text-black">
-                {items.map((item) => (
+                { isLoading ? (
+                  <p className="text-lg text-gray-500">Loading items...</p>
+                ) : error ? (
+                  <p className="text-lg text-red-500">Error loading items: {error.message}</p>
+                ) : items.length === 0 ? (
+                  <p className="text-lg text-gray-500">No items available.</p>
+                ) : (
+                  items.map((item) => (
                     <div
                     key={item.id}
                     className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-[150px] sm:w-[180px] md:w-[200px] lg:w-[320px]"
                     >
                     <Image
-                        src={item.image}
-                        alt={item.title}
+                        src={item.img}
+                        alt={item.name}
                         className='object-cover'
                         height={250}
                         width={250}
                     />
-                    <h3 className="text-center text-sm md:text-base">{item.title}</h3>
+                    <h3 className="text-center text-sm md:text-base">{item.name}</h3>
                     <p className="text-center font-semibold mt-1">{item.price}</p>
-                    <button className="mt-2 cursor-pointer bg-black text-white text-xs w-full md:text-sm px-4 py-2 rounded hover:bg-red-700">
+                    <button className="mt-2 cursor-pointer bg-black text-white text-xs w-full md:text-sm px-4 py-2 rounded hover:bg-red-700"
+                      onClick={() => alert(`Added ${item.name} to cart! ${item.id}`)}
+                    >
                         BUY NOW
                     </button>
                     </div>
-                ))}
+                ))
+              )}
             </div>
         </section>
 

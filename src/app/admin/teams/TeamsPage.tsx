@@ -216,13 +216,13 @@ export default function TeamsPage() {
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
+                    <td colSpan={4} className="px-4 py-4 text-center text-gray-400">
                       Loading...
                     </td>
                   </tr>
                 ) : filteredTeams.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
+                    <td colSpan={4} className="px-4 py-4 text-center text-gray-400">
                       No {cat.label.toLowerCase()} found.
                     </td>
                   </tr>
@@ -246,7 +246,7 @@ export default function TeamsPage() {
                             onClick={() => handleDeleteTeam(t._id, t.firstName + ' ' + t.lastName)}
                             className="text-red-500 hover:text-red-700"
                           >
-                            <TrashIcon className="h-5 w-5 cursor-pointer" />
+                            <TrashIcon className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
