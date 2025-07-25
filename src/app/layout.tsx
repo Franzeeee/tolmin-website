@@ -5,9 +5,8 @@ import Image from 'next/image';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import Sponsors from '@/components/layout/Sponsors';
-import { useEffect, useState } from 'react';
-import { FaArrowUp } from 'react-icons/fa'; // FontAwesome icon
 import './globals.css';
+import { useEffect, useState } from 'react';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
@@ -17,20 +16,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const isAdmin = pathname.startsWith('/admin');
   const queryClient = new QueryClient();
 
-  // Scroll-to-top button logic
-  const [showScroll, setShowScroll] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScroll(window.scrollY > 200);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleLoad = () => setIsLoading(false);
+    if (document.readyState === 'complete') {
+      setIsLoading(false);
+    } else {
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
+    }
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,34 +38,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="icon" href="/tolmin-logo.png" />
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {children}
-
-          {/* Scroll to top button */}
-          {showScroll && (
-            <button
-              onClick={scrollToTop}
-              aria-label="Scroll to top"
-              className="fixed bottom-8 right-8 z-50 bg-red-600 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition"
-            >
-              <FaArrowUp size={20} />
-            </button>
-          )}
-
-          {/* Hide Sponsors and footer when on admin pages */}
-          {!isAdmin && <Sponsors />}
-          {!isAdmin && (
-            <div className="w-full p-5 bg-red-600 text-gray-200 poppins flex items-center justify-between">
-              <div className="flex gap-5 text-sm -mb-1">
-                <p>(c) 2018, Tolmin Football Club</p>
-                <p>Legal notice and cookies | Website development</p>
-              </div>
-              <div className='flex gap-4'>
-                <Image src="/logo/instagram.png" alt="Instagram" width={25} height={25} />
-                <Image src="/logo/facebook.png" alt="Facebook" width={25} height={25} />
-                <Image src="/logo/youtube.png" alt="YouTube" width={25} height={25} />
-                <Image src="/logo/linkedin.png" alt="LinkedIn" width={25} height={25} />
-              </div>
+          {isLoading ? (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+              <i className="fas fa-spinner fa-spin text-red-600 text-4xl"></i>
             </div>
+          ) : (
+            <>
+              {children}
+              {!isAdmin && <Sponsors />}
+              {!isAdmin && (
+                <div className="w-full p-5 bg-red-600 text-gray-200 poppins flex items-center justify-between">
+                  <div className="flex gap-5 text-sm -mb-1">
+                    <p>(c) 2018, Tolmin Football Club</p>
+                    <p>Legal notice and cookies | Website development</p>
+                  </div>
+                  <div className='flex gap-4'>
+                    <Image src="/logo/instagram.png" alt="Instagram" width={25} height={25} />
+                    <Image src="/logo/facebook.png" alt="Facebook" width={25} height={25} />
+                    <Image src="/logo/youtube.png" alt="YouTube" width={25} height={25} />
+                    <Image src="/logo/linkedin.png" alt="LinkedIn" width={25} height={25} />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </body>
       </html>
