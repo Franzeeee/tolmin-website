@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   try {
     const teamCollection = await getCollection('teams');
-    const { id } = params;
+    const { id } = context.params;
 
     if (!ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
@@ -23,6 +23,6 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ message: 'Team member deleted successfully' });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error', details: error }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error', details: String(error) }, { status: 500 });
   }
 }
