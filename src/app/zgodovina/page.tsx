@@ -6,6 +6,7 @@ import MainNav from '@/components/layout/MainNav';
 import Tab1 from '@/components/Zgodovina/Tab1';
 import Tab2 from '@/components/Zgodovina/Tab2';
 import Tab3 from '@/components/Zgodovina/Tab3';
+import Tab4 from '@/components/Zgodovina/Tab4';
 
 const TABS = ["1921 – 1971", "1971 – 1995", "1995 – today", "Photo history"] as const;
 
@@ -13,7 +14,7 @@ const TAB_COMPONENTS = {
   "1921 – 1971": Tab1,
   "1971 – 1995": Tab2,
   "1995 – today": Tab3,
-  "Photo history": Tab3, // You can replace with actual PhotoTab component
+  "Photo history": Tab4, // You can replace with actual PhotoTab component
 };
 
 export default function Page() {
@@ -76,13 +77,13 @@ export default function Page() {
                   {currentTab === tab && (
                     <motion.div
                       layoutId="underline"
-                      className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+                      className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded z-10"
                       transition={{ type: "spring", stiffness: 500, damping: 60 }}
                     />
                   )}
                 </li>
               ))}
-              <div className="absolute left-0 right-0 bottom-2 h-[3px] bg-gray-300" />
+              <div className="absolute left-0 right-0 -bottom-1 z-0 h-[3px] bg-gray-300" />
             </ul>
           </div>
         </section>
