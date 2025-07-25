@@ -61,28 +61,28 @@ export default function Tab3() {
               </span>
             </button>
             {isOpen && (
-              <div className="px-10 py-3 bg-white text-gray-800 flex flex-col gap-3">
-                <div className="relative w-full min-h-[500px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] m-auto shadow-sm">
+                <div className="px-4 sm:px-6 py-3 bg-white text-gray-800 flex flex-col gap-3">
+                <div className="relative w-full min-h-[220px] max-h-[300px] sm:min-h-[350px] sm:max-h-[400px] md:min-h-[400px] md:max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] m-auto">
                   <Image
-                    src={item.image}
-                    alt={item.title}
-                    className="object-contain xl:object-cover"
-                    fill
-                    sizes="(max-width: 1280px) 100vw, 650px"
-                    priority
+                  src={item.image}
+                  alt={item.title}
+                  className="object-contain xl:object-cover"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+                  priority
                   />
                 </div>
-                <div className="flex flex-col w-full p-4 py-0 poppins text-black">
+                <div className="flex flex-col w-full p-2 sm:p-4 py-0 poppins text-black">
                   {item.content.map((paragraph, i) => (
-                    <p key={i} className="text-lg text-gray-800 mb-4 text-justify">
-                      {paragraph}
-                    </p>
+                  <p key={i} className="text-base sm:text-lg text-gray-800 mb-4 text-justify">
+                    {paragraph}
+                  </p>
                   ))}
                 </div>
-                <button className="m-auto cursor-pointer px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors mb-5 uppercase font-semibold">
+                <button className="m-auto cursor-pointer px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors mb-5 uppercase font-semibold text-sm sm:text-base">
                   {item.title}
                 </button>
-              </div>
+                </div>
             )}
           </div>
         );

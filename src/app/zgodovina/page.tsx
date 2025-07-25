@@ -27,33 +27,33 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       {/* HERO SECTION */}
-      <header className="relative w-full h-screen max-h-[900px] grid grid-rows-[auto_1fr] bg-white overflow-hidden">
+      <header className="w-screen max-h-[500px] h-screen grid grid-rows-[auto_1fr] bg-white landing-header md:max-h-[700px]  lg:max-h-[900px]">
         <MainNav />
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
+          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] md:max-h-[700px]  lg:max-h-[900px]"
         >
           <source src="/tolmin-header.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10" />
-        <div className="flex items-end justify-center h-full z-20 relative">
-          <motion.h1
-            initial={{ x: '110vw' }}
-            animate={{ x: '-120vw' }}
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] md:max-h-[700px] lg:max-h-[900px]" />
+        <div className="flex items-end pb-2 justify-center h-screen max-h-[500px] lg:max-h-[900px] md:max-h-[700px]  z-20 relative overflow-hidden">
+            <motion.h1
+            initial={{ x: typeof window !== "undefined" && window.innerWidth < 640 ? '200vw' : '100vw' }}
+            animate={{ x: typeof window !== "undefined" && window.innerWidth < 640 ? '-120vw' : '-60vw' }}
             transition={{
               repeat: Infinity,
               repeatType: "loop",
               duration: 16,
               ease: "linear"
             }}
-            className="text-5xl md:text-7xl lg:text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
-          >
-            Člansko moštvo - tekme
-          </motion.h1>
+            className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
+            >
+            Sponzorji in donatorji
+            </motion.h1>
         </div>
       </header>
 

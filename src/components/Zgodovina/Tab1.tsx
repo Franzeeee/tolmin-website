@@ -5,14 +5,14 @@ export default function Tab1() {
     return(<>
     <div className="w-full p-4 flex h-fit gap-8 flex-col justify-center items-center max-w-5xl">
         {/* Image: Image */}
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p1.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p1.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
@@ -32,17 +32,16 @@ export default function Tab1() {
 
         </div>
 
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p2.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p2.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
-
         {/* Text: Content */}
         <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins text-black max">
             <p className='text-lg text-gray-800 mb-4 text-justify'>
@@ -60,14 +59,14 @@ export default function Tab1() {
 
         </div>
 
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p3.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p3.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
@@ -77,14 +76,14 @@ export default function Tab1() {
             </p>
         </div>
 
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p4.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p4.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
@@ -98,14 +97,14 @@ export default function Tab1() {
             </p>
         </div>
 
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p5.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p5.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
@@ -119,14 +118,14 @@ export default function Tab1() {
             </p>
         </div>
 
-        <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p6.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p6.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
@@ -137,14 +136,14 @@ export default function Tab1() {
 
         </div>
 
-         <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
+        <div className="relative w-full h-56 sm:h-72 md:h-96 xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] max-h-[500px]">
             <Image 
-                src={'/zgodovina/p7.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-                sizes="(max-width: 1280px) 100vw, 650px"
-                priority
+            src={'/zgodovina/p7.png'}
+            alt="Example"
+            className="object-contain xl:object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
+            priority
             />
         </div>
 
