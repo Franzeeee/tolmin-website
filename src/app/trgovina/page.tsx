@@ -108,28 +108,34 @@ export default function Page() {
                   items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-[150px] sm:w-[180px] md:w-[200px] lg:w-[320px] h-[370px] md:h-[400px] lg:h-[470px] justify-between"
+                      className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-full sm:w-[270px] md:w-[300px] lg:w-[320px] h-[380px] md:h-[420px] lg:h-[470px] justify-between"
                     >
-                      <div className="flex flex-col items-center w-full flex-1">
-                        <div className="w-full flex justify-center items-center min-h-[180px] md:min-h-[220px] lg:min-h-[280px]">
-                          <Image
-                            src={item.img}
-                            alt={item.name}
-                            className="object-contain"
-                            height={250}
-                            width={250}
-                          />
-                        </div>
-                        <h3 className="text-center text-sm md:text-base mt-2">{item.name}</h3>
-                        <p className="text-center font-semibold mt-1">{item.price}</p>
+                      {/* Image Container */}
+                      <div className="w-full flex justify-center items-center h-[180px] md:h-[220px] lg:h-[250px] overflow-hidden">
+                        <Image
+                          src={item.img}
+                          alt={item.name}
+                          height={250}
+                          width={250}
+                          className="object-contain max-h-full max-w-full"
+                        />
                       </div>
+
+                      {/* Info */}
+                      <div className="flex flex-col items-center text-center flex-1 mt-4 w-full">
+                        <h3 className="text-sm md:text-base font-medium">{item.name}</h3>
+                        <p className="font-semibold mt-1 text-sm md:text-base">{item.price}</p>
+                      </div>
+
+                      {/* Button */}
                       <button
-                        className="mt-2 cursor-pointer bg-black text-white text-xs w-full md:text-sm px-4 py-2 rounded hover:bg-red-700"
+                        className="mt-4 bg-black text-white text-xs md:text-sm px-4 py-2 rounded w-full hover:bg-red-700 transition"
                         onClick={() => alert(`Added ${item.name} to cart! ${item.id}`)}
                       >
                         BUY NOW
                       </button>
                     </div>
+
                 ))
               )}
             </div>
