@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import axios from 'axios'
+import Loading from '@/components/Loading'
 
 interface Product {
   id: number
@@ -288,7 +289,7 @@ const handleSave = async () => {
           ))
         ) : (
             <div className="col-span-3 text-center text-gray-500">
-                {isLoading ? 'Loading products...' : 'No products available.'}
+                {isLoading ? <Loading /> : 'No products available.'}
             </div>
         )}
       </div>

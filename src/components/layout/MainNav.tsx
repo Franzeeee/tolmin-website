@@ -33,7 +33,7 @@ const navItems = [
       { name: "Statistika", link: "/zgodovina/statistika" }
     ]
   },
-  { name: "Arhiv", link: "/arhiv" },
+  { name: "Arhiv", link: "#" },
   { name: "Trgovina", link: "/trgovina" }
 ];
 
