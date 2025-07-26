@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Image from 'next/image';
 import axios from 'axios';
+import CartModal from '@/components/Shop/CartModal';
 
 interface Item {
   id: number;
@@ -15,9 +16,10 @@ interface Item {
 
 export default function Page() {
 
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<unknown>(null);
-  const [items, setItems] = React.useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<unknown>(null);
+  const [items, setItems] = useState<Item[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
 
   useEffect(() => {
     axios.get('/api/products')
@@ -73,10 +75,24 @@ export default function Page() {
 
         <section className='w-full min-h-content p-2 px-5 pb-9'>
             {/* Header Title */}
-            <div className='border-b-2 border-gray-300 pb-3'>
+            <div className='flex items-center justify-between border-b-2 border-gray-300 pb-3'>
               <h1 className="text-3xl font-bold text-left text-red-600 mt-4 uppercase">
-                Trgovina
+              Trgovina
               </h1>
+                <div className="flex items-center gap-4 mt-4">
+                <button
+                  className="flex items-center relative"
+                  onClick={() => setCartOpen(true)}
+                  aria-label="View cart"
+                >
+                  <i className="fas fa-shopping-cart text-lg text-red-500 hover:text-red-700 transition-colors duration-200 ease-in cursor-pointer " aria-hidden="true"></i>
+
+                  {/* Banner showing cart count, currently 0 */}
+                    <span className="absolute font-semibold rounded-full w-6 h-6 flex items-center justify-center text-xs text-black -top-4 -right-4 bg-white border border-gray-300 shadow">
+                    0
+                    </span>
+                </button>
+                </div>
             </div>
 
              <div className="w-full py-8 px-4 flex flex-wrap justify-center gap-6 md:gap-8 text-black">
@@ -115,6 +131,7 @@ export default function Page() {
         </section>
 
       </main>
+       <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }
