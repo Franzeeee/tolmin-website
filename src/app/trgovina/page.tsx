@@ -107,23 +107,28 @@ export default function Page() {
                 ) : (
                   items.map((item) => (
                     <div
-                    key={item.id}
-                    className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-[150px] sm:w-[180px] md:w-[200px] lg:w-[320px]"
+                      key={item.id}
+                      className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-[150px] sm:w-[180px] md:w-[200px] lg:w-[320px] h-[370px] md:h-[400px] lg:h-[470px] justify-between"
                     >
-                    <Image
-                        src={item.img}
-                        alt={item.name}
-                        className='object-cover'
-                        height={250}
-                        width={250}
-                    />
-                    <h3 className="text-center text-sm md:text-base">{item.name}</h3>
-                    <p className="text-center font-semibold mt-1">{item.price}</p>
-                    <button className="mt-2 cursor-pointer bg-black text-white text-xs w-full md:text-sm px-4 py-2 rounded hover:bg-red-700"
-                      onClick={() => alert(`Added ${item.name} to cart! ${item.id}`)}
-                    >
+                      <div className="flex flex-col items-center w-full flex-1">
+                        <div className="w-full flex justify-center items-center min-h-[180px] md:min-h-[220px] lg:min-h-[280px]">
+                          <Image
+                            src={item.img}
+                            alt={item.name}
+                            className="object-contain"
+                            height={250}
+                            width={250}
+                          />
+                        </div>
+                        <h3 className="text-center text-sm md:text-base mt-2">{item.name}</h3>
+                        <p className="text-center font-semibold mt-1">{item.price}</p>
+                      </div>
+                      <button
+                        className="mt-2 cursor-pointer bg-black text-white text-xs w-full md:text-sm px-4 py-2 rounded hover:bg-red-700"
+                        onClick={() => alert(`Added ${item.name} to cart! ${item.id}`)}
+                      >
                         BUY NOW
-                    </button>
+                      </button>
                     </div>
                 ))
               )}
