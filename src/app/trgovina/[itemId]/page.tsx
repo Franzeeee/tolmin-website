@@ -1,13 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Image from 'next/image';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+
+type Item = {
+  id: string;
+  name: string;
+  price: string;
+  img: string;
+  priceWithTax?: string;
+};
 
 export default function Page() {
+    const { itemId } = useParams();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const sizes = ['8 let', '10 let', '12 let', 'S', 'M', 'L', 'XL'];
+  const [item, setItem] = useState<Item | null>(null);
+
+useEffect(() => {
+  console.log('useEffect triggered with itemId:', itemId);
+  if (!itemId || typeof itemId !== 'string') return;
+  fetchData(itemId);
+  console.log('Fetching item with ID:', itemId);
+}, [itemId]);
+
+  const fetchData = async (itemId: string) => {
+    const response = await axios.get(`/api/products/${itemId}`);
+    const data = response.data;
+    setItem(data);
+    console.log('Fetched item:', data);
+  };
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 text-black poppins">
@@ -52,28 +79,54 @@ export default function Page() {
             </h1>
           </div>
 
+          {/* Return to shop  */}
+            <Link
+            href="/trgovina"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600 transition text-left mt-4 lg:mt-5 w-full"
+            >
+            <i className="fas fa-arrow-left"></i>
+            Nazaj v trgovino
+            </Link>
+
           {/* Product Layout */}
           <div className="w-full max-w-6xl mx-auto py-8 flex flex-col md:flex-row gap-8 lg:mt-5">
             {/* Left: Product Image */}
-            <div className="flex-1 border p-4 flex items-center justify-center bg-white rounded-lg shadow-sm">
+            <div className="flex-1 border border-gray-300 p-4 flex items-center justify-center bg-transparent rounded-lg ">
+              {item?.img ? (
               <Image
-                src={'/Merch/item1.png'}
+                src={item.img}
                 alt={'Item Image'}
                 className="object-contain"
                 height={300}
                 width={300}
                 priority
               />
+              ) : (
+              <div className="flex items-center justify-center w-[300px] h-[300px] bg-gray-200 animate-pulse rounded">
+                <span className="text-gray-400">Loading image...</span>
+              </div>
+              )}
             </div>
 
             {/* Right: Product Info */}
             <div className="flex-1 flex flex-col gap-4">
-              <h2 className="text-xl sm:text-2xl font-semibold">Dres NK TKK Tolmin</h2>
-              <p className="text-gray-500">Na zalogi</p>
-              <p className="text-xl sm:text-2xl font-bold">3,00 €</p>
-              <p className="text-sm text-gray-500">
-                Cena vključuje DDV (22%) 2,70 €
-              </p>
+              {item ? (
+                <>
+                  <h2 className="text-xl sm:text-2xl font-semibold">{item.name}</h2>
+                  <p className="text-gray-500">Na zalogi</p>
+                  <p className="text-xl sm:text-2xl font-bold">€ {item.price},00</p>
+                  <p className="text-sm text-gray-500">
+                    Cena vključuje DDV (22%) € {item.priceWithTax || "0"},00
+                  </p>
+                </>
+              ) : (
+                <div className="animate-pulse space-y-2">
+                  <div className="h-7 bg-gray-200 rounded w-2/3" />
+                  <div className="h-4 bg-gray-200 rounded w-1/4" />
+                  <div className="h-7 bg-gray-200 rounded w-1/3" />
+                  <div className="h-4 bg-gray-200 rounded w-1/2" />
+                </div>
+              )}
 
               {/* Size Selector */}
               <div>
@@ -83,9 +136,9 @@ export default function Page() {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`border px-3 py-1 rounded text-sm ${
+                      className={`border px-3 py-2 rounded text-sm cursor-pointer ${
                         selectedSize === size
-                          ? 'bg-black text-white'
+                          ? 'bg-red-600 text-white border-gray-300'
                           : 'bg-white hover:bg-gray-100'
                       }`}
                     >
@@ -95,7 +148,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <button className="mt-4 bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition">
+              <button className="mt-4 bg-red-700 text-white px-4 py-3 cursor-pointer rounded hover:bg-red-800 transition">
                 Dodajte v nakupovalno košarico
               </button>
 
@@ -105,30 +158,15 @@ export default function Page() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-4">
                 <span className="text-sm">Delite ta izdelek s prijatelji</span>
                 <div className="flex gap-3">
-                  <a href="#" aria-label="Instagram">
-                    <Image
-                      src="/instagram.svg"
-                      alt="Instagram"
-                      width={20}
-                      height={20}
-                    />
-                  </a>
-                  <a href="#" aria-label="Facebook">
-                    <Image
-                      src="/facebook.svg"
-                      alt="Facebook"
-                      width={20}
-                      height={20}
-                    />
-                  </a>
-                  <a href="#" aria-label="LinkedIn">
-                    <Image
-                      src="/linkedin.svg"
-                      alt="LinkedIn"
-                      width={20}
-                      height={20}
-                    />
-                  </a>
+                    <a href="#" aria-label="Instagram" className="text-gray-700 hover:text-pink-600 text-xl">
+                    <i className="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" aria-label="Facebook" className="text-gray-700 hover:text-blue-600 text-xl">
+                    <i className="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" aria-label="LinkedIn" className="text-gray-700 hover:text-red-600 text-xl">
+                    <i className="fab fa-youtube"></i>
+                    </a>
                 </div>
               </div>
             </div>

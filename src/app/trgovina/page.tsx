@@ -6,9 +6,11 @@ import MainNav from '@/components/layout/MainNav';
 import Image from 'next/image';
 import axios from 'axios';
 import CartModal from '@/components/Shop/CartModal';
+import Loading from '@/components/Loading';
 
 interface Item {
   id: number;
+  _id?: string;
   name: string;
   price: string;
   img: string;
@@ -97,7 +99,7 @@ export default function Page() {
 
              <div className="w-full py-8 px-4 flex flex-wrap justify-center gap-6 md:gap-8 text-black">
                 { isLoading ? (
-                  <p className="text-lg text-gray-500">Loading items...</p>
+                  <Loading />
                 ) : error ? (
                   <p className="text-lg text-red-500">
                     Error loading items: {error && typeof error === 'object' && 'message' in error ? (error as { message: string }).message : String(error)}
@@ -108,10 +110,10 @@ export default function Page() {
                   items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex flex-col items-center bg-white shadow hover:shadow-lg rounded p-4 w-full sm:w-[270px] md:w-[300px] lg:w-[320px] h-[380px] md:h-[420px] lg:h-[470px] justify-between"
+                      className="flex pb-4 flex-col items-center transition-all duration-200 ease-in-out bg-white shadow hover:shadow-lg rounded w-full sm:w-[270px] md:w-[300px] lg:w-[320px] h-[340px] md:h-[420px] lg:h-[400px] justify-between"
                     >
                       {/* Image Container */}
-                      <div className="w-full flex justify-center items-center h-[180px] md:h-[220px] lg:h-[250px] overflow-hidden">
+                      <div className="w-full flex justify-center items-center h-[210px] md:h-[260px] lg:h-[290px] overflow-hidden bg-gray-100">
                         <Image
                           src={item.img}
                           alt={item.name}
@@ -122,18 +124,18 @@ export default function Page() {
                       </div>
 
                       {/* Info */}
-                      <div className="flex flex-col items-center text-center flex-1 mt-4 w-full">
+                      <div className="flex flex-col items-center text-left flex-1 mt-4 w-full">
                         <h3 className="text-sm md:text-base font-medium">{item.name}</h3>
-                        <p className="font-semibold mt-1 text-sm md:text-base">{item.price}</p>
+                        <p className="font-bold mt-1 text-2xl">€ {item.price},00</p>
                       </div>
 
                       {/* Button */}
-                      <button
-                        className="mt-4 bg-black text-white text-xs md:text-sm px-4 py-2 rounded w-full hover:bg-red-700 transition"
-                        onClick={() => alert(`Added ${item.name} to cart! ${item.id}`)}
+                      <a
+                        className="mt-4 text-center font-semibold bg-black text-white text-xs md:text-sm px-4 py-3 cursor-pointer rounded w-[90%] hover:bg-red-700 transition"
+                        href={`/trgovina/${item._id}`}
                       >
                         BUY NOW
-                      </button>
+                      </a>
                     </div>
 
                 ))

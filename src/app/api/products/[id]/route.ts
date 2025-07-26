@@ -50,3 +50,23 @@ export async function PUT(
 
   return NextResponse.json({ message: 'Product updated', updatedCount: result.modifiedCount })
 }
+
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+
+  const productsCollection = await getCollection('products')
+  if (!productsCollection) {
+    return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 })
+  }
+
+  const product = await productsCollection.findOne({ _id: new ObjectId(id) })
+  if (!product) {
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+  }
+
+  return NextResponse.json(product)
+}
