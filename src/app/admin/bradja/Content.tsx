@@ -145,40 +145,72 @@ export default function Content() {
           </div>
 
           {/* TinyMCE Editor Card */}
-          <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+            <div className="bg-white rounded-2xl shadow p-6 space-y-4">
             <h2 className="text-xl font-semibold text-black">Content Editor</h2>
-        <Editor
-            apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-            value={editorContent}
-            onEditorChange={(content) => setEditorContent(content)}
-            init={{
-                height: 500,
-                menubar: false,
-                plugins: [
-                'link',
-                'advlist autolink lists image charmap preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table code help wordcount',
-                'textcolor', 'hr',
-                ],
-                toolbar:
+            <Editor
+              apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+              value={editorContent}
+              onEditorChange={(content) => setEditorContent(content)}
+              init={{
+              height: 500,
+              menubar: false,
+              plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
+                'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'textcolor', 'hr'
+              ],
+              toolbar:
                 'undo redo | formatselect fontsize | bold italic underline forecolor backcolor | ' +
                 'alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist outdent indent | link unlink hr | removeformat | preview fullscreen',
-                fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt',
-                link_title: true,
-                default_link_target: '_blank',
-                target_list: [
+                'bullist numlist outdent indent | link unlink hr | removeformat | preview fullscreen | image',
+              fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt',
+              link_title: true,
+              default_link_target: '_blank',
+              target_list: [
                 { title: 'New tab', value: '_blank' },
                 { title: 'Same tab', value: '_self' },
-                ],
-                link_context_toolbar: true,
-                link_assume_external_targets: true,
-                link_default_protocol: 'https',
-            }}
-        />
+              ],
+              image_list: [
+                { title: 'My image 1', value: 'https://www.example.com/my1.gif' },
+                { title: 'My image 2', value: 'http://www.moxiecode.com/my2.gif' }
+              ],
+              link_context_toolbar: true,
+              link_assume_external_targets: true,
+              link_default_protocol: 'https',
+              image_caption: true,
+              image_title: true,
+              automatic_uploads: true,
+              file_picker_types: 'image',
+              file_picker_callback: (callback, value, meta) => {
+                if (meta.filetype === 'image') {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.onchange = async function (event: Event) {
+                  const target = event.target as HTMLInputElement;
+                  if (!target.files || !target.files[0]) return;
+                  const file = target.files[0];
+                  const formData = new FormData();
+                  formData.append('file', file);
 
-          </div>
+                  try {
+                  const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData,
+                  });
+                  const data = await res.json();
+                  callback(data.url, { title: file.name });
+                  } catch (err) {
+                  alert('Image upload failed');
+                  console.error('Image upload error:', err);
+                  }
+                };
+                input.click();
+                }
+              },
+              }}
+            />
+            </div>
 
           {/* Save Button */}
           <div className="flex justify-end">

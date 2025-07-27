@@ -13,7 +13,7 @@ type PageProps = {
 
 export default function Tab2() {
 
-    const id = '6885bbf48718432e43975732';
+    const id = '6885bbf68718432e43975734';
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [data, setData] = useState<PageProps | null>(null);

@@ -8,8 +8,8 @@ import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import MainNav from '@/components/layout/MainNav';
 import Tab1 from '@/components/Klub/Tab1';
 import Tab2 from '@/components/Klub/Tab2';
-import Tab3 from '@/components/Zgodovina/Tab3';
-import Tab4 from '@/components/Zgodovina/Tab4';
+import Tab3 from '@/components/Klub/Tab3';
+import Tab4 from '@/components/Klub/Tab4';
 
 
 export default function Page() {
@@ -75,7 +75,7 @@ export default function Page() {
 
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-visible'>
-          <div className="relative w-full h-[250px] max-h-[300px] xl:w-full xl:h-[350px] xl:max-h-[500px]">
+          <div className="relative w-full h-[200px] max-h-[300px] xl:w-full xl:h-[350px] xl:max-h-[500px]">
               <Image 
                 src={'/club.png'}
                   alt="Example"
