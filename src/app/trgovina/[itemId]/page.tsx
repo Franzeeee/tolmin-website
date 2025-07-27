@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import CartModal from '@/components/Shop/CartModal';
+import { useCartStore } from '../cartStore';
 
 type Item = {
   id: string;
@@ -15,6 +16,17 @@ type Item = {
   price: string;
   img: string;
   priceWithTax?: string;
+  size?: string;
+};
+
+export type CartItem = {
+  id: string;
+  name: string;
+  price: string;
+  img: string;
+  priceWithTax?: string;
+  quantity: number;
+  size: string; // Added size property
 };
 
 export default function Page() {
@@ -23,6 +35,11 @@ export default function Page() {
   const sizes = ['8 let', '10 let', '12 let', 'S', 'M', 'L', 'XL'];
   const [item, setItem] = useState<Item | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
+
+  const cart = useCartStore((state) => state.cart);
+
+  // Total item count (sum of quantities)
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
 useEffect(() => {
   console.log('useEffect triggered with itemId:', itemId);
@@ -37,6 +54,22 @@ useEffect(() => {
     setItem(data);
     console.log('Fetched item:', data);
   };
+
+  function addToCart(product: { quantity: number; id?: string; name?: string; price?: string; img?: string; priceWithTax?: string }) {
+    if (!item || !selectedSize) {
+      // Optionally show a message to select size or wait for item to load
+      return;
+    }
+    // Add selected size to the product object
+    useCartStore.getState().addToCart({
+      ...item,
+      size: selectedSize,
+      quantity: product.quantity,
+    });
+    setCartOpen(true);
+    console.log('Added to cart:', { ...item, size: selectedSize, quantity: product.quantity });
+    console.log('Current cart state:', useCartStore.getState().cart);
+  }
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 text-black poppins">
@@ -89,7 +122,7 @@ useEffect(() => {
 
                   {/* Banner showing cart count, currently 0 */}
                     <span className="absolute font-semibold rounded-full w-6 h-6 flex items-center justify-center text-xs text-black -top-4 -right-4 bg-white border border-gray-300 shadow">
-                    0
+                    {cartItemCount > 0 ? cartItemCount : '0'}
                     </span>
                 </button>
                 </div>
@@ -164,7 +197,9 @@ useEffect(() => {
                 </div>
               </div>
 
-              <button className="mt-4 bg-red-700 text-white px-4 py-3 cursor-pointer rounded hover:bg-red-800 transition">
+              <button className="mt-4 bg-red-700 text-white px-4 py-3 cursor-pointer rounded hover:bg-red-800 transition"
+                onClick={() => addToCart({ ...item, quantity: 1 })}
+              >
                 Dodajte v nakupovalno košarico
               </button>
 
