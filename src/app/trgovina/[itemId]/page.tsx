@@ -7,6 +7,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import CartModal from '@/components/Shop/CartModal';
 
 type Item = {
   id: string;
@@ -17,10 +18,11 @@ type Item = {
 };
 
 export default function Page() {
-    const { itemId } = useParams();
+  const { itemId } = useParams();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const sizes = ['8 let', '10 let', '12 let', 'S', 'M', 'L', 'XL'];
   const [item, setItem] = useState<Item | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
 
 useEffect(() => {
   console.log('useEffect triggered with itemId:', itemId);
@@ -73,11 +75,25 @@ useEffect(() => {
       <main className="w-full h-fit max-w-[60rem] bg-gray-50 border-t-4 border-red-600">
         <section className="w-full min-h-content flex flex-col lg:items-center p-4 sm:px-6 lg:px-12 pb-9">
           {/* Section Title */}
-          <div className="border-b-2 border-gray-300 pb-3 w-full">
+          <div className="border-b-2 border-gray-300 pb-3 w-full flex items-center justify-between">
             <h1 className="text-2xl sm:text-3xl font-bold text-left text-red-600 mt-4 uppercase">
               Trgovina
             </h1>
-          </div>
+            <div className="flex items-center gap-4 mt-4">
+                <button
+                  className="flex items-center relative"
+                  onClick={() => setCartOpen(true)}
+                  aria-label="View cart"
+                >
+                  <i className="fas fa-shopping-cart text-lg text-red-500 hover:text-red-700 transition-colors duration-200 ease-in cursor-pointer " aria-hidden="true"></i>
+
+                  {/* Banner showing cart count, currently 0 */}
+                    <span className="absolute font-semibold rounded-full w-6 h-6 flex items-center justify-center text-xs text-black -top-4 -right-4 bg-white border border-gray-300 shadow">
+                    0
+                    </span>
+                </button>
+                </div>
+            </div>
 
           {/* Return to shop  */}
             <Link
@@ -173,6 +189,7 @@ useEffect(() => {
           </div>
         </section>
       </main>
+      <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }

@@ -1,69 +1,128 @@
-import React from 'react'
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
 
+type FootballSchool = {
+  img?: string
+  content?: string
+  name?: string
+}
+
+const fetchFootballSchool = async (id: string): Promise<FootballSchool> => {
+  const res = await axios.get(`/api/football-school/${id}`)
+  return res.data
+}
+
 export default function U7() {
-    return(<>
+  const id = '6884cbebf71ec698fd833eb4'
+
+  const {
+    data: fetchedData,
+    isLoading,
+  } = useQuery({
+    queryKey: ['footballSchool', id],
+    queryFn: () => fetchFootballSchool(id)
+  })
+
+  const contentLoaded = !!fetchedData?.content || !!fetchedData?.name
+
+  return (
     <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
-        {/* Left: Image */}
-        <div className="relative w-full max-h-[500px] xl:w-[650px] xl:max-h-[1200px] xl:aspect-square h-auto flex-shrink-0">
-            <Image 
-                src={'/U7.png'}
-                alt="Example"
-                className="object-contain xl:object-cover"
-                fill
-            />
+      {/* Left: Image */}
+      {!fetchedData?.img ? (
+        <div className="flex items-center justify-center w-full h-[300px] xl:w-[650px] xl:h-[500px] bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded relative overflow-hidden transition-all duration-700">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="glare-effect" />
+          </div>
+          <span className="relative z-10 text-gray-400 text-lg font-medium">Loading...</span>
         </div>
-
-        {/* Right: Content */}
-        <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins">
-            <div className="flex flex-col border-b-2 border-gray-200 items-start justify-start w-full h-fit pb-5 text-black uppercase">
-                <h1 className='text-black font-semibold mb-1 uppercase'>AKTUALNA OBVESTILA:</h1>
-                <ul className="list-disc ml-6 space-y-1 text-gray-800 mb-4 font-light">
-                    <li>GARDEROBE NISO NA RAZPOLAGO, ZATO VSI OTROCI PRIDEJO NA TRENING OBLEČENI V ŠPORTNO OPREMO, ALI PA SE PREOBLEČEJO PRED GARDEROBO.</li>
-                </ul>
-
-                <h1 className='text-black font-semibold mb-1 uppercase'>V spodnjih VIDEO POSNETKIH najdete primere preprostih vaj, ki jih lahko opravite doma. Vse, kar rabite je žoga in želja.</h1>
-                <ul className="list-disc ml-6 space-y-1 text-gray-800 mb-4 font-light">
-                    <li>prvih 5 vaj navajanja na žogo.</li>
-                    <li>drugih 5 vaj navajanja na žogo</li>
-                </ul>
-
-                <h1 className='text-black font-semibold mb-1 uppercase'>VIDEO UTRINKI:</h1>
-                <ul className="list-disc ml-6 space-y-1 text-gray-800 mb-4 font-light">
-                    <li>Nekaj utrinkov iz predstavitve selekcije U7 na članski tekmi</li>
-                </ul>
-
-                <p className='mb-4'>TURNIRJI potekajo občasno, na sporedu so ob vikendih (september – november, marec – maj). Za prevoz na turnir poskrbite sami.</p>
-
-                <p className='mb-4'><span className='font-semibold'>TEKME:</span> otroci v tej starostni skupini nimajo tekem.</p>
-
-                <p className='text-red-700 italic font-semibold text-lg'>OTROCI naj imajo vedno s se boj telovadne copate, kratke hlače in rdečo klubsko majico!</p>
-            </div>
-            <div className='w-full h-50 p-2 px-5 flex gap-12 pb-0 items-end justify-center '>
-                <div className='relative w-1/2 p-1 h-36 bg-gray-200 flex items-end justify-center rounded-xs'>
-                    <div className='w-20 h-20 bg-gray-500 rounded-full absolute -top-12 left-1/2 -translate-x-1/2 flex items-center justify-center'>
-                        <FontAwesomeIcon icon={faPhone} className='text-3xl'/>
-                    </div>
-                    <div className='w-full uppercase text-black px-3 pb-4'>
-                        <h1 className='text-2xl text-black font-semibold'>pokličite nas</h1>
-                        <p>Fitim Zabeljaj</p>
-                        <p>041 656 492</p>
-                    </div>
-                </div>
-                <div className='relative w-1/2 p-1 h-36 bg-gray-200 flex items-end justify-center rounded-xs'>
-                    <div className='w-20 h-20 bg-gray-500 rounded-full absolute -top-12 left-1/2 -translate-x-1/2 flex items-center justify-center'>
-                        <FontAwesomeIcon icon={faEnvelope} className='text-3xl'/>
-                    </div>
-                    <div className='w-full uppercase text-black px-3 pb-10'>
-                        <h1 className='text-2xl text-black font-semibold'>Postavite vprašanje</h1>
-                        <p className='bg-red-700 text-white w-fit px-4 rounded-md'>začeti</p>
-                    </div>
-                </div>
-            </div>
+      ) : (
+        <div className="relative w-full aspect-[4/3] max-w-full xl:w-[650px] xl:aspect-square flex-shrink-0 rounded overflow-hidden">
+          <Image
+            src={fetchedData.img || '/U7.png'}
+            alt="Example"
+            fill
+            className="object-contain xl:object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 650px"
+            priority
+          />
         </div>
+      )}
+
+      {/* Right: Content */}
+      <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins">
+        {isLoading || !contentLoaded ? (
+          <div className="w-full flex flex-col gap-3 items-stretch justify-between animate-pulse transition-all duration-500">
+            <div className="w-full h-4 bg-gray-300 rounded" />
+            <div className="w-5/6 h-4 bg-gray-200 rounded" />
+            <div className="w-2/3 h-4 bg-gray-300 rounded" />
+            <div className="w-3/4 h-4 bg-gray-200 rounded" />
+            <div className="w-1/2 h-4 bg-gray-300 rounded" />
+            <div className="w-4/5 h-4 bg-gray-200 rounded" />
+            <div className="w-2/5 h-4 bg-gray-300 rounded" />
+            <div className="w-3/5 h-4 bg-gray-200 rounded" />
+            <span className="text-gray-400 text-lg mt-4 self-center">Loading vsebina...</span>
+          </div>
+        ) : (
+          <div
+            className="text-black pb-10"
+            dangerouslySetInnerHTML={{
+              __html: fetchedData?.content || fetchedData?.name || 'U7 Nogometna Šola',
+            }}
+          />
+        )}
+
+        {/* Contact Info Cards */}
+        <div className="w-full flex flex-col md:flex-row gap-8 md:gap-12 p-2 px-0 pb-0 items-stretch justify-center">
+          {/* Phone Card */}
+          <div className="relative flex-1 min-w-[220px] max-w-md min-h-40 md:h-40 h-full bg-gray-200 flex flex-col items-center justify-end rounded-xs mb-16 md:mb-0 mx-auto w-full md:w-auto">
+            <div className="w-16 h-16 bg-gray-500 rounded-full absolute -top-8 left-1/2 -translate-x-1/2 flex items-center justify-center">
+              <FontAwesomeIcon icon={faPhone} className="text-2xl text-white" />
+            </div>
+            <div className="w-full uppercase text-black px-3 pb-4 text-center">
+              <h1 className="text-xl md:text-2xl text-black font-semibold">pokličite nas</h1>
+              <p className="text-base">Fitim Zabeljaj</p>
+              <p className="text-base">041 656 492</p>
+            </div>
+          </div>
+
+          {/* Email Card */}
+          <div className="relative flex-1 min-w-[220px] max-w-md sm:max-h-40 min-h-40 md:h-40 h-full bg-gray-200 flex flex-col items-center justify-end rounded-xs mb-16 md:mb-0 mx-auto w-full md:w-auto">
+            <div className="w-16 h-16 bg-gray-500 rounded-full absolute -top-8 left-1/2 -translate-x-1/2 flex items-center justify-center">
+              <FontAwesomeIcon icon={faEnvelope} className="text-2xl text-white" />
+            </div>
+            <div className="w-full uppercase text-black px-3 pb-6 text-center">
+              <h1 className="text-xl md:text-2xl text-black font-semibold">Postavite vprašanje</h1>
+              <p className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 cursor-pointer">začeti</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Glare effect style */}
+      <style jsx>{`
+        .glare-effect {
+          position: absolute;
+          top: 0;
+          left: -70%;
+          width: 70%;
+          height: 100%;
+          background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%);
+          filter: blur(6px);
+          opacity: 0.7;
+          animation: glareMove 2.2s cubic-bezier(0.4,0,0.2,1) infinite;
+          transition: opacity 0.4s;
+        }
+        @keyframes glareMove {
+          0% { left: -70%; }
+          100% { left: 120%; }
+        }
+      `}</style>
     </div>
+  )
 
-    </>)
 }

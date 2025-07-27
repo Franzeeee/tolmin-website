@@ -81,7 +81,7 @@ export default function Page() {
               <h1 className="text-3xl font-bold text-left text-red-600 mt-4 uppercase">
               Trgovina
               </h1>
-                <div className="flex items-center gap-4 mt-4">
+              <div className="flex items-center gap-4 mt-4">
                 <button
                   className="flex items-center relative"
                   onClick={() => setCartOpen(true)}
@@ -95,7 +95,7 @@ export default function Page() {
                     </span>
                 </button>
                 </div>
-            </div>
+              </div>
 
              <div className="w-full py-8 px-4 flex flex-wrap justify-center gap-6 md:gap-8 text-black">
                 { isLoading ? (
