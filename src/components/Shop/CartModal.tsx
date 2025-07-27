@@ -62,27 +62,80 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     0
   );
 
-  const nextStep = () => {
-    if (step === 2 && !email) {
-      Swal.fire('Vnesite e-pošto', '', 'warning');
-      return;
+const nextStep = () => {
+    if (step === 2) {
+      if (!email.trim()) {
+        Swal.fire('Vnesite e-pošto', '', 'warning');
+        return;
+      }
     }
-    if (step === 3 && !deliveryMethod) {
-      Swal.fire('Izberite način dostave', '', 'warning');
-      return;
+
+    if (step === 3) {
+      if (!deliveryMethod) {
+        Swal.fire('Izberite način dostave', '', 'warning');
+        return;
+      }
+
+      const requiredPickupFields = ['name', 'phone'];
+      const requiredDeliveryFields = ['country', 'name', 'phone', 'address', 'postalCode', 'city'];
+
+      const pickupValues = Array.from(document.querySelectorAll('[step="3"] input')).map(i => (i as HTMLInputElement).value.trim());
+      const deliveryValues = Array.from(document.querySelectorAll('[step="3"] input')).map(i => (i as HTMLInputElement).value.trim());
+
+      if (
+        (deliveryMethod === 'pickup' && pickupValues.some(v => v === '')) ||
+        (deliveryMethod === 'delivery' && deliveryValues.some(v => v === ''))
+      ) {
+        Swal.fire('Izpolnite vsa polja za naslov in kontakt.', '', 'warning');
+        return;
+      }
+
+      // Check required fields based on deliveryMethod
+      let requiredFields: string[] = [];
+      if (deliveryMethod === 'pickup') {
+        requiredFields = requiredPickupFields;
+      } else if (deliveryMethod === 'delivery') {
+        requiredFields = requiredDeliveryFields;
+      }
+
+      for (const field of requiredFields) {
+        const el = document.querySelector(`[data-step="3"] [name="${field}"]`) as HTMLInputElement | null;
+        if (!el || !el.value.trim()) {
+          Swal.fire('Izpolnite vsa polja za naslov in kontakt.', '', 'warning');
+          return;
+        }
+      }
+
     }
-    if (step === 4 && !paymentMethod) {
-      Swal.fire('Izberite način plačila', '', 'warning');
-      return;
+
+    if (step === 4) {
+      if (!paymentMethod) {
+        Swal.fire('Izberite način plačila', '', 'warning');
+        return;
+      }
+
+      if (paymentMethod === 'card') {
+        const cardFields = ['cardNumber', 'expDate', 'secCode'];
+        for (const id of cardFields) {
+          const el = document.getElementById(id) as HTMLInputElement;
+          if (!el?.value.trim()) {
+            Swal.fire('Izpolnite vse podatke o kartici.', '', 'warning');
+            return;
+          }
+        }
+      }
     }
-    if (step < 4) setStep(step + 1);
-    else {
+
+    if (step < 6) {
+      setStep(step + 1);
+    } else {
       Swal.fire('Naročilo poslano!', 'Hvala za nakup.', 'success');
       setStep(1);
       clearCart();
       onClose();
     }
   };
+
 
   const backStep = () => setStep((prev) => Math.max(1, prev - 1));
 
@@ -101,7 +154,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           {/* Title */}
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-red-700">
             <FontAwesomeIcon icon={faShoppingCart} />
-            {step !== 1 ? 'Košarica' : 'Plačilo'}
+            {step == 1 ? 'Košarica' : 'Plačilo'}
           </h2>
 
           {/* Tabs */}
@@ -183,7 +236,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
+            <div className="space-y-4" data-step="3">
               <p className="font-semibold">Način dostave:</p>
               <div className="flex flex-col gap-4">
                 <div className='flex flex-col md:flex-row gap-4'>
@@ -232,6 +285,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <label htmlFor="name" className='font-semibold'>Ime in priimek</label>
                   <input
                     type="text"
+                    name='name'
+                    step={3}
                     placeholder="Ime in priimek"
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500"
                     required
@@ -239,6 +294,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                   <label htmlFor="phone" className='font-semibold'>Telefon</label>
                   <input
                     type="tel"
+                    name='phone'
+                    step={3}
                     placeholder="Telefon"
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500"
                     required
@@ -395,6 +452,120 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
               )}
             </div>
           )}
+            {step === 5 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-red-700 mb-2">Povzetek naročila</h3>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Izdelki:</h4>
+              <ul className="space-y-2">
+                {cart.map((item, idx) => (
+                <li key={idx} className="flex justify-between items-center">
+                  <span>
+                  {item.name} ({item.size}) x {item.quantity}
+                  </span>
+                  <span>
+                  {(Number(item.price) * item.quantity).toFixed(2)} €
+                  </span>
+                </li>
+                ))}
+              </ul>
+              <div className="flex justify-between mt-4 border-t pt-2 font-bold">
+                <span>Skupaj:</span>
+                <span>{total.toFixed(2)} €</span>
+              </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Podatki za dostavo:</h4>
+              <div className="text-sm">
+                <div><span className="font-medium">Email:</span> {email}</div>
+                <div>
+                <span className="font-medium">Način dostave:</span> {deliveryMethod === 'pickup' ? 'Osebni prevzem' : 'Dostava na dom'}
+                </div>
+                {/* You can add more delivery details here if you store them in state */}
+              </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Način plačila:</h4>
+              <div className="text-sm">
+                {paymentMethod === 'cash' ? 'Plačilo z gotovino' : 'Plačilo s kartico'}
+              </div>
+              </div>
+              <div className="flex justify-end mt-4">
+              </div>
+            </div>
+            )}
+              {step === 6 && (
+                <div className="space-y-6 text-center py-8">
+                  <div className="text-3xl mb-2">Hvala za vaše naročilo! 🎉</div>
+                  <div className="text-gray-700 mb-4">
+                    Potrdilo o naročilu in posodobitve bomo poslali na <span className="font-semibold">{email}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 mb-4">
+                    <div className="text-sm text-gray-500">
+                      Naročilo <span className="font-mono font-bold">#{Math.random().toString(36).substring(2, 7).toUpperCase()}</span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleString('sl-SI', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Stanje plačila: <span className="font-semibold">{paymentMethod === 'cash' ? 'Čakanje na plačilo' : 'Plačano'}</span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {paymentMethod === 'cash' ? 'Pay by cash' : 'Pay by card'}
+                    </div>
+                    <div className="text-lg font-bold text-red-700">
+                      Skupaj {total.toFixed(2)} €
+                    </div>
+                  </div>
+                  {deliveryMethod === 'pickup' ? (
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                      <div className="font-semibold mb-1">Prevzem na tekmi NK Tolmin</div>
+                      <div className="text-sm text-gray-700 mb-1">
+                        Obvestili vas bomo, ko bo naročilo pripravljeno na prevzem
+                      </div>
+                      <div className="font-semibold mt-2 mb-1">Prevzemno mesto</div>
+                      <div className="text-sm text-gray-700">
+                        Športni park Brajda, Tolmin, med tekmami NK Tolmin
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                      <div className="font-semibold mb-1">Dostava na dom</div>
+                      <div className="text-sm text-gray-700 mb-1">
+                        Pošiljko bomo poslali na vaš naslov.
+                      </div>
+                    </div>
+                  )}
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                    <div className="font-semibold mb-2">Vaše naročilo</div>
+                    <ul className="space-y-2">
+                      {cart.map((item, idx) => (
+                        <li key={idx} className="flex justify-between items-center text-sm">
+                          <span>
+                            {item.name} {item.size ? `(${item.size})` : ''} 
+                          </span>
+                          <span>× {item.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-6">
+                    <div className="font-semibold mb-1">Vprašanja o vašem naročilu?</div>
+                    <div className="text-sm text-gray-700 mb-1">
+                      Tu smo za vas. Sporočite nam, kako vam lahko pomagamo.
+                    </div>
+                    <div className="text-sm">
+                      E-naslov: <a href="mailto:nktolmin1921@gmail.com" className="text-red-700 underline">nktolmin1921@gmail.com</a>
+                    </div>
+                  </div>
+                </div>
+              )}
 
           {/* Navigation Buttons */}
           {step > 1 && (
@@ -409,7 +580,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 onClick={nextStep}
                 className="px-5 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition"
               >
-                {step === 4 ? 'Oddaj naročilo' : 'Naprej'}
+                {step === 5 ? 'Oddaj naročilo' : 'Okay'}
               </button>
             </div>
           )}
