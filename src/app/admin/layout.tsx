@@ -16,6 +16,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard' },
     { name: 'Sponzorji', href: '/admin/sponzorji' },
+    { name: 'Klub',
+      submenu: [
+        { name: 'Članstvo', href: '/admin/clanstvo' },
+        { name: 'Pravilniki', href: '/admin/pravilniki' },
+        { name: 'Bradja', href: '/admin/bradja' },
+      ]
+     },
     {
       name: 'Football School',
       submenu: [
