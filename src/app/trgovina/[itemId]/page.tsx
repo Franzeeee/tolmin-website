@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import CartModal from '@/components/Shop/CartModal';
 import { useCartStore } from '../cartStore';
+import Swal from 'sweetalert2';
 
 type Item = {
   id: string;
@@ -42,17 +43,14 @@ export default function Page() {
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
 useEffect(() => {
-  console.log('useEffect triggered with itemId:', itemId);
   if (!itemId || typeof itemId !== 'string') return;
   fetchData(itemId);
-  console.log('Fetching item with ID:', itemId);
 }, [itemId]);
 
   const fetchData = async (itemId: string) => {
     const response = await axios.get(`/api/products/${itemId}`);
     const data = response.data;
     setItem(data);
-    console.log('Fetched item:', data);
   };
 
   function addToCart(product: { quantity: number; id?: string; name?: string; price?: string; img?: string; priceWithTax?: string }) {
@@ -66,9 +64,15 @@ useEffect(() => {
       size: selectedSize,
       quantity: product.quantity,
     });
-    setCartOpen(true);
-    console.log('Added to cart:', { ...item, size: selectedSize, quantity: product.quantity });
-    console.log('Current cart state:', useCartStore.getState().cart);
+    Swal.fire({
+      icon: 'success',
+      title: 'Izdelek dodan v košarico',
+      showConfirmButton: false,
+      timer: 1500,
+      customClass: {
+      popup: 'border-2 border-red-600'
+      }
+    });
   }
 
   return (

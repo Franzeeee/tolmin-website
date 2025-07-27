@@ -14,7 +14,6 @@ export default function LoginForm() {
     e.preventDefault()
     try {
       const res = await axios.post('/api/login', { email, password })
-      console.log(res.data)
       if (res.status === 200) {
         Swal.fire({
           title: "Login Successful!",
