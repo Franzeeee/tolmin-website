@@ -41,6 +41,7 @@ export default function OrdersPage() {
 
   const handleViewOrder = (orderId: number) => {
     setIsModalOpen(true);
+    console.log('Viewing order:', orderId);
   };
 
   // Filtering logic
