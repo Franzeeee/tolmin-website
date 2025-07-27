@@ -220,7 +220,6 @@ export default function PhotoHistoryDashboard() {
             imagePreviews: card.imagePreviews,
         }));
 
-        console.log('Submitting data:', preparedData);
 
         Swal.fire({
             title: 'Saving Photo History',

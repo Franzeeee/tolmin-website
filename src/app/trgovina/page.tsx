@@ -33,7 +33,6 @@ export default function Page() {
   useEffect(() => {
     axios.get('/api/products')
       .then(response => {
-          console.log('Items fetched:', response.data);
             const mappedItems = response.data.map((item: Item & { _id?: number }) => ({
             ...item,
             id: item._id ?? item.id,

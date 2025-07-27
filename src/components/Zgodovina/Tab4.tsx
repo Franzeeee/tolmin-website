@@ -27,7 +27,6 @@ export default function Tab4() {
         }
         const result = await response.json();
         setData(result);
-        console.log('Fetched data:', result);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Failed to load data');

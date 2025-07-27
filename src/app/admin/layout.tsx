@@ -51,7 +51,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const handleLogout = () => {
     axios.post('/api/logout')
       .then(() => {
-        console.log('Logged out successfully')
         window.location.href = '/'
       })
       .catch((error) => {
