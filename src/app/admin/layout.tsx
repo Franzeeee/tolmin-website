@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Shop', submenu: [
       { name: 'Shop Overview', href: '/admin/shop' },
       { name: 'Orders', href: '/admin/shop/orders' },
-      { name: 'Customers', href: '/admin/shop/customers' },
+      // { name: 'Customers', href: '/admin/shop/customers' },
     ]},
   ]
 

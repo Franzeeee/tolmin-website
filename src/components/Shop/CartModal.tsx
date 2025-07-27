@@ -10,50 +10,53 @@ import {
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import Image from 'next/image';
+import { useCartStore } from '@/app/trgovina/cartStore';
 
 type CartModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-// Static cart items for demonstration
-const staticCart = [
-  {
-    productId: '1',
-    name: 'Majica Tolmin',
-    size: 'M',
-    quantity: 2,
-    price: 19.99,
-    image: '/Merch/item1.png',
-  },
-  {
-    productId: '2',
-    name: 'Kapa Tolmin',
-    size: 'L',
-    quantity: 1,
-    price: 14.99,
-    image: '/Merch/item2.png',
-  },
-];
-
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
-  const handleRemove = () => {
-    Swal.fire(
-      'Demo način',
-      'Odstranjevanje izdelkov ni omogočeno.',
-      'info'
-    );
+  const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  const handleRemove = (id: string, size: string) => {
+    Swal.fire({
+      title: 'Ste prepričani?',
+      text: 'Izdelek bo odstranjen iz košarice.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Da, odstrani',
+      cancelButtonText: 'Prekliči',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeFromCart(id, size);
+      }
+    });
   };
 
-  const clearCart = () => {
-    Swal.fire('Demo način', 'Počisti košarico ni omogočeno.', 'info');
-  };
 
+  const handleClearCart = () => {
+    Swal.fire({
+      title: 'Počisti košarico?',
+      text: 'Vsi izdelki bodo odstranjeni.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Da, počisti',
+      cancelButtonText: 'Prekliči',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        clearCart();
+      }
+    });
+  };
 
   return (
     <Dialog open={isOpen} onClose={onClose} as={Fragment}>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 text-black">
-        <Dialog.Panel className="w-full max-w-2xl bg-white shadow-2xl p-6 relative overflow-y-auto max-h-[90vh]  rounded-2xl">
+        <Dialog.Panel className="w-full max-w-2xl bg-white shadow-2xl p-6 relative overflow-y-auto max-h-[90vh] rounded-2xl">
           {/* Close Button */}
           <button
             className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
@@ -68,54 +71,67 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             Košarica
           </h2>
 
-          {staticCart.length === 0 ? (
+          {cart.length === 0 ? (
             <p className="text-gray-500 text-center">Vaša košarica je prazna.</p>
           ) : (
             <div className="space-y-5">
-              {staticCart.map((item, index) => (
+              {cart.map((item, index) => (
                 <div
-                  key={`${item.productId}-${item.size}-${index}`}
+                  key={`${item.id}-${index}`}
                   className="flex gap-4 items-center p-4 bg-gray-50 rounded-xl border border-gray-300"
                 >
                   {/* Image */}
-                    <div className="w-20 h-20 bg-white rounded-md overflow-hidden relative">
+                  <div className="w-20 h-20 bg-white rounded-md overflow-hidden relative">
                     <Image
-                      src={item.image}
+                      src={item.img}
                       alt={item.name}
                       fill
                       sizes="80px"
                       className="object-cover"
                       priority
                     />
-                    </div>
+                  </div>
 
                   {/* Info */}
                   <div className="flex-1">
                     <h3 className="text-base font-semibold">{item.name}</h3>
                     <p className="text-sm text-gray-600">Velikost: {item.size}</p>
+                    <p className="text-sm text-gray-600">Cena: € {item.price},00</p>
                     <p className="text-sm text-gray-600">Količina: {item.quantity}</p>
                     <p className="text-sm font-bold mt-1 text-gray-800">
-                      {(item.price * item.quantity).toFixed(2)} €
+                      {(Number(item.price) * item.quantity).toFixed(2)} €
                     </p>
                   </div>
 
                   {/* Remove Button */}
                   <button
-                    onClick={() => handleRemove()}
-                    className="text-red-600 hover:text-red-800 mb-15 cursor-pointer transition-colors duration-200"
+                    onClick={() => handleRemove(item.id, item.size)}
+                    className="text-red-600 hover:text-red-800 cursor-pointer transition-colors duration-200 -mt-22"
                   >
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
               ))}
 
+              {/* Total Summary */}
+              <div className="pt-4 border-t border-gray-300 flex justify-between items-center">
+                <span className="text-lg font-semibold text-gray-700">Skupaj:</span>
+                <span className="text-2xl font-bold text-red-700">
+                  €{' '}
+                  {cart
+                    .reduce((total, item) => total + Number(item.price) * item.quantity, 0)
+                    .toFixed(2)}
+                </span>
+              </div>
+
+
               {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-3 pt-3">
                 <button
-                  onClick={clearCart}
+                  onClick={handleClearCart}
                   className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
                 >
-                  Clear Cart
+                  Počisti
                 </button>
                 <button
                   onClick={() => alert('Proceed to checkout')}

@@ -2,11 +2,11 @@
 
 import { Geist, Geist_Mono } from 'next/font/google';
 import Image from 'next/image';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import Sponsors from '@/components/layout/Sponsors';
 import './globals.css';
 import { useEffect, useState } from 'react';
+import Providers from '@/components/Provider';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
@@ -44,7 +44,6 @@ function ScrollUpButton() {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
-  const queryClient = new QueryClient();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -59,7 +58,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
       <html lang="en">
         <head>
           <title>NK Tolmin</title>
@@ -74,7 +72,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           ) : (
             <>
-              {children}
+              <Providers>
+                {children}
+              </Providers>
               <ScrollUpButton />
               {!isAdmin && <Sponsors />}
               {!isAdmin && (
@@ -95,6 +95,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           )}
         </body>
       </html>
-    </QueryClientProvider>
   );
 }

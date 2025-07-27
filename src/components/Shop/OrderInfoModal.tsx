@@ -45,9 +45,20 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     );
   };
 
-  const clearCart = () => {
-    Swal.fire('Demo način', 'Počisti košarico ni omogočeno.', 'info');
-  };
+const clearCart = () => {
+    Swal.fire({
+        title: 'Ste prepričani?',
+        text: 'Ali res želite preklicati naročilo in počistiti košarico?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Da, počisti',
+        cancelButtonText: 'Prekliči',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Demo način', 'Počisti košarico ni omogočeno.', 'info');
+        }
+    });
+};
 
 
   return (
@@ -72,6 +83,10 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             <p className="text-gray-500 text-center">Vaša košarica je prazna.</p>
           ) : (
             <div className="space-y-5">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <span className="inline-block w-1.5 h-6 bg-red-700 rounded-sm mr-2"></span>
+                    Items Ordered
+                </h3>
               {staticCart.map((item, index) => (
                 <div
                   key={`${item.productId}-${item.size}-${index}`}
@@ -109,6 +124,28 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 </div>
               ))}
 
+              {/* Order Summary */}
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                  <span className="inline-block w-1.5 h-6 bg-red-700 rounded-sm mr-2"></span>
+                  Order Summary
+                </h3>
+                <div className="bg-gray-100 rounded-lg p-4">
+                  <div className="flex flex-col sm:flex-row sm:gap-8">
+                    <div className="mb-2 sm:mb-0">
+                      <span className="block text-xs text-gray-500">Total Items</span>
+                      <span className="text-sm text-gray-700 font-medium">{staticCart.length}</span>
+                    </div>
+                    <div>
+                      <span className="block text-xs text-gray-500">Total Price</span>
+                      <span className="text-sm text-gray-700 font-medium">
+                        {staticCart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)} €
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Customer Info  */}
 
               <div className='w-full border-t border-gray-200'>
@@ -141,7 +178,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                     Cancel Order
                 </button>
                 <button
-                  onClick={() => alert('Proceed to checkout')}
+                  onClick={onClose}
                   className="px-5 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition"
                 >
                   Close

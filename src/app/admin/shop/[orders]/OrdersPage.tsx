@@ -99,12 +99,12 @@ export default function OrdersPage() {
                   View
                 </button>
                 <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
-                  <i className="fa fa-check text-green-500" aria-hidden="true"></i>
-                  Delivered
+                  <i className="fa fa-truck text-blue-500" aria-hidden="true"></i>
+                  Shipped
                 </button>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-500 flex items-center gap-2 cursor-pointer">
-                  <i className="fa fa-trash text-red-400" aria-hidden="true"></i>
-                  Delete
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-black flex items-center gap-2 cursor-pointer">
+                  <i className="fa fa-check text-green-400" aria-hidden="true"></i>
+                  Delivered
                 </button>
               </div>
             )}

@@ -7,9 +7,10 @@ import Image from 'next/image';
 import axios from 'axios';
 import CartModal from '@/components/Shop/CartModal';
 import Loading from '@/components/Loading';
+import { useCartStore } from './cartStore';
 
 interface Item {
-  id: number;
+  id: number; 
   _id?: string;
   name: string;
   price: string;
@@ -22,6 +23,12 @@ export default function Page() {
   const [error, setError] = useState<unknown>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+
+  const cart = useCartStore((state) => state.cart);
+
+  // Total item count (sum of quantities)
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+
 
   useEffect(() => {
     axios.get('/api/products')
@@ -91,7 +98,7 @@ export default function Page() {
 
                   {/* Banner showing cart count, currently 0 */}
                     <span className="absolute font-semibold rounded-full w-6 h-6 flex items-center justify-center text-xs text-black -top-4 -right-4 bg-white border border-gray-300 shadow">
-                    0
+                    {cartItemCount > 0 ? cartItemCount : '0'}
                     </span>
                 </button>
                 </div>
