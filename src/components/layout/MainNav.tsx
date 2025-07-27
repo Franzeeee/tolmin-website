@@ -117,7 +117,7 @@ export default function MainNav() {
           onMouseLeave={handleMouseLeave}
         >
           {/* Desktop Left Nav */}
-          <div className={`hidden lg:flex ${isScrolled || isToggled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
+          <div className={`hidden lg:flex ${isScrolled || isToggled ? "gap-8 lg:gap-3 xl:gap-6 uppercase" : "gap-7 lg:gap-3 xl:gap-7"} flex-shrink-0 items-end relative`}>
             {navItems.slice(0, 4).map((item, i) => {
               const index = i;
               const hasDropdown = item.dropdown && item.dropdown.length > 0;
@@ -191,7 +191,7 @@ export default function MainNav() {
           </div>
 
           {/* Desktop Right Nav */}
-          <div className={`hidden lg:flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-8" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
+          <div className={`hidden lg:flex ${isScrolled ? "gap-8 lg:gap-3 xl:gap-5 uppercase" : "gap-7 lg:gap-2 xl:gap-7"} flex-shrink-0 items-end relative`}>
             {navItems.slice(4).map((item, i) => {
               const index = i + 4;
               const hasDropdown = item.dropdown && item.dropdown.length > 0;

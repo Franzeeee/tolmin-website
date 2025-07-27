@@ -19,8 +19,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       name: 'Football School',
       submenu: [
-        { name: 'All Users', href: '/admin/users' },
-        { name: 'Add User', href: '/admin/users/add' },
+        { name: 'Vodstvo NŠ Hidria Tolmin in trenerji', href: '/admin/vodstvo-ns-hidria-tolmin-in-trenerji' },
+        { name: 'U7', href: '/admin/U7' },
+        { name: 'U9', href: '/admin/U9' },
+        { name: 'U11', href: '/admin/U11' },
+        { name: 'U13', href: '/admin/U13' },
+        { name: 'U15', href: '/admin/U15' },
+        { name: 'U17', href: '/admin/U17' },
+        { name: 'U19', href: '/admin/U19' },
+        { name: 'Aktivnosti in dokumenti', href: '/admin/aktivnosti-in-dokumenti' },
+        { name: 'Nogometni kamp 1.-7. razred', href: '/admin/nogometni-kamp-1-7-razred' },
+        { name: 'Nogometni kamp 6.-9. razred', href: '/admin/nogometni-kamp-6-9-razred' },
       ],
     },
     { name: 'Photo History', href: '/admin/photo-history' },
@@ -67,10 +76,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     }, 100)
                   }}
                 >
-                  <button className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
-                    {item.name}
-                    <ChevronDownIcon className="ml-1 h-4 w-4" />
-                  </button>
+                <button
+                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                    item.submenu.some(sub => pathname === sub.href)
+                      ? 'bg-red-500 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {item.name}
+                  <ChevronDownIcon className="ml-1 h-4 w-4" />
+                </button>
+
                   {openDropdown === item.name && (
                     <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-40">
                       {item.submenu.map((sub) => (

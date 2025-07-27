@@ -5,16 +5,25 @@ import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import U7 from '@/components/Nogometna-Sola/U7';
 import U9 from '@/components/Nogometna-Sola/U9';
+import U11 from '@/components/Nogometna-Sola/U11';
+import U13 from '@/components/Nogometna-Sola/U13';
+import U15 from '@/components/Nogometna-Sola/U15';
+import U17 from '@/components/Nogometna-Sola/U17';
+import U19 from '@/components/Nogometna-Sola/U19';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("U7");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
-  const [tabs] = useState(["U7", "U9", "U11", "U13", "U15", "U17", "U19"]);
-  const [tabContent] = useState([U7(), U9()])
+  const tabs = ["U7", "U9", "U11", "U13", "U15", "U17", "U19"];
+  const tabContent = [U7, U9, U11, U13, U15, U17, U19]; // Store component references
 
   // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
+
+  // Find the component for the active tab
+  const activeIndex = tabs.findIndex(tab => tab === activeTab);
+  const ActiveComponent = tabContent[activeIndex];
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -74,14 +83,12 @@ export default function Page() {
               ))}
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
-          </ul>
+            </ul>
           </div>
         </section>
 
         <section className='w-full min-h-content p-2 px-5 pb-9'>
-          {
-            tabContent[tabs.findIndex(tab => tab === activeTab)]
-          }
+          {ActiveComponent ? <ActiveComponent /> : null}
         </section>
       </main>
     </div>

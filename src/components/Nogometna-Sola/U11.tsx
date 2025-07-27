@@ -18,7 +18,7 @@ const fetchFootballSchool = async (id: string): Promise<FootballSchool> => {
 }
 
 export default function U7() {
-  const id = '6884cbebf71ec698fd833eb3'
+  const id = '6884cbecf71ec698fd833eb6'
 
   const {
     data: fetchedData,
@@ -124,4 +124,5 @@ export default function U7() {
       `}</style>
     </div>
   )
+
 }
