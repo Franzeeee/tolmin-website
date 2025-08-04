@@ -16,12 +16,16 @@ type CartState = {
   addToCart: (item: CartItem) => void
   removeFromCart: (id: string, size: string) => void
   clearCart: () => void
+  paid: boolean
+  setPaid: (paid: boolean) => void
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       cart: [],
+      paid: false,
+      setPaid: (paid: boolean) => set({ paid }),
       addToCart: (item) =>
         set((state) => {
           const existing = state.cart.find(
