@@ -10,6 +10,7 @@ import MerchItem from '@/components/MerchItem';
 import StadiumCarousel from '@/components/Home/StadiumCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 const slides = [
   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
@@ -273,9 +274,9 @@ export default function Page() {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-left text-black mt-4 uppercase">
               Igralci
             </h1>
-            <p className="text-gray-700 cursor-pointer hover:text-red-600 transition-colors duration-300 text-sm md:text-base">
+            <Link href={'/clansko-mostvo'} className="text-gray-700 cursor-pointer hover:text-red-600 transition-colors duration-300 text-sm md:text-base">
               Prikaži vse <FontAwesomeIcon className="text-xs" icon={faAngleRight} />
-            </p>
+            </Link>
           </div>
           <PlayerCarousel />
         </section>
@@ -320,7 +321,7 @@ export default function Page() {
                   </p>
                   <div className="flex justify-end">
                     <a
-                      href="#"
+                      href="/zgodovina"
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                     >
                       Read more
@@ -374,7 +375,7 @@ export default function Page() {
                   </p>
                   <div className="flex justify-end">
                     <a
-                      href="#"
+                      href="/zgodovina"
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                     >
                       Read more
@@ -428,7 +429,7 @@ export default function Page() {
                 <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
                   Trgovina
                 </h1>
-                <p className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300`}>Obiščite trgovino <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </p>
+                <Link href="/trgovina" className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300`}>Obiščite trgovino <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </Link>
               </div>
             </div>
             <MerchItem />
