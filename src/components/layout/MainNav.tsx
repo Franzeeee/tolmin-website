@@ -54,16 +54,34 @@ export default function MainNav() {
     setUnderlineStyle({ left, width });
   };
 
-  useEffect(() => {
-    const currentPath = pathname;
-    const foundIndex = navItems.findIndex(
-      (item) => item.link === currentPath || (item.dropdown && item.dropdown.some(subItem => subItem.link === currentPath))
-    );
-
-    if (foundIndex !== -1) {
-      setActiveIndex(foundIndex);
+useEffect(() => {
+  const currentPath = pathname;
+  
+  // Find the index of the active item
+  let foundIndex = -1;
+  
+  navItems.forEach((item, index) => {
+    // Check if current path matches the main link exactly
+    if (currentPath === item.link) {
+      foundIndex = index;
     }
-  }, [pathname]);
+    // Check if current path starts with the main link (for nested routes)
+    else if (currentPath.startsWith(item.link + '/') || 
+            (item.link !== '/' && currentPath.startsWith(item.link))) {
+      foundIndex = index;
+    }
+    // Check dropdown items
+    else if (item.dropdown && item.dropdown.some(subItem => 
+      currentPath === subItem.link || 
+      currentPath.startsWith(subItem.link + '/'))) {
+      foundIndex = index;
+    }
+  });
+
+  if (foundIndex !== -1) {
+    setActiveIndex(foundIndex);
+  }
+}, [pathname]);
 
   useEffect(() => {
     if (navRef.current) {
@@ -142,7 +160,16 @@ export default function MainNav() {
                       handleMouseEnter(e);
                     }}
                     onClick={() => setActiveIndex(index)}
-                    className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${activeIndex === index ? "text-red-600" : isScrolled ? "text-gray-900" : "text-white"}`}
+                  className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${
+                    activeIndex === index || 
+                    pathname === item.link || 
+                    (item.link !== '/' && pathname.startsWith(item.link + '/')) || 
+                    (item.dropdown && item.dropdown.some(subItem => 
+                      pathname === subItem.link || 
+                      pathname.startsWith(subItem.link + '/')))
+                      ? "text-red-600" 
+                      : isScrolled ? "text-gray-900" : "text-white"
+                  }`}
                   >
                     {item.name}
                   </Link>
@@ -216,7 +243,16 @@ export default function MainNav() {
                       handleMouseEnter(e);
                     }}
                     onClick={() => setActiveIndex(index)}
-                    className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${activeIndex === index ? "text-red-600" : isScrolled ? "text-gray-900" : "text-white"}`}
+                    className={`relative z-10 cursor-pointer px-2 font-semibold hover:text-red-600 pb-3 ${
+                      activeIndex === index || 
+                      pathname === item.link || 
+                      (item.link !== '/' && pathname.startsWith(item.link + '/')) || 
+                      (item.dropdown && item.dropdown.some(subItem => 
+                        pathname === subItem.link || 
+                        pathname.startsWith(subItem.link + '/')))
+                        ? "text-red-600" 
+                        : isScrolled ? "text-gray-900" : "text-white"
+                    }`}
                   >
                     {item.name}
                   </Link>
