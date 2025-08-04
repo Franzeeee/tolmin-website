@@ -40,6 +40,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const total = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
 
   useEffect(() => {
+    setPaid(useCartStore.getState().paid);
     if (step === 4 && paymentMethod === 'card' && !clientSecret && !paid) {
       (async () => {
         setIsProcessing(true);
@@ -71,6 +72,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   const handlePaid = () => {
     setPaid(true);
+    useCartStore.getState().setPaid(true);
     setStep(5);
   };
 
@@ -93,6 +95,10 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       return;
     }
     if (step === 4) {
+      if (paid) {
+        setStep(5);
+        return;
+      }
       if (!paymentMethod) return Swal.fire('Izberite način plačila', '', 'warning');
       if (paymentMethod === 'cash') {
         setStep(5);
@@ -103,15 +109,15 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     if (step < 5) {
       setStep(prev => prev + 1);
     } else {
-      onClose();
+      setStep(prev => prev + 1);
       Swal.fire('Naročilo poslano!', 'Hvala za nakup.', 'success');
       clearCart();
-      setStep(1);
       setEmail('');
       setDeliveryMethod('');
       setPaymentMethod('');
       setClientSecret(null);
       setPaid(false);
+      useCartStore.getState().setPaid(false); // reset paid state in store
     }
   };
 
@@ -357,7 +363,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                         },
                       }}
                     >
-                      <CardPaymentSection onPaid={handlePaid} />
+                      <CardPaymentSection onPaid={handlePaid} total={total} />
                     </Elements>
                   )}
                 </>
@@ -441,7 +447,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
 
 // 🎯 CardPaymentSection is placed outside but within the same file—can also be extracted
-function CardPaymentSection({ onPaid }: { onPaid: () => void }) {
+function CardPaymentSection({ onPaid, total }: { onPaid: () => void; total: number }) {
   const stripe = useStripe();
   const elements = useElements();
   const [busy, setBusy] = useState(false);
@@ -474,7 +480,10 @@ function CardPaymentSection({ onPaid }: { onPaid: () => void }) {
         disabled={busy}
         className="mt-4 w-full px-5 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition disabled:opacity-50"
       >
-        {busy ? 'Obdelujem plačilo …' : 'Potrdi plačilo'}
+        {busy
+          ? 'Obdelujem plačilo …'
+          : `Potrdi plačilo (${total.toFixed(2)} €)`
+        }
       </button>
     </div>
   );
