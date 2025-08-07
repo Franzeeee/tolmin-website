@@ -74,11 +74,9 @@ export async function DELETE(
 
 
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const id = url.pathname.split('/').pop();
 
   const ordersCollection = await getCollection('orders');
   if (!ordersCollection) {
