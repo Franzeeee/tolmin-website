@@ -2,16 +2,21 @@ import { NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+import { NextRequest } from 'next/server';
+
+export async function PUT(request: NextRequest) {
+  const { pathname } = new URL(request.url);
+  const idMatch = pathname.match(/\/orders\/([^/]+)\/ship/);
+  const id = idMatch ? idMatch[1] : null;
   const body = await request.json();
 
   // Ensure we have something to update
   if (!body || Object.keys(body).length === 0) {
     return NextResponse.json({ error: 'No update fields provided' }, { status: 400 });
+  }
+
+  if (!id) {
+    return NextResponse.json({ error: 'Order ID not found in URL' }, { status: 400 });
   }
 
   const ordersCollection = await getCollection('orders');
