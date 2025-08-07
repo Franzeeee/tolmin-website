@@ -51,28 +51,6 @@ export async function PUT(request: Request) {
 }
 
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-
-  const ordersCollection = await getCollection('orders');
-  if (!ordersCollection) {
-    return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 });
-  }
-
-  const result = await ordersCollection.deleteOne({ _id: new ObjectId(id) });
-
-  if (result.deletedCount === 0) {
-    return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-  }
-
-  return NextResponse.json({ message: 'Order deleted' });
-}
-
-
-
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split('/').pop();
