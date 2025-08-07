@@ -1,37 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import OrderInfoModal from '@/components/Shop/OrderInfoModal';
+import axios from 'axios';
+// import axios from 'axios';
 
-type Order = {
-  id: number;
-  customer: string;
+interface OrderCustomer {
+  name: string;
   email: string;
-  date: string;
-  status: string;
-  total: number;
-};
+  phone: string;
+  address: string | null;
+}
 
-const mockOrders: Order[] = [
-  { id: 1, customer: "Alice", email: "alice@example.com", date: "2024-06-01", status: "Pending", total: 120 },
-  { id: 2, customer: "Bob", email: "bob@example.com", date: "2024-06-02", status: "Shipped", total: 80 },
-  { id: 3, customer: "Charlie", email: "charlie@example.com", date: "2024-06-03", status: "Delivered", total: 200 },
-  { id: 4, customer: "Diana", email: "diana@example.com", date: "2024-06-04", status: "Cancelled", total: 50 },
-  { id: 5, customer: "Eve", email: "eve@example.com", date: "2024-06-05", status: "Pending", total: 150 },
-  { id: 6, customer: "Frank", email: "frank@example.com", date: "2024-06-06", status: "Shipped", total: 90 },
-  { id: 7, customer: "Grace", email: "grace@example.com", date: "2024-06-07", status: "Delivered", total: 300 },
-  { id: 8, customer: "Henry", email: "henry@example.com", date: "2024-06-08", status: "Pending", total: 110 },
-  { id: 9, customer: "Ivy", email: "ivy@example.com", date: "2024-06-09", status: "Shipped", total: 70 },
-  { id: 10, customer: "Jack", email: "jack@example.com", date: "2024-06-10", status: "Delivered", total: 220 },
-];
+interface OrderItem {
+  productId: string;
+  name: string;
+  size: string | null;
+  quantity: number;
+  price: number | string;
+  image: string;
+}
+
+interface Order {
+  _id: string;
+  id: number;
+  customer: OrderCustomer;
+  items: OrderItem[];
+  totalItems: number;
+  totalPrice: number;
+  paymentMethod: string;
+  paymentStatus: 'paid' | 'pending';
+  deliveryMethod: string;
+  totalPayment: number;
+  status: string;
+  orderedAt: string;
+}
 
 export default function OrdersPage() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const handleToggleMenu = (id: number) => {
     setOpenMenuId((prev) => (prev === id ? null : id));
@@ -39,27 +52,52 @@ export default function OrdersPage() {
 
   const handleClickOutside = () => setOpenMenuId(null);
 
-  const handleViewOrder = (orderId: number) => {
+  const handleViewOrder = (orderId: string) => {
     setIsModalOpen(true);
-    console.log('Viewing order:', orderId);
+    setSelectedOrderId(orderId);
   };
 
+  useEffect(() => {
+    axios.get('/api/orders')
+      .then(response => {
+        console.log('Fetched orders:', response.data);
+        const ordersWithId = response.data.map((order: Order, idx: number) => ({
+          ...order,
+          id: order.id ?? idx + 1, // Use existing id or fallback to index+1
+        }));
+        setOrders(ordersWithId);
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error);
+      });
+  }, []);
+
   // Filtering logic
-  const filteredOrders = mockOrders.filter(order => {
+  const filteredOrders = orders?.filter(order => {
     const matchesSearch =
-      order.customer.toLowerCase().includes(search.toLowerCase()) ||
-      order.email.toLowerCase().includes(search.toLowerCase()) ||
+      order.customer.name.toLowerCase().includes(search.toLowerCase()) ||
+      order.customer.email.toLowerCase().includes(search.toLowerCase()) ||
       order.id.toString().includes(search) ||
-      order.date.includes(search);
+      order.orderedAt.includes(search);
     const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
+  // Helper to format date as "Jul, 10"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric', 
+    });
+  };
+
   const columns: TableColumn<Order>[] = [
     { name: 'Order ID', selector: row => row.id.toString(), sortable: true },
-    { name: 'Customer', selector: row => row.customer, sortable: true },
-    { name: 'Email', selector: row => row.email, sortable: true },
-    { name: 'Date', selector: row => row.date, sortable: true },
+    { name: 'Customer', selector: row => row.customer.name, sortable: true },
+    { name: 'Email', selector: row => row.customer.email, sortable: true },
+    { name: 'Date', selector: row => formatDate(row.orderedAt), sortable: true },
     {
       name: 'Status',
       cell: (row) => (
@@ -74,11 +112,11 @@ export default function OrdersPage() {
       ),
       sortable: true
     },
-    { name: 'Total ($)', selector: row => `$${row.total}`, sortable: true },
+    { name: 'Total (€)', selector: row => `€${row.totalPrice},00`, sortable: true },
     {
       name: 'Actions',
       cell: (row, rowIndex) => {
-        const lastThreeIndexes = [mockOrders.length - 1, mockOrders.length - 2, mockOrders.length - 3];
+        const lastThreeIndexes = [orders.length - 1, orders.length - 2, orders.length - 3];
         const isLastRow = lastThreeIndexes.includes(rowIndex);
         return (
           <div className="relative" onClick={(e) => e.stopPropagation()}>
@@ -90,22 +128,15 @@ export default function OrdersPage() {
             </button>
             {openMenuId === row.id && (
               <div
-                className={`absolute z-20 right-0 w-32 bg-white border border-gray-200 rounded shadow
-                  ${isLastRow ? 'bottom-10 mb-0' : 'mt-1'}`}
+                className={`absolute z-20 right-5 w-32 bg-white border border-gray-200 rounded shadow
+                  ${isLastRow ? 'bottom-7 mb-0' : 'mt-1'}`}
                 style={isLastRow ? { top: 'auto' } : {}}
               >
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer" onClick={() => handleViewOrder(row.id)}>
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer" onClick={() => handleViewOrder(row._id)}>
                   <i className="fa fa-eye text-gray-500" aria-hidden="true"></i>
                   View
                 </button>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 cursor-pointer">
-                  <i className="fa fa-truck text-blue-500" aria-hidden="true"></i>
-                  Shipped
-                </button>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-black flex items-center gap-2 cursor-pointer">
-                  <i className="fa fa-check text-green-400" aria-hidden="true"></i>
-                  Delivered
-                </button>
+               
               </div>
             )}
           </div>
@@ -116,7 +147,7 @@ export default function OrdersPage() {
 
   return (
     
-<div className="space-y-6 max-w-6xl m-auto">
+  <div className="space-y-6 max-w-6xl m-auto">
       {/* Welcome message */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800">Welcome back, Orders Page! 👋</h1>
@@ -129,23 +160,24 @@ export default function OrdersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Total Orders</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">3</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.length || 0}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Revenue</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">12</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">0</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Pending Orders</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">24</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.filter(order => order.status === 'Pending').length || 0}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Delivered Orders</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">8</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.filter(order => order.status === 'Delivered').length || 0}</p>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6 border-2 rounded-lg bg-white" onClick={handleClickOutside}>
+    <div className="max-w-6xl mx-auto px-4 py-6 border-2 rounded-lg bg-white relative overflow-visible" onClick={handleClickOutside}>
+
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Orders</h1>
         <div className="flex flex-col justify-between md:flex-row gap-4 mb-4">
           <div className="relative w-full md:w-1/3">
@@ -186,7 +218,7 @@ export default function OrdersPage() {
           striped
         />
       </div>
-      <OrderInfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <OrderInfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} orderId={selectedOrderId} />
     </div>
   );
 }

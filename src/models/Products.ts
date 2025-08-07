@@ -14,6 +14,11 @@ const productsSchema = new Schema(
       type: Number,
       required: true,
     },
+    sizes: {
+      type: [String],
+      required: false, // Optional sizes array
+    },
+
   },
   { timestamps: true }
 );

@@ -12,6 +12,7 @@ interface Product {
   name: string
   price: number
   img: string
+  sizes: string[] | null
 }
 
 export default function ShopPage() {
@@ -26,6 +27,8 @@ export default function ShopPage() {
     const [newImage, setNewImage] = useState<string>('/Merch/item1.png')
     const [uploadedImage, setUploadedImage] = useState<File | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [newSizes, setNewSizes] = useState<string[]>([]);
+    const [sizeInput, setSizeInput] = useState('');
 
     useEffect(() => {
         // Fetch products from API
@@ -137,6 +140,7 @@ const handleSave = async () => {
       name: newName,
       price: Number(newPrice),
       img: newImage,
+      sizes: newSizes,
     }
 
     setProducts(prev => [...prev, newProduct])
@@ -388,6 +392,50 @@ const handleSave = async () => {
                 onChange={(e) => setNewName(e.target.value)}
                 className="w-full border rounded-lg px-3 py-2"
               />
+            </div>
+
+            {/* Sizes Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Available Sizes (Optional)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={sizeInput}
+                  onChange={(e) => setSizeInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. S, M, L"
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (sizeInput && !newSizes.includes(sizeInput)) {
+                      setNewSizes([...newSizes, sizeInput]);
+                      setSizeInput('');
+                    }
+                  }}
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {newSizes.map((size, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-sm px-3 py-1 rounded-full flex items-center gap-2"
+                  >
+                    {size}
+                    <button
+                      onClick={() =>
+                        setNewSizes(newSizes.filter((_, i) => i !== index))
+                      }
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Price (€)</label>

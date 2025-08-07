@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { useCartStore } from '@/app/trgovina/cartStore';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import axios from 'axios';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -18,6 +19,35 @@ type CartModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+
+interface OrderCustomer {
+  name: string;
+  email: string;
+  phone: string;
+  address: string | null;
+}
+
+interface OrderItem {
+  productId: string;
+  name: string;
+  size: string | null;
+  quantity: number;
+  price: number | string;
+  image: string;
+}
+
+interface OrderPayload {
+  customer: OrderCustomer;
+  items: OrderItem[];
+  totalItems: number;
+  totalPrice: number;
+  paymentMethod: string;
+  paymentStatus: 'paid' | 'pending';
+  deliveryMethod: string;
+  totalPayment: number;
+  status: string;
+}
 
 /**
  * Main component orchestrating the multi-step cart and payment modal.
@@ -27,6 +57,8 @@ type CartModalProps = {
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | ''>('');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -110,7 +142,47 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       setStep(prev => prev + 1);
     } else {
       setStep(prev => prev + 1);
-      Swal.fire('Naročilo poslano!', 'Hvala za nakup.', 'success');
+      // Get full address fields if delivery
+      let fullAddress = null;
+      if (deliveryMethod === 'delivery') {
+        const addressEl = document.querySelector('[data-step="3"] [name="address"]') as HTMLInputElement | null;
+        const cityEl = document.querySelector('[data-step="3"] [name="city"]') as HTMLInputElement | null;
+        const countryEl = document.querySelector('[data-step="3"] [name="country"]') as HTMLInputElement | null;
+        fullAddress = {
+          address: addressEl?.value || '',
+          city: cityEl?.value || '',
+          country: countryEl?.value || '',
+        };
+      }
+      axios.post<void, void, OrderPayload>('/api/orders', {
+        customer: {
+          name: name || '',
+          email,
+          phone: phone || '',
+          address: fullAddress ? `${fullAddress.address}, ${fullAddress.city}, ${fullAddress.country}` : '',
+        },
+        items: cart.map((item): OrderItem => ({
+          productId: item.id, // should be ObjectId in DB
+          name: item.name,
+          size: item.size,
+          quantity: item.quantity,
+          price: Number(item.price),
+          image: item.img,
+        })),
+        totalItems: cart.reduce((sum: number, item) => sum + item.quantity, 0),
+        totalPrice: Number(total.toFixed(2)),
+        paymentMethod: paymentMethod === 'cash' ? 'Cash on Delivery' : 'Credit Card',
+        paymentStatus: paid ? 'paid' : 'pending',
+        deliveryMethod: deliveryMethod === 'pickup' ? 'Pickup' : 'Home Delivery',
+        totalPayment: Number(total.toFixed(2)),
+        status: 'Pending',
+        // status and orderedAt are set by backend
+      }).then(() => {
+        Swal.fire('Naročilo uspešno!', 'Hvala za nakup.', 'success');
+      }).catch((err: unknown) => {
+        console.error('Error creating order:', err);
+        Swal.fire('Napaka pri naročilu', 'Poskusite ponovno kasneje.', 'error');
+      });
       clearCart();
       setEmail('');
       setDeliveryMethod('');
@@ -187,7 +259,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                         {(Number(item.price) * item.quantity).toFixed(2)} €
                       </p>
                     </div>
-                    <button onClick={() => handleRemove(item.id, item.size)} className="text-red-600 hover:text-red-800">
+                    <button onClick={() => handleRemove(item.id, item.size ?? '')} className="text-red-600 hover:text-red-800">
                       <FontAwesomeIcon icon={faXmark} />
                     </button>
                   </div>
@@ -256,22 +328,22 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 {deliveryMethod === 'pickup' ? (
                   <form className="flex flex-col gap-3 w-full">
                     <label className="font-semibold">Ime in priimek</label>
-                    <input name="name" placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="name" onChange={(e) => setName(e.target.value)} placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Telefon</label>
-                    <input name="phone" placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="phone" onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                   </form>
                 ) : deliveryMethod === 'delivery' ? (
                   <form className="flex flex-col gap-3 w-full">
                     <label className="font-semibold">Država</label>
-                    <input name="country" placeholder="Država" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="country" id='country' placeholder="Država" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Ime in priimek</label>
-                    <input name="name" placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="name" id='name' placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Telefon</label>
-                    <input name="phone" placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="phone" id='phone' placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Naslov</label>
-                    <input name="address" placeholder="Naslov" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="address" id='address' placeholder="Naslov" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Mesto</label>
-                    <input name="city" placeholder="Mesto" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="city" id='city' placeholder="Mesto" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                   </form>
                 ) : null}
               </div>
