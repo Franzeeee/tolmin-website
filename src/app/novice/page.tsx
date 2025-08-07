@@ -74,22 +74,28 @@ export default function Page() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-white overflow-hidden border border-gray-200">
-            <Image
-                src={`/news.png`}
-                alt={`News ${i + 1}`}
-                className="w-full h-40 object-cover"
-                width={400}
-                height={300}
-            />
-            <div className="p-3">
-                <span className="text-xs text-gray-500 block mb-1">Category • Aug 8, 2025</span>
-                <h4 className="text-md font-semibold text-gray-700 leading-snug mb-1">
-                News headline sample title number {i + 1}
-                </h4>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                Short description or excerpt for the news article goes here to give readers an idea.
-                </p>
-            </div>
+                <Image
+                    src={`/news.png`}
+                    alt={`News ${i + 1}`}
+                    className="w-full h-40 object-cover"
+                    width={400}
+                    height={300}
+                />
+                <div className="p-3">
+                    <span className="text-xs text-gray-500 block mb-1">Category • Aug 8, 2025</span>
+                    <h4 className="text-md font-semibold text-gray-700 leading-snug mb-1">
+                        News headline sample title number {i + 1}
+                    </h4>
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                        Short description or excerpt for the news article goes here to give readers an idea.
+                    </p>
+                    <a
+                        href="#"
+                        className="inline-block mt-2 text-sm text-red-600 hover:underline font-medium"
+                    >
+                        Read More
+                    </a>
+                </div>
             </div>
         ))}
         </div>
