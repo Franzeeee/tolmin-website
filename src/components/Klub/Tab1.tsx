@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faMusic, faPhone } from '@fortawesome/free-solid-svg-icons'
 
 export default function Tab1() {
     return(<>
@@ -91,7 +91,7 @@ export default function Tab1() {
             </p>
 
             <p className='text-lg text-gray-800 mb-4 text-justify '>
-               <span className='font-bold'><FontAwesomeIcon icon={faEnvelope} /> Himna NK Tolmin:</span> - Leon Oblak <a
+               <span className='font-bold'><FontAwesomeIcon icon={faMusic} /> Himna NK Tolmin:</span> - Leon Oblak <a
                  href="https://www.youtube.com/watch?v=cp5Ur_lthPY"
                  className="text-red-600 hover:underline"
                  target="_blank"
