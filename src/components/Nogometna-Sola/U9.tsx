@@ -12,10 +12,12 @@ type FootballSchool = {
   name?: string
 }
 
+
 const fetchFootballSchool = async (id: string): Promise<FootballSchool> => {
   const res = await axios.get(`/api/football-school/${id}`)
   return res.data
 }
+
 
 export default function U7() {
   const id = '6884cbebf71ec698fd833eb3'
@@ -32,26 +34,28 @@ export default function U7() {
 
   return (
     <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
-      {/* Left: Image */}
-      {!fetchedData?.img ? (
-        <div className="flex items-center justify-center w-full h-[300px] xl:w-[650px] xl:h-[500px] bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded relative overflow-hidden transition-all duration-700">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="glare-effect" />
-          </div>
-          <span className="relative z-10 text-gray-400 text-lg font-medium">Loading...</span>
+    {isLoading ? (
+      // SHOW LOADING PLACEHOLDER
+      <div className="flex items-center justify-center w-full h-[300px] xl:w-[650px] xl:h-[500px] bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded relative overflow-hidden transition-all duration-700">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="glare-effect" />
         </div>
-      ) : (
-        <div className="relative w-full aspect-[4/3] max-w-full xl:w-[650px] xl:aspect-square flex-shrink-0 rounded overflow-hidden">
-          <Image
-            src={fetchedData.img || '/U7.png'}
-            alt="Example"
-            fill
-            className="object-contain xl:object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 650px"
-            priority
-          />
-        </div>
-      )}
+        <span className="relative z-10 text-gray-400 text-lg font-medium">Loading...</span>
+      </div>
+    ) : fetchedData?.img?.trim() ? (
+      // SHOW IMAGE IF img IS NON-EMPTY
+      <div className="relative w-full max-h-[400px] aspect-video max-w-full xl:w-[650px] xl:max-h-[500px] flex-shrink-0 rounded overflow-hidden">
+        <Image
+          src={fetchedData.img}
+          alt="Team Image"
+          fill
+          className="object-contain"
+          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 650px"
+          priority
+        />
+      </div>
+    ) : null}
+
 
       {/* Right: Content */}
       <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins">

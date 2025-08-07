@@ -26,7 +26,6 @@ const Carousel: React.FC = () => {
 
     axios.get('/api/teams')
       .then(response => {
-        console.log('Teams fetched:', response.data);
         setCards(response.data.map((team: { _id: string | number, firstName: string, lastName: string, number: number, img?: string }) => ({
           id: team._id,
           firstName: team.firstName,
@@ -37,6 +36,13 @@ const Carousel: React.FC = () => {
       })
       .catch(error => {
         console.error('Error fetching teams:', error);
+        import ('sweetalert2').then(Swal => {
+          Swal.default.fire({
+            icon: 'error',
+            title: 'Failed to load player data',
+            text: 'There was an error fetching the player information. Please try again later.',
+          });
+        });
       });
   };
 

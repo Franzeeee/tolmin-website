@@ -22,7 +22,7 @@ const navItems = [
       { name: "Nogometni kamp 6.-9. razred", link: "/nogometna-sola/nogometni-kamp-6-9-razred" }
     ]
   },
-  { name: "Klub", link: "/klub" },
+  { name: "Novice", link: "/novice" },
   { name: "Zgodovina", link: "/zgodovina" },
   {
     name: "Člansko moštvo",
@@ -33,7 +33,7 @@ const navItems = [
       { name: "Statistika", link: "/zgodovina/statistika" }
     ]
   },
-  { name: "Arhiv", link: "#" },
+  { name: "Klub", link: "/klub" },
   { name: "Trgovina", link: "/trgovina" }
 ];
 

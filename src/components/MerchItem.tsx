@@ -22,7 +22,6 @@ const MerchItem: React.FC = () => {
   useEffect(() => {
     axios.get('/api/products')
       .then(response => {
-        console.log('Products fetched:', response.data);
         setCards(response.data.map((product: { _id: string | number, name: string, img?: string }) => ({
           id: product._id,
           label: product.name,
@@ -31,6 +30,13 @@ const MerchItem: React.FC = () => {
       })
       .catch(error => {
         console.error('Error fetching products:', error);
+        import('sweetalert2').then(Swal => {
+          Swal.default.fire({
+            icon: 'error',
+            title: 'Failed to load merch items',
+            text: 'There was an error fetching the products. Please try again later.',
+          });
+        });
       });
   }, []);
 
