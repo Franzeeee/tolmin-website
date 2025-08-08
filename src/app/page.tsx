@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainNav from '@/components/layout/MainNav';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Image from 'next/image';
@@ -9,8 +9,10 @@ import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
 import StadiumCarousel from '@/components/Home/StadiumCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faSoccerBall } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const slides = [
   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
@@ -39,6 +41,16 @@ const slideVariants: Variants = {
   }),
 };
 
+interface NewsArticle {
+  id: number;
+  _id: string;
+  title: string;
+  content: string;
+  description: string;
+  image: string
+  publishedAt: string;
+}
+
 export default function Page() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -51,6 +63,23 @@ export default function Page() {
     setDirection(-1);
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
+
+  const [news, setNews] = useState<NewsArticle[]>([]);
+
+  useEffect(() => {
+    axios.get('/api/news')
+      .then((response) => {
+        console.log(response.data);
+        setNews(response.data);
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error fetching news',
+          text: error.message,
+        });
+      });
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
@@ -208,64 +237,126 @@ export default function Page() {
 
             <div className='flex flex-col lg:grid [grid-template-rows:.8fr_1.2fr] md:[grid-template-rows:1fr_1fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-5'>
               {/* Main News */}
-              <motion.div 
-                className='relative p-5 min-h-[400px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-[650px]'
+              <motion.div
+                onClick={() => (window.location.href = `/novice/${news[0]?._id}`)}
+                className='relative p-5 min-h-[400px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-[650px] cursor-pointer group'
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: .9, ease: "easeOut" }}
                 viewport={{ once: true }}
               >
                 <Image
-                  src='/news.png'
-                  alt="News Image"
+                  src={news[0]?.image || '/news.png'}
+                  alt={news[0]?.title || 'News Image'}
                   fill
                   className='object-cover w-full h-full'
                   style={{ objectFit: 'cover' }}
                 />
-                <div className='absolute w-full px-2 sm:px-6 left-0 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50'>
-                  <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>NOVICE SPREMLJAJTE NA NAŠI FB IN IG STRANI</h1>
-                  <p className='text-right py-2'>May 22, 2025 </p>
+                <div className='absolute w-full px-2 sm:px-6 left-0 bottom-0 flex flex-col justify-end text-white p-4 h-50 transition-all duration-500'>
+                  {/* Red gradient overlay */}
+                  <div className="absolute left-0 bottom-0 w-full h-full pointer-events-none z-0 transition-all duration-500 bg-gradient-to-t from-red-600/50 via-black/50 to-transparent opacity-70 group-hover:from-red-600/90 group-hover:opacity-90"></div>
+                  <div className="relative z-10">
+                    <h1 className='text-4xl font-bold poppins max-w-[80%] leading-snug'>{news[0]?.title || 'News Title'}</h1>
+                    <p className='text-right py-2'>
+                      {news[0]?.publishedAt
+                        ? new Date(news[0].publishedAt).toLocaleDateString('sl-SI', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })
+                        : 'Datum ni na voljo'}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
 
               {/* Additional News */}
-              <div className='flex gap-3 flex-col'>
-              {Array.from({ length: 4 }).map((_, idx) => (
-                <motion.div
-                key={idx}
-                className='flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500'
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1}}
-                transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
-                viewport={{ once: true }}
-                >
-                <Image
-                  src='/news.png'
-                  alt='Thumb'
-                  width={230}
-                  height={800}
-                  className='object-cover w-full sm:w-[200px]'
-                />
-                <div className='flex gap-1 flex-col w-full'>
-                  <p className='text-left text-xs text-gray-500 lg:text-right'>May 22, 2025</p>
-                  <h1 className='font-semibold text-lg'>TKK TOLMIN 0:4 TRIGLAV KRANJ</h1>
+              <div className="flex gap-3 flex-col h-full justify-between">
+                <div className="flex gap-3 flex-col flex-1">
+                  {news.length > 1 ? (
+                    news.slice(1, 5).map((item, idx) => (
+                      <motion.div
+                        key={item._id || idx}
+                        className="flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
+                        viewport={{ once: true }}
+                        onClick={() => (window.location.href = `/novice/${item._id}`)}
+                      >
+                        <Image
+                          src={item.image || '/news.png'}
+                          alt="Thumb"
+                          width={230}
+                          height={800}
+                          className="object-cover w-full sm:w-[200px]"
+                        />
+                        <div className="flex gap-1 flex-col w-full">
+                          <p className="text-left text-xs text-gray-500 lg:text-right">
+                            {item.publishedAt
+                              ? new Date(item.publishedAt).toLocaleDateString('sl-SI', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                })
+                              : ''}
+                          </p>
+                          <h1 className="font-semibold text-lg">{item.title}</h1>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                      <motion.div
+                      animate={{
+                        y: [0, -30, 0],
+                      }}
+                      transition={{
+                        repeat: Infinity,
+                        repeatType: "loop",
+                        duration: 1,
+                        ease: "easeInOut",
+                      }}
+                      className="mb-2"
+                      >
+                      <FontAwesomeIcon icon={faSoccerBall} className="text-6xl mb-2 text-red-600" spin bounce />
+                      </motion.div>
+                      <span
+                        className="text-lg font-semibold animate-pulse"
+                        style={{
+                          animation: "pulse-red-gray 2s infinite"
+                        }}
+                      >
+                        No additional news to display
+                      </span>
+                      <style jsx global>{`
+                        @keyframes pulse-red-gray {
+                          0%, 100% {
+                            color: #dc2626; /* red-600 */
+                          }
+                          50% {
+                            color: #6b7280; /* gray-500 */
+                          }
+                        }
+                      `}</style>
+                    </div>
+                    )}
                 </div>
-                </motion.div>
-              ))}
-
-              <div className='border-t-4 border-gray-200 pt-3'>
-                <motion.button
-                onClick={() => window.location.href = '/novice'}
-                whileHover={{ scale: 1.01, backgroundColor: "#b91c1c" }}
-                whileTap={{ scale: 1 }}
-                className='w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700'
-                >
-                See more
-                </motion.button>
+                {news.length > 6 && (
+                  <div className="border-t-4 border-gray-200 pt-3">
+                    <motion.button
+                      onClick={() => (window.location.href = '/novice')}
+                      whileHover={{ scale: 1.01, backgroundColor: "#b91c1c" }}
+                      whileTap={{ scale: 1 }}
+                      className="w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700"
+                    >
+                      See more
+                    </motion.button>
+                  </div>
+                )}
               </div>
 
               </div>
-            </div>
           </section>
 
 

@@ -169,7 +169,7 @@ export default function Content() {
               plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
                 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'textcolor', 'hr'
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'hr'
               ],
               toolbar:
                 'undo redo | formatselect fontsize | bold italic underline forecolor backcolor | ' +

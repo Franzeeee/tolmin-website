@@ -8,6 +8,7 @@ import Loading from '@/components/Loading';
 import axios from 'axios';
 
 interface News {
+  _id: string;
   title: string;
   description: string;
   image: string;
@@ -112,7 +113,7 @@ export default function Page() {
                 <p className="text-gray-600 text-sm">
                     {featured.description || <span className="italic text-gray-400">No description available.</span>}
                 </p>
-                <a href="#" className="text-sm text-red-600 mt-3 hover:underline">
+                <a href={`novice/${featured._id}`} className="text-sm text-red-600 mt-3 hover:underline">
                   Read More
                 </a>
               </div>
