@@ -255,6 +255,7 @@ export default function Page() {
 
               <div className='border-t-4 border-gray-200 pt-3'>
                 <motion.button
+                onClick={() => window.location.href = '/novice'}
                 whileHover={{ scale: 1.01, backgroundColor: "#b91c1c" }}
                 whileTap={{ scale: 1 }}
                 className='w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700'
