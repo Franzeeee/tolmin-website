@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { useParams } from 'next/navigation';
 
 
 const Editor = dynamic(() =>
@@ -15,12 +16,34 @@ const Editor = dynamic(() =>
 );
 
 export default function Content() {
+  const { id } = useParams();
+
   const [editorContent, setEditorContent] = useState('');
   const [preview, setPreview] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [newsTitle, setNewsTitle] = useState('');
   const [description, setDescription] = useState('');
+
+
+useEffect(() => {
+  if (!id) return;
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(`/api/news/${id}`);
+      setEditorContent(data.content || '');
+      setPreview(data.image || '');
+      setNewsTitle(data.title || '');
+      setDescription(data.description || '');
+    } catch (error) {
+      console.error('Error fetching news data:', error);
+    }
+  };
+
+  fetchData();
+}, [id]);
+
 
   // Handle image input and preview
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +84,7 @@ export default function Content() {
         uploadedUrl = uploadData.url;
       }
 
-      await axios.post(`/api/news`, {
+      await axios.put(`/api/news/${id}`, {
         title: newsTitle,
         image: uploadedUrl,
         content: editorContent,
@@ -70,9 +93,11 @@ export default function Content() {
 
       Swal.fire({
         icon: 'success',
-        title: 'Successfully created!',
+        title: 'Successfully updated!',
         showConfirmButton: false,
         timer: 1500,
+      }).then(() => {
+        window.location.href = '/admin/news';
       });
     } catch (err) {
       console.error('Failed to create:', err);
@@ -88,9 +113,9 @@ export default function Content() {
   return (
     <div className="space-y-6">
       <a href="/admin/news" className='text-red-600'><FontAwesomeIcon icon={faArrowLeft} /> Go to News Overviews</a>
-      <h2 className="text-lg font-semibold text-gray-700 mt-3">Novice - Ustvari</h2>
+      <h2 className="text-lg font-semibold text-gray-700 mt-3">Novica - Posodobi - <span className='text-red-600'>{newsTitle}</span></h2>
       <p className="text-gray-600">
-        Uporabite ta obrazec za ustvarjanje in objavo nove novice za Tolmin.
+        Uporabite ta obrazec za posodobitev in objavo nove novice za Tolmin.
       </p>
 
         <div className="space-y-6">
@@ -169,7 +194,7 @@ export default function Content() {
               plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
                 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'textcolor', 'hr'
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'hr'
               ],
               toolbar:
                 'undo redo | formatselect fontsize | bold italic underline forecolor backcolor | ' +
