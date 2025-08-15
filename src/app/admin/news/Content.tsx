@@ -76,26 +76,6 @@ export default function ShopPage() {
           This is the admin section where you can manage your club&#39;s news articles.
         </p>
       </div>
-{/* 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Total Articles</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">10</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Total Views</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">56</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Revenue</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">€1,200</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Customer Inquiries</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">5</p>
-        </div>
-      </div> */}
-
       {/* Products Grid */}
       <div className="flex items-center justify-between lg:mb-8">
         <h2 className="text-2xl font-semibold text-gray-700">Novice</h2>
