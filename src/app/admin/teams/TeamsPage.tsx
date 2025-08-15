@@ -182,12 +182,91 @@ export default function TeamsPage() {
     { label: 'Staff', key: 'staff' },
   ];
 
+  const handleAddOldSeasonTeam = async () => {
+    const { value: result } = await Swal.fire({
+      title: 'Add Old Season Team',
+      confirmButtonColor: '#ef4444',
+      showCancelButton: true,
+      showLoaderOnConfirm: true,
+      html: `
+      <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; font-family: sans-serif;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label for="swal-input-season" style="font-size: 13px; color: #444; font-weight: 500;">
+          Season
+        </label>
+        <input 
+          id="swal-input-season"
+          placeholder="e.g. 2022/2023"
+          style="border-radius: 6px; border: 1px solid #ccc; padding: 8px; font-size: 14px; width: 100%; box-sizing: border-box;"
+        >
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label for="swal-input-file" style="font-size: 13px; color: #444; font-weight: 500;">
+          Team Image
+        </label>
+        <input 
+          type="file" 
+          id="swal-input-file"
+          accept="image/*"
+          style="border-radius: 6px; border: 1px solid #ccc; padding: 6px; background: #f9f9f9; font-size: 13px; width: 100%; box-sizing: border-box;"
+        >
+        </div>
+      </div>
+      `,
+      focusConfirm: false,
+      preConfirm: async () => {
+      const season = (document.getElementById('swal-input-season') as HTMLInputElement)?.value;
+      const fileInput = document.getElementById('swal-input-file') as HTMLInputElement;
+      const file = fileInput?.files ? fileInput.files[0] : null;
+
+      if (!season) {
+        Swal.showValidationMessage('Please enter a season');
+        return;
+      }
+      if (!file) {
+        Swal.showValidationMessage('Please select an image');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadResponse = await axios.post('/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        return { img: uploadResponse.data.url, season };
+      } catch (error) {
+        Swal.showValidationMessage('Upload failed. Please try again.');
+        console.log(error)
+      }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+
+    if (!result) return;
+
+    await axios.post('/api/old-team', { image: result.img, season: result.season });
+    Swal.fire('Added!', `Old season team for "${result.season}" has been added.`, 'success');
+
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold text-gray-700">Team Management</h2>
       <p className="text-gray-600">
         Manage and organize your teams by their respective roles in the club.
       </p>
+
+      <div className='w-full flex gap-2'>
+        <button onClick={handleAddOldSeasonTeam} className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded'>
+          Add Old Season Team
+        </button>
+        <button className='bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded'>
+          View Old Season Teams
+        </button>
+      </div>
 
       {categories.map(cat => {
         const filteredTeams = teams.filter(t => t.position.toLowerCase() === cat.key);

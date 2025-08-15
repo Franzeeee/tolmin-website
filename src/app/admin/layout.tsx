@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: 'Pravilniki', href: '/admin/pravilniki' },
         { name: 'Bradja', href: '/admin/bradja' },
       ]
-     },
+    },
     {
       name: 'Football School',
       submenu: [
@@ -40,13 +40,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ],
     },
     { name: 'Photo History', href: '/admin/photo-history' },
-    { name: 'Teams', href: '/admin/teams' },
+    { name: 'Članstvo Moštvo', submenu: [
+      { name: 'Ekipa', href: '/admin/teams' },
+      { name: 'Create', href: '/admin/clanstvo-mostvo/create' },
+      { name: 'Edit', href: '/admin/clanstvo-mostvo/edit/[id]', visible: false, dynamic: true },
+    ]},
+    { name: 'News', submenu: [
+      { name: 'News Overview', href: '/admin/news' },
+      { name: 'Create News', href: '/admin/news/create' },
+      { name: 'Edit News', href: '/admin/news/edit/[id]', visible: false, dynamic: true },
+    ]},
     { name: 'Shop', submenu: [
       { name: 'Shop Overview', href: '/admin/shop' },
       { name: 'Orders', href: '/admin/shop/orders' },
       // { name: 'Customers', href: '/admin/shop/customers' },
     ]},
   ]
+
 
   const handleLogout = () => {
     axios.post('/api/logout')
@@ -84,9 +94,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 >
                 <button
                   className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                    item.submenu.some(sub => pathname === sub.href)
-                      ? 'bg-red-500 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                  item.submenu.some(sub => pathname === sub.href || pathname.startsWith(sub.href))
+                    ? 'bg-red-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {item.name}
@@ -96,17 +106,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {openDropdown === item.name && (
                     <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-40">
                       {item.submenu.map((sub) => (
-                        <Link
-                          key={sub.name}
-                          href={sub.href}
-                          className={`block px-4 py-2 text-sm ${
-                            pathname === sub.href
-                              ? 'bg-red-500 text-white'
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          {sub.name}
-                        </Link>
+                        (sub.visible !== false) && (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            className={`block px-4 py-2 text-sm ${
+                              pathname === sub.href
+                                ? 'bg-red-500 text-white'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            {sub.name}
+                          </Link>
+                        )
                       ))}
                     </div>
                   )}
@@ -175,17 +187,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     {openMobileSubmenu === item.name && (
                       <div className="pl-4 space-y-1">
                         {item.submenu.map((sub) => (
-                          <Link
-                            key={sub.name}
-                            href={sub.href}
-                            className={`block px-3 py-2 rounded-md text-sm ${
-                              pathname === sub.href
-                                ? 'bg-red-500 text-white'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                          >
-                            {sub.name}
-                          </Link>
+                          (sub.visible !== false) && (
+                            <Link
+                              key={sub.name}
+                              href={sub.href}
+                              className={`block px-3 py-2 rounded-md text-sm ${
+                                pathname === sub.href
+                                  ? 'bg-red-500 text-white'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              {sub.name}
+                            </Link>
+                          )
                         ))}
                       </div>
                     )}

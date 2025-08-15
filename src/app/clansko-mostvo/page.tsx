@@ -63,35 +63,43 @@ export default function Page() {
 
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
-          <div className='relative w-full p-3 flex flex-row items-center justify-between'>
+            <div className='relative w-full p-3 flex flex-row items-center justify-between'>
             <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none'>
               {tabs.map((tab) => (
-                <li
-                  key={tab.name}
-                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                    currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
-                  }`}
-                  onClick={() => setActiveTab(tab.name)}
-                  onMouseEnter={() => setHoveredTab(tab.name)}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
-                    {tab.name}
-                  </Link>
-                  {currentTab === tab.name && (
-                    <motion.div
-                      layoutId="underline"
-                      className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
-                      transition={{ type: "spring", stiffness: 500, damping: 60 }}
-                    />
-                  )}
-                </li>
+              <li
+                key={tab.name}
+                className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+                currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
+                }`}
+                onClick={() => setActiveTab(tab.name)}
+                onMouseEnter={() => setHoveredTab(tab.name)}
+                onMouseLeave={() => setHoveredTab(null)}
+              >
+                <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
+                {tab.name}
+                </Link>
+                {currentTab === tab.name && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+                  transition={{ type: "spring", stiffness: 500, damping: 60 }}
+                />
+                )}
+              </li>
               ))}
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
-          </ul>
-              <Dropdown items={["1", "2"]} />
-          </div>
+            </ul>
+              <Dropdown items={[
+              "2020-2021",
+              "2019-2020",
+              "2018-2019",
+              "2017-2018",
+              "2016-2017",
+              "2015-2016",
+              "2014-2015"
+              ]} />
+            </div>
         </section>
 
         {/* GoalKeeper Section */}

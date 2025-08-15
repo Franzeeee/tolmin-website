@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, img, price } = body
+    const { name, img, price, sizes } = body
 
     const productsCollection = await getCollection('products')
     if (!productsCollection) {
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
         name,
         img: img,
         price: price,
+        sizes: sizes || [], // Optional sizes array
         createdAt: new Date(),
     })
 

@@ -41,16 +41,16 @@ export default function U7() {
           <span className="relative z-10 text-gray-400 text-lg font-medium">Loading...</span>
         </div>
       ) : (
-        <div className="relative w-full aspect-[4/3] max-w-full xl:w-[650px] xl:aspect-square flex-shrink-0 rounded overflow-hidden">
-          <Image
-            src={fetchedData.img || '/U7.png'}
-            alt="Example"
-            fill
-            className="object-contain xl:object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 650px"
-            priority
-          />
-        </div>
+        <div className="relative w-full max-h-[400px] aspect-video max-w-full xl:w-[650px] xl:max-h-[500px] flex-shrink-0 rounded overflow-hidden">
+                <Image
+                  src={fetchedData.img}
+                  alt="Team Image"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 650px"
+                  priority
+                />
+              </div>
       )}
 
       {/* Right: Content */}

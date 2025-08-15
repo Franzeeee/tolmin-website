@@ -6,7 +6,7 @@ type CartItem = {
   name: string
   price: string
   img: string
-  size: string
+  size: string | null
   priceWithTax?: string
   quantity: number
 }

@@ -1,19 +1,30 @@
-import mongoose, { Document, Model, models, Schema } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
-export interface INews extends Document {
-  title: string;
-  content: string;
-  publishedAt: Date;
-  author?: string;
-}
+const newsSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    publishedAt: {
+      type: Date,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const NewsSchema = new Schema<INews>({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  publishedAt: { type: Date, required: true },
-  author: { type: String },
-});
-
-const News: Model<INews> = models.News || mongoose.model<INews>('News', NewsSchema);
-
+const News = models.News || model('News', newsSchema);
 export default News;

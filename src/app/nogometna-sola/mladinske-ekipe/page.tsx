@@ -52,7 +52,7 @@ export default function Page() {
             }}
             className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
           >
-            Člansko moštvo - tekme
+            Mladinske-ekipe
           </motion.h1>
         </div>
       </header>

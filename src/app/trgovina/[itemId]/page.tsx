@@ -27,13 +27,13 @@ export type CartItem = {
   img: string;
   priceWithTax?: string;
   quantity: number;
-  size: string; // Added size property
+  size: string | null;
 };
 
 export default function Page() {
   const { itemId } = useParams();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const sizes = ['8 let', '10 let', '12 let', 'S', 'M', 'L', 'XL'];
+  const [sizes, setSizes] = useState<CartItem['size'][]>();
   const [item, setItem] = useState<Item | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -51,17 +51,18 @@ useEffect(() => {
     const response = await axios.get(`/api/products/${itemId}`);
     const data = response.data;
     setItem(data);
+    setSizes(data.sizes || []); // Set sizes if available
   };
 
   function addToCart(product: { quantity: number; id?: string; name?: string; price?: string; img?: string; priceWithTax?: string }) {
-    if (!item || !selectedSize) {
+    if (!item) {
       // Optionally show a message to select size or wait for item to load
       return;
     }
     // Add selected size to the product object
     useCartStore.getState().addToCart({
       ...item,
-      size: selectedSize,
+      size: selectedSize || 'N/A', // Use selected size or null if not selected
       quantity: product.quantity,
     });
     Swal.fire({
@@ -103,7 +104,7 @@ useEffect(() => {
             }}
             className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase"
           >
-            Sponzorji in donatorji
+            Trgovina - {item ? item.name : 'Nalaganje...'}
           </motion.h1>
         </div>
       </header>
@@ -183,9 +184,11 @@ useEffect(() => {
 
               {/* Size Selector */}
               <div>
-                <p className="mb-2 font-medium">Izberite velikost:</p>
+                {sizes && sizes.length > 0 && (
+                  <p className="mb-2 font-medium">Izberite velikost:</p>
+                )}
                 <div className="flex flex-wrap gap-2">
-                  {sizes.map((size) => (
+                  {sizes?.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}

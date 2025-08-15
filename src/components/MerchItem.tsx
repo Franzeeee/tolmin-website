@@ -3,14 +3,42 @@ import '../../public/styles/player-carousel.css';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import axios from 'axios';
+
+type Product = {
+  id: string | number;
+  label: string;
+  img?: string;
+};
 
 const MerchItem: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const cardsPerPage = 4;
-  const cards = ['Card 1', 'Card 2', 'Card 3', 'Card 4', 'Card 5', 'Card 6', 'Card 7', 'Card 8'];
+  const [cards, setCards] = useState<Product[]>([]);
   const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+  useEffect(() => {
+    axios.get('/api/products')
+      .then(response => {
+        setCards(response.data.map((product: { _id: string | number, name: string, img?: string }) => ({
+          id: product._id,
+          label: product.name,
+          img: product.img
+        })));
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+        import('sweetalert2').then(Swal => {
+          Swal.default.fire({
+            icon: 'error',
+            title: 'Failed to load merch items',
+            text: 'There was an error fetching the products. Please try again later.',
+          });
+        });
+      });
+  }, []);
 
   // Scroll detection for dots
   const handleScroll = () => {
@@ -68,7 +96,7 @@ const MerchItem: React.FC = () => {
       </button>
 
       <div className="carousel-track" ref={trackRef}>
-        {cards.map((label, i) => (
+        {cards.map((item, i) => (
           <div className="card text-black" key={i}>
             <motion.div
               className='relative h-full w-full border-2 border-gray-200'
@@ -79,7 +107,7 @@ const MerchItem: React.FC = () => {
             >
               <div className={`w-full h-[350px] flex items-center justify-center bg-gray-200`}>
                 <Image
-                  src='/Merch/item1.png'
+                  src={item.img || '/Merch/item1.png'}
                   alt="News Image"
                   className='object-cover'
                   height={250}
@@ -88,9 +116,9 @@ const MerchItem: React.FC = () => {
               </div>
                 <div className="p-5 pt-2">
                   <a href="#">
-                      <h5 className="mb-2 text-lg text-center tracking-tight text-gray-700">Dres NK TKK Tolmin</h5>
+                      <h5 className="mb-2 text-lg text-center tracking-tight text-gray-700">{item.label}</h5>
                   </a>
-                  <a href="#" className="inline-flex justify-center items-center w-full px-3 py-2 text-lg uppercase font-medium text-center text-white bg-gray-900 hover:bg-gray-950 focus:ring-1 focus:outline-none focus:ring-gray-500">
+                  <a href={`/trgovina/${item.id}`} className="inline-flex justify-center items-center w-full px-3 py-2 text-lg uppercase font-medium text-center text-white bg-gray-900 hover:bg-gray-950 focus:ring-1 focus:outline-none focus:ring-gray-500">
                       Buy Now
                   </a>
               </div>
