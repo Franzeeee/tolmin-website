@@ -42,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Photo History', href: '/admin/photo-history' },
     { name: 'Članstvo Moštvo', submenu: [
       { name: 'Ekipa', href: '/admin/teams' },
-      { name: 'Create', href: '/admin/clanstvo-mostvo/create' },
+      { name: 'Tekme', href: '/admin/clansko-tekme' },
       { name: 'Edit', href: '/admin/clanstvo-mostvo/edit/[id]', visible: false, dynamic: true },
     ]},
     { name: 'News', submenu: [
