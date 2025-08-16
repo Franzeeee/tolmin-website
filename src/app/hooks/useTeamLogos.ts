@@ -1,0 +1,36 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
+
+type TeamLogoResponse = {
+  img_id: string;
+};
+
+export function useTeamLogos(teamIds: string[]) {
+  return useQuery({
+    queryKey: ["team-logos", teamIds],
+    queryFn: async () => {
+      const logos: Record<string, string> = {};
+
+      for (const teamId of teamIds) {
+        try {
+          const { data } = await axios.get<TeamLogoResponse>(
+            `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
+          );
+
+          console.log(data)
+          const imgId = data.img_id;
+
+          // ✅ Correct Soccerway logo URL format
+          logos[teamId] = `https://static.soccerway.com/team/${imgId}/participant-logo-mobile-100x100/image.png`;
+        } catch (err) {
+          console.error("Failed fetching logo for team:", teamId, err);
+        }
+      }
+
+      return logos;
+    },
+    staleTime: 1000 * 60 * 60 * 24, // cache logos for 1 day
+  });
+}
