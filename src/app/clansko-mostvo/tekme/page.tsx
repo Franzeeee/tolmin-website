@@ -35,6 +35,7 @@ export default function Page() {
   [season: string]: {
     enemy: string;
     score: string;
+    status: string
   }[];
 };
 
@@ -74,6 +75,7 @@ type Match = {
     name?: string;
   };
   teams: [Team, Team];
+  o_status: string;
 };
 
 const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: string[] }> => {
@@ -108,8 +110,9 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
           score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
         }
 
+        console.log(`Match: ${teamA.name} vs ${teamB.name}, Score: ${score}, Season: ${season}, Status: ${match.o_status}`);
         if (!result[season]) result[season] = [];
-        result[season].push({ enemy, score });
+        result[season].push({ enemy, score, status: match.o_status });
       });
     } catch (error) {
       console.error("Error fetching tekme from", link, error);
