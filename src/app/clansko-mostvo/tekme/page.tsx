@@ -39,6 +39,7 @@ export default function Page() {
     stage: {
       st_name: string;
     };
+    start: number;
   }[];
 };
 
@@ -83,6 +84,7 @@ type Match = {
   stage: {
     st_name: string;
   };
+  start: number;
 };
 
 const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: string[] }> => {
@@ -122,6 +124,7 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
           score,
           status: match.o_status,
           stage: { st_name: match.stage.st_name },
+          start: match.start
         });
       });
     } catch (error) {
@@ -165,6 +168,25 @@ useEffect(() => {
     console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
   }
 }, [selectedSeason]);
+
+function formatMatchDate(unixTimestamp: number): string {
+  const date = new Date(unixTimestamp * 1000); // convert seconds → ms
+
+  const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const months = [
+    "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+    "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+  ];
+
+  const day = days[date.getUTCDay()];
+  const d = date.getUTCDate().toString().padStart(2, "0");
+  const month = months[date.getUTCMonth()];
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+
+  return `${day} ${d} ${month} — ${hours}:${minutes}`;
+}
+
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -250,7 +272,7 @@ useEffect(() => {
                     <div className="w-full h-full">
                       <div className="font-extrabold text-base">{match.stage.st_name}</div>
                       <div className="text-sm">
-                        SUN 25 MAY — 23:00 — ŠPORTNI PARK BRAJDA
+                        {formatMatchDate(match.start)} — ŠPORTNI PARK BRAJDA
                       </div>
                     </div>
                     <div className="text-3xl flex items-end justify-end h-full md:absolute md:-bottom-0.5 md:left-0">
