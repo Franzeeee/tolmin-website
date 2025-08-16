@@ -238,7 +238,7 @@ useEffect(() => {
                   {/* Left: Match Info & Home Team */}
                   <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
                     <div className="w-full h-full">
-                      <div className="font-extrabold text-base">{match.phase_info.name}</div>
+                      <div className="font-extrabold text-base">{match.stage.st_name}</div>
                       <div className="text-sm">
                         SUN 25 MAY — 23:00 — ŠPORTNI PARK BRAJDA
                       </div>
