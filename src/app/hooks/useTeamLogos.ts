@@ -4,9 +4,7 @@ import axios from "axios";
 const corsProxy = "https://cors-anywhere.herokuapp.com/";
 
 type TeamLogoResponse = {
-  participant: {
-    img_id: string;
-  };
+  img_id: string;
 };
 
 export function useTeamLogos(teamIds: string[]) {
@@ -21,7 +19,8 @@ export function useTeamLogos(teamIds: string[]) {
             `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
           );
 
-          const imgId = data.participant.img_id;
+          console.log(data)
+          const imgId = data.img_id;
 
           // ✅ Correct Soccerway logo URL format
           logos[teamId] = `https://static.soccerway.com/img/teams/1/${imgId}.png`;
