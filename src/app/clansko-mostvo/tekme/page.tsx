@@ -129,13 +129,9 @@ useEffect(() => {
   if (data) {
     setOrganizedMatches(data.organized);
     setSeasons(data.seasons);
+    setSelectedSeason(data.seasons[0] || null);
   }
 }, [data]);
-
-useEffect(() => {
-  console.log("organizedMatches:", organizedMatches);
-  console.log("seasons:", seasons);
-}, [organizedMatches, seasons]);
 
 const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
