@@ -45,6 +45,7 @@ const [seasons, setSeasons] = useState<string[]>([]);
 const corsProxy = "https://cors-anywhere.herokuapp.com/";
 
 const [links] = useState<string[]>([
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/team/11005`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&limit=20&onlydetails=true`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&onlydetails=true`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=30&onlydetails=true`,
