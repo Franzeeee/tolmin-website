@@ -98,7 +98,9 @@ export default function Page() {
               "2016-2017",
               "2015-2016",
               "2014-2015"
-              ]} />
+              ]} 
+              onSelect={() => {}}
+              />
             </div>
         </section>
 
