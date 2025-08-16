@@ -48,7 +48,7 @@ const [seasons, setSeasons] = useState<string[]>([]);
 const corsProxy = "https://cors-anywhere.herokuapp.com/";
 
 const [links] = useState<string[]>([
-  `${corsProxy}https://int.soccerway.com/legacy/v1/english/team/11005`,
+  `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/11005/`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&limit=20&onlydetails=true`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&onlydetails=true`,
   `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=30&onlydetails=true`,
@@ -223,11 +223,11 @@ useEffect(() => {
         <section className='w-full min-h-content p-2 px-5 overflow-hidden pb-12'>
           
           <div className='w-full flex flex-col mb-12'>
-            <div className='border-b-2 border-gray-200 mb-4 pb-2'>
+            {/* <div className='border-b-2 border-gray-200 mb-4 pb-2'>
               <h1 className="text-5xl font-bold text-left mt-2 uppercase text-gray-200">
                 May 2025
               </h1>
-            </div>
+            </div> */}
 
             <div className="w-full grid gap-4">
               {(selectedSeason && organizedMatches[selectedSeason] ? organizedMatches[selectedSeason] : []).map((match, i) => (
