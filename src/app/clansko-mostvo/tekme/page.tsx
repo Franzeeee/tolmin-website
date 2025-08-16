@@ -129,7 +129,7 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
   return { organized: result, seasons: Array.from(seasonSet) };
 };
 
-const { data } = useQuery({
+const { data, isLoading, error } = useQuery({
   queryKey: ['tekme-matches'],
   queryFn: fetchAllMatches,
   staleTime: 1000 * 60 * 60 * 24, // 1 day
@@ -216,7 +216,7 @@ useEffect(() => {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
           </ul>
-              <Dropdown label={selectedSeason ? selectedSeason : "Failed to Load Season"} items={seasons} onSelect={handleSelectedSeason} />
+              <Dropdown label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined} items={seasons} onSelect={handleSelectedSeason} />
           </div>
         </section>
 
