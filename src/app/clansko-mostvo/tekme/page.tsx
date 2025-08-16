@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
@@ -10,6 +10,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/components/Loading';
+import { useTeamLogos } from '@/app/hooks/useTeamLogos';
 
 export default function Page() {
   const pathname = usePathname();
@@ -34,6 +35,7 @@ export default function Page() {
   type OrganizedData = {
     [season: string]: {
       enemy: string;
+      enemyId: string; // Added team ID
       score: string;
       status: string;
       stage: {
@@ -109,19 +111,23 @@ export default function Page() {
 
           const [teamA, teamB] = match.teams;
           let enemy = "";
+          let enemyId = "";
           let score = "";
 
           if (teamA.id === "11005") {
             enemy = teamB.name;
+            enemyId = teamB.id;
             score = `${teamA.scores.RUNNING ?? "0"} - ${teamB.scores.RUNNING ?? "0"}`;
           } else {
             enemy = teamA.name;
+            enemyId = teamA.id;
             score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
           }
 
           if (!result[season]) result[season] = [];
           result[season].push({
             enemy,
+            enemyId, // Store the enemy team ID
             score,
             status: match.o_status,
             stage: { st_name: match.stage.st_name },
@@ -163,12 +169,27 @@ export default function Page() {
     setSelectedSeason(season);
   };
 
+  // Extract unique team IDs from current season matches
+  const currentSeasonTeamIds = useMemo(() => {
+    if (!selectedSeason || !organizedMatches[selectedSeason]) return [];
+    
+    const teamIds = organizedMatches[selectedSeason]
+      .map(match => match.enemyId)
+      .filter((id, index, arr) => arr.indexOf(id) === index); // Remove duplicates
+    
+    return teamIds;
+  }, [selectedSeason, organizedMatches]);
+
+  // Fetch logos for current season teams
+  const { data: teamLogos, isLoading: logosLoading } = useTeamLogos(currentSeasonTeamIds);
+
   useEffect(() => {
     if (selectedSeason) {
       console.log("Selected season:", selectedSeason);
       console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
+      console.log("Team IDs for logos:", currentSeasonTeamIds);
     }
-  }, [selectedSeason]);
+  }, [selectedSeason, currentSeasonTeamIds]);
 
   // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {
@@ -289,12 +310,21 @@ export default function Page() {
                       <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
                         {match.score.replace(' - ', ' : ')}
                       </div>
+                      {/* Dynamic enemy logo */}
                       <Image
-                        src="/enemy-logo.png"
+                        src={
+                          logosLoading 
+                            ? "/enemy-logo.png" // fallback while loading
+                            : teamLogos?.[match.enemyId] || "/enemy-logo.png" // use fetched logo or fallback
+                        }
                         alt={match.enemy}
                         width={50}
                         height={50}
                         className="w-10 h-10 md:w-[60px] md:h-[60px]"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          (e.target as HTMLImageElement).src = "/enemy-logo.png";
+                        }}
                       />
                     </div>
                   </div>
