@@ -89,7 +89,7 @@ export default function Page() {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
           </ul>
-              <Dropdown items={["1", "2"]} />
+              <Dropdown items={["1", "2"]} onSelect={() => {}} />
           </div>
         </section>
 
