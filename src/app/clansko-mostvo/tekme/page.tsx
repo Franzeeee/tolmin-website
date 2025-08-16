@@ -1,16 +1,15 @@
 'use client'
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/components/Loading';
-import { useTeamLogos } from '@/app/hooks/useTeamLogos';
 
 export default function Page() {
   const pathname = usePathname();
@@ -169,27 +168,13 @@ export default function Page() {
     setSelectedSeason(season);
   };
 
-  // Extract unique team IDs from current season matches
-  const currentSeasonTeamIds = useMemo(() => {
-    if (!selectedSeason || !organizedMatches[selectedSeason]) return [];
-    
-    const teamIds = organizedMatches[selectedSeason]
-      .map(match => match.enemyId)
-      .filter((id, index, arr) => arr.indexOf(id) === index); // Remove duplicates
-    
-    return teamIds;
-  }, [selectedSeason, organizedMatches]);
-
-  // Fetch logos for current season teams
-  const { data: teamLogos, isLoading: logosLoading } = useTeamLogos(currentSeasonTeamIds);
-
-  useEffect(() => {
-    if (selectedSeason) {
-      console.log("Selected season:", selectedSeason);
-      console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
-      console.log("Team IDs for logos:", currentSeasonTeamIds);
-    }
-  }, [selectedSeason, currentSeasonTeamIds]);
+  // useEffect(() => {
+  //   if (selectedSeason) {
+  //     console.log("Selected season:", selectedSeason);
+  //     console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
+  //     console.log("Team IDs for logos:", currentSeasonTeamIds);
+  //   }
+  // }, [selectedSeason, currentSeasonTeamIds]);
 
   // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {
@@ -270,7 +255,11 @@ export default function Page() {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
             </ul>
-            <Dropdown label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined} items={seasons} onSelect={handleSelectedSeason} />
+            <Dropdown
+              label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined}
+              items={seasons}
+              onSelect={handleSelectedSeason}
+            />
           </div>
         </section>
 
@@ -278,67 +267,73 @@ export default function Page() {
           <div className='w-full flex flex-col mb-12'>
             { isLoading && <Loading /> }
 
-            <div className="w-full grid gap-4">
-              {(selectedSeason && organizedMatches[selectedSeason] ? organizedMatches[selectedSeason] : []).map((match, i) => (
-                <div
-                  key={i}
-                  className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
-                >
-                  {/* Left: Match Info & Home Team */}
-                  <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
-                    <div className="w-full h-full">
-                      <div className="font-extrabold text-base">{match.stage.st_name}</div>
-                      <div className="text-sm">
-                        {formatMatchDate(match.start)} — ŠPORTNI PARK BRAJDA
-                      </div>
-                    </div>
-                    <div className="text-3xl flex items-end justify-end h-full md:absolute md:-bottom-0.5 md:left-0">
-                      NK TOLMIN
-                    </div>
+            {selectedSeason && organizedMatches[selectedSeason] ? (
+              // ✅ Group matches by month/year
+              Object.entries(
+                organizedMatches[selectedSeason].reduce((acc, match) => {
+                  const date = new Date(match.start * 1000);
+                  const monthYear = date.toLocaleString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  });
+                  if (!acc[monthYear]) acc[monthYear] = [];
+                  acc[monthYear].push(match);
+                  return acc;
+                }, {} as Record<string, typeof organizedMatches[string]>)
+              ).map(([monthYear, matches]) => (
+                <div key={monthYear} className="mb-10">
+                  {/* Month Header */}
+                  <div className='border-b-2 border-gray-200 mb-4 pb-2'>
+                    <h1 className="text-5xl font-bold text-left mt-2 uppercase text-gray-200">
+                      {monthYear}
+                    </h1>
                   </div>
 
-                  {/* Center: Logos and Score */}
-                  <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src="/tolmin-logo.png"
-                        alt="NK Tolmin"
-                        width={50}
-                        height={50}
-                        className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                      />
-                      <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
-                        {match.score.replace(' - ', ' : ')}
-                      </div>
-                      {/* Dynamic enemy logo */}
-                      <Image
-                        src={
-                          logosLoading 
-                            ? "/enemy-logo.png" // fallback while loading
-                            : teamLogos?.[match.enemyId] || "/enemy-logo.png" // use fetched logo or fallback
-                        }
-                        alt={match.enemy}
-                        width={50}
-                        height={50}
-                        className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                        onError={(e) => {
-                          // Fallback if image fails to load
-                          (e.target as HTMLImageElement).src = "/enemy-logo.png";
-                        }}
-                      />
-                    </div>
-                  </div>
+                  {/* Matches in that month */}
+                  <div className="w-full grid gap-4">
+                    {matches.map((match, i) => (
+                      <div
+                        key={i}
+                        className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
+                      >
+                        {/* Left: Match Info & Home Team */}
+                        <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
+                          <div className="w-full h-full">
+                            <div className="font-extrabold text-base">{match.stage.st_name}</div>
+                            <div className="text-sm">
+                              {formatMatchDate(match.start)} — ŠPORTNI PARK BRAJDA
+                            </div>
+                          </div>
+                          <div className="text-3xl flex items-end justify-end h-full md:absolute md:-bottom-0.5 md:left-0">
+                            NK TOLMIN
+                          </div>
+                        </div>
 
-                  {/* Right: Away Team */}
-                  <div className="text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
-                    {match.enemy}
+                        {/* Center: Logos and Score */}
+                        <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
+                          <div className="flex items-center gap-3">
+                            <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
+                              {match.score.replace(' - ', ' : ')}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Away Team */}
+                        <div className="text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
+                          {match.enemy}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              !isLoading && <p className="text-gray-500 text-center">No matches available</p>
+            )}
           </div>
         </section>
       </main>
     </div>
   );
+
 }
