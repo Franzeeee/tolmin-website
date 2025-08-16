@@ -94,49 +94,63 @@ export default function Page() {
     const result: OrganizedData = {};
     const seasonSet = new Set<string>();
 
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    // const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    for (const [i, link] of links.entries()) {
-      try {
-        if (i > 0) await delay(500);
+    // If you only have one link that contains all matches, fetch it once and process its matches array
+    if (links.length === 0) {
+      console.warn("No links provided for fetching matches");
+    } else {
+    try {
+    type ApiItem = {
+      data: {
+        matches: Match[];
+      };
+    };
 
-        const response = await axios.get(link);
-        const matches = response.data.matches;
+    const response = await axios.get<ApiItem[]>('/api/tolmin');
+    const data = response.data;
 
-        matches.forEach((match: Match) => {
+    data.forEach((item) => {
+      if (Array.isArray(item.data.matches)) {
+        item.data.matches.forEach((match: Match) => {
           const season = match.season_info?.name;
           if (!season) return;
 
-          seasonSet.add(season);
+      seasonSet.add(season);
 
-          const [teamA, teamB] = match.teams;
-          let enemy = "";
-          let enemyId = "";
-          let score = "";
+      const [teamA, teamB] = match.teams;
+      let enemy = "";
+      let enemyId = "";
+      let score = "";
 
-          if (teamA.id === "11005") {
-            enemy = teamB.name;
-            enemyId = teamB.id;
-            score = `${teamA.scores.RUNNING ?? "0"} - ${teamB.scores.RUNNING ?? "0"}`;
-          } else {
-            enemy = teamA.name;
-            enemyId = teamA.id;
-            score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
-          }
-
-          if (!result[season]) result[season] = [];
-          result[season].push({
-            enemy,
-            enemyId, // Store the enemy team ID
-            score,
-            status: match.o_status,
-            stage: { st_name: match.stage.st_name },
-            start: match.start
-          });
-        });
-      } catch (error) {
-        console.error("Error fetching tekme from", link, error);
+      if (teamA.id === "11005") {
+        enemy = teamB.name;
+        enemyId = teamB.id;
+        score = `${teamA.scores.RUNNING ?? "0"} - ${teamB.scores.RUNNING ?? "0"}`;
+      } else {
+        enemy = teamA.name;
+        enemyId = teamA.id;
+        score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
       }
+
+      if (!result[season]) result[season] = [];
+      result[season].push({
+        enemy,
+        enemyId,
+        score,
+        status: match.o_status,
+        stage: { st_name: match.stage.st_name },
+        start: match.start
+      });
+      });
+    } else {
+      console.warn("Expected item.matches to be an array", item);
+    }
+    })
+    
+    } catch (error) {
+    console.error("Error fetching tekme from", error);
+    }
     }
 
     // Sort seasons like "2025/2026", "2024/2025" -> latest first
