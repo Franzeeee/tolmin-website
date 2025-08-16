@@ -209,7 +209,7 @@ useEffect(() => {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
           </ul>
-              <Dropdown items={seasons} onSelect={handleSelectedSeason} />
+              <Dropdown label={selectedSeason ? selectedSeason : "Failed to Load Season"} items={seasons} onSelect={handleSelectedSeason} />
           </div>
         </section>
 
@@ -223,7 +223,7 @@ useEffect(() => {
             </div>
 
             <div className="w-full grid gap-4">
-              {[...Array(3)].map((_, i) => (
+              {(selectedSeason && organizedMatches[selectedSeason] ? organizedMatches[selectedSeason] : []).map((match, i) => (
                 <div
                   key={i}
                   className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
@@ -252,11 +252,11 @@ useEffect(() => {
                         className="w-10 h-10 md:w-[60px] md:h-[60px]"
                       />
                       <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
-                        2 : 2
+                        {match.score.replace(' - ', ' : ')}
                       </div>
                       <Image
                         src="/enemy-logo.png"
-                        alt="NK Dravinja"
+                        alt={match.enemy}
                         width={50}
                         height={50}
                         className="w-10 h-10 md:w-[60px] md:h-[60px]"
@@ -266,7 +266,7 @@ useEffect(() => {
 
                   {/* Right: Away Team */}
                   <div className="text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
-                    NK DRAVINJA
+                    {match.enemy}
                   </div>
                 </div>
               ))}
