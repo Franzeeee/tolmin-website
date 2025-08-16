@@ -5,9 +5,10 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 interface DropdownProps {
   label?: string;
   items?: string[];
+  onSelect: (item: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label = "Select", items = [] }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label = "Select", items = [], onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(items[0]);
 
@@ -16,6 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label = "Select", items = [] }) => 
   const handleSelect = (item: string) => {
     setSelected(item);
     setIsOpen(false);
+    onSelect(item);
   };
 
   return (
