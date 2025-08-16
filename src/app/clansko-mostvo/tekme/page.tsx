@@ -35,7 +35,10 @@ export default function Page() {
   [season: string]: {
     enemy: string;
     score: string;
-    status: string
+    status: string;
+    phase_info: {
+      name: string;
+    };
   }[];
 };
 
@@ -77,6 +80,9 @@ type Match = {
   };
   teams: [Team, Team];
   o_status: string;
+  phase_info: {
+    name: string;
+  };
 };
 
 const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: string[] }> => {
@@ -111,9 +117,9 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
           score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
         }
 
-        console.log(`Match: ${teamA.name} vs ${teamB.name}, Score: ${score}, Season: ${season}, Status: ${match.o_status}`);
+        console.log(`Match: ${teamA.name} vs ${teamB.name}, Score: ${score}, Season: ${season}, Status: ${match.o_status}, League: ${match.phase_info.name}`);
         if (!result[season]) result[season] = [];
-        result[season].push({ enemy, score, status: match.o_status });
+        result[season].push({ enemy, score, status: match.o_status, phase_info: { name: match.phase_info.name } });
       });
     } catch (error) {
       console.error("Error fetching tekme from", link, error);
@@ -232,7 +238,7 @@ useEffect(() => {
                   {/* Left: Match Info & Home Team */}
                   <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
                     <div className="w-full h-full">
-                      <div className="font-extrabold text-base">2. SNL</div>
+                      <div className="font-extrabold text-base">{match.phase_info.name}</div>
                       <div className="text-sm">
                         SUN 25 MAY — 23:00 — ŠPORTNI PARK BRAJDA
                       </div>
