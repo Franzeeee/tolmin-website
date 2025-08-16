@@ -48,7 +48,7 @@ export default function Page() {
   const [organizedMatches, setOrganizedMatches] = useState<OrganizedData>({});
   const [seasons, setSeasons] = useState<string[]>([]);
 
-  const corsProxy = "https://cors-anywhere.herokuapp.com/";
+  const corsProxy = "";
 
   const [links] = useState<string[]>([
     `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/11005/`,
