@@ -89,7 +89,6 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
   const result: OrganizedData = {};
   const seasonSet = new Set<string>();
 
-  // Helper to wait for ms milliseconds
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   for (const [i, link] of links.entries()) {
@@ -117,16 +116,27 @@ const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: s
           score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
         }
 
-        console.log(`Match: ${teamA.name} vs ${teamB.name}, Score: ${score}, Season: ${season}, Status: ${match.o_status}, League: ${match.stage.st_name}`);
         if (!result[season]) result[season] = [];
-        result[season].push({ enemy, score, status: match.o_status, stage: { st_name: match.stage.st_name } });
+        result[season].push({
+          enemy,
+          score,
+          status: match.o_status,
+          stage: { st_name: match.stage.st_name },
+        });
       });
     } catch (error) {
       console.error("Error fetching tekme from", link, error);
     }
   }
 
-  return { organized: result, seasons: Array.from(seasonSet) };
+  // Sort seasons like "2025/2026", "2024/2025" -> latest first
+  const sortedSeasons = Array.from(seasonSet).sort((a, b) => {
+    const startA = parseInt(a.split("/")[0], 10);
+    const startB = parseInt(b.split("/")[0], 10);
+    return startB - startA; // descending order
+  });
+
+  return { organized: result, seasons: sortedSeasons };
 };
 
 const { data, isLoading, error } = useQuery({
