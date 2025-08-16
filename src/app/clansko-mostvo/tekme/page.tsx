@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
-// import Image from 'next/image';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '@/components/Loading';
+import { useTeamLogos } from '@/app/hooks/useTeamLogos';
 
 export default function Page() {
   const pathname = usePathname();
@@ -168,13 +169,27 @@ export default function Page() {
     setSelectedSeason(season);
   };
 
-  // useEffect(() => {
-  //   if (selectedSeason) {
-  //     console.log("Selected season:", selectedSeason);
-  //     console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
-  //     console.log("Team IDs for logos:", currentSeasonTeamIds);
-  //   }
-  // }, [selectedSeason, currentSeasonTeamIds]);
+  // Extract unique team IDs from current season matches
+  const currentSeasonTeamIds = useMemo(() => {
+    if (!selectedSeason || !organizedMatches[selectedSeason]) return [];
+    
+    const teamIds = organizedMatches[selectedSeason]
+      .map(match => match.enemyId)
+      .filter((id, index, arr) => arr.indexOf(id) === index); // Remove duplicates
+    
+    return teamIds;
+  }, [selectedSeason, organizedMatches]);
+
+  // Fetch logos for current season teams
+  const { data: teamLogos, isLoading: logosLoading } = useTeamLogos(currentSeasonTeamIds);
+
+  useEffect(() => {
+    if (selectedSeason) {
+      console.log("Selected season:", selectedSeason);
+      console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
+      console.log("Team IDs for logos:", currentSeasonTeamIds);
+    }
+  }, [selectedSeason, currentSeasonTeamIds]);
 
   // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {
@@ -255,11 +270,7 @@ export default function Page() {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
             </ul>
-            <Dropdown
-              label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined}
-              items={seasons}
-              onSelect={handleSelectedSeason}
-            />
+            <Dropdown label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined} items={seasons} onSelect={handleSelectedSeason} />
           </div>
         </section>
 
@@ -267,7 +278,7 @@ export default function Page() {
           <div className='w-full flex flex-col mb-12'>
             { isLoading && <Loading /> }
 
-            {selectedSeason && organizedMatches[selectedSeason] ? (
+             {selectedSeason && organizedMatches[selectedSeason] ? (
               // ✅ Group matches by month/year
               Object.entries(
                 organizedMatches[selectedSeason].reduce((acc, match) => {
@@ -312,9 +323,37 @@ export default function Page() {
                         {/* Center: Logos and Score */}
                         <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
                           <div className="flex items-center gap-3">
+                            <Image
+                              src="/tolmin-logo.png"
+                              alt="NK Tolmin"
+                              width={50}
+                              height={50}
+                              className="w-10 h-10 md:w-[60px] md:h-[60px]"
+                            />
+
                             <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
                               {match.score.replace(' - ', ' : ')}
                             </div>
+
+                            <img
+                              src={
+                                logosLoading
+                                  ? "/logo/placeholder-team.png"
+                                  : teamLogos?.[match.enemyId] || "/logo/placeholder-team.png"
+                              }
+                              alt={match.enemy}
+                              width={50}
+                              height={50}
+                              className="w-10 h-10 md:w-[60px] md:h-[60px]"
+                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                const img = e.currentTarget;
+                                // avoid infinite loop if placeholder is missing/broken
+                                if (!img.src.includes('/logo/placeholder-team.png')) {
+                                  img.onerror = null;
+                                  img.src = "/logo/placeholder-team.png";
+                                }
+                              }}
+                            />
                           </div>
                         </div>
 
@@ -330,10 +369,10 @@ export default function Page() {
             ) : (
               !isLoading && <p className="text-gray-500 text-center">No matches available</p>
             )}
+
           </div>
         </section>
       </main>
     </div>
   );
-
 }
