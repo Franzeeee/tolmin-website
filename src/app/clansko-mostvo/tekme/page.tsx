@@ -7,6 +7,8 @@ import Dropdown from '@/components/Dropdown';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Page() {
   const pathname = usePathname();
@@ -19,6 +21,7 @@ export default function Page() {
     { name: "Lestvica", link: "/clansko-mostvo/lestvica" }
   ]);
 
+
   useEffect(() => {
     const foundTab = tabs.find((tab) => tab.link === pathname);
     if (foundTab) {
@@ -27,6 +30,121 @@ export default function Page() {
   }, [pathname, tabs]);
 
   const currentTab = hoveredTab || activeTab;
+
+  type OrganizedData = {
+  [season: string]: {
+    enemy: string;
+    score: string;
+  }[];
+};
+
+const [organizedMatches, setOrganizedMatches] = useState<OrganizedData>({});
+const [seasons, setSeasons] = useState<string[]>([]);
+
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
+
+const [links] = useState<string[]>([
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&limit=20&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=30&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=60&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=90&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=120&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=150&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=180&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=210&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=240&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=270&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=300&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=330&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=360&onlydetails=true`,
+  `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=390&onlydetails=true`
+]);
+
+type Team = {
+  id: string;
+  name: string;
+  scores: {
+    RUNNING?: string;
+  };
+};
+
+type Match = {
+  season_info?: {
+    name?: string;
+  };
+  teams: [Team, Team];
+};
+
+const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: string[] }> => {
+  const result: OrganizedData = {};
+  const seasonSet = new Set<string>();
+
+  // Helper to wait for ms milliseconds
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  for (const [i, link] of links.entries()) {
+    try {
+      if (i > 0) await delay(500);
+
+      const response = await axios.get(link);
+      const matches = response.data.matches;
+
+      matches.forEach((match: Match) => {
+        const season = match.season_info?.name;
+        if (!season) return;
+
+        seasonSet.add(season);
+
+        const [teamA, teamB] = match.teams;
+        let enemy = "";
+        let score = "";
+
+        if (teamA.id === "11005") {
+          enemy = teamB.name;
+          score = `${teamA.scores.RUNNING ?? "0"} - ${teamB.scores.RUNNING ?? "0"}`;
+        } else {
+          enemy = teamA.name;
+          score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
+        }
+
+        if (!result[season]) result[season] = [];
+        result[season].push({ enemy, score });
+      });
+    } catch (error) {
+      console.error("Error fetching tekme from", link, error);
+    }
+  }
+
+  return { organized: result, seasons: Array.from(seasonSet) };
+};
+
+const { data } = useQuery({
+  queryKey: ['tekme-matches'],
+  queryFn: fetchAllMatches,
+  staleTime: 1000 * 60 * 60 * 24, // 1 day
+});
+
+useEffect(() => {
+  if (data) {
+    setOrganizedMatches(data.organized);
+    setSeasons(data.seasons);
+    setSelectedSeason(data.seasons[0] || null);
+  }
+}, [data]);
+
+const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
+
+const handleSelectedSeason = (season: string) => {
+  setSelectedSeason(season);
+};
+
+useEffect(() => {
+  if (selectedSeason) {
+    console.log("Selected season:", selectedSeason);
+    console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
+  }
+}, [selectedSeason]);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -79,7 +197,6 @@ export default function Page() {
                   </Link>
                   {currentTab === tab.name && (
                     <motion.div
-                      layoutId="underline"
                       className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
                       transition={{ type: "spring", stiffness: 500, damping: 60 }}
                     />
@@ -89,7 +206,7 @@ export default function Page() {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
           </ul>
-              <Dropdown items={["1", "2"]} />
+              <Dropdown items={seasons} onSelect={handleSelectedSeason} />
           </div>
         </section>
 
