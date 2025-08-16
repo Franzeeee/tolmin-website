@@ -23,7 +23,7 @@ export function useTeamLogos(teamIds: string[]) {
           const imgId = data.img_id;
 
           // ✅ Correct Soccerway logo URL format
-          logos[teamId] = `https://static.soccerway.com/img/teams/1/${imgId}.png`;
+          logos[teamId] = `https://static.soccerway.com/team/${imgId}/participant-logo-mobile-100x100/image.png`;
         } catch (err) {
           console.error("Failed fetching logo for team:", teamId, err);
         }
