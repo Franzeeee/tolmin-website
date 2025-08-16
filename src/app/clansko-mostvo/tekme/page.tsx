@@ -96,7 +96,7 @@ export default function Page() {
 
     console.log("Fetched matches data:", data);
 
-    data.map((item) => {
+    data.forEach((item) => {
       console.log(item)
       if (Array.isArray(item.data.matches)) {
         item.data.matches.forEach((match: Match) => {

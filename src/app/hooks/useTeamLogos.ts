@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
+
 type TeamLogoResponse = {
   img_id: string;
 };
@@ -11,23 +13,24 @@ export function useTeamLogos(teamIds: string[]) {
     queryFn: async () => {
       const logos: Record<string, string> = {};
 
-      await Promise.all(
-        teamIds.map(async (teamId) => {
-          try {
-            const { data } = await axios.get<TeamLogoResponse>(
-              `/api/tolmin/team?teamId=${teamId}`
-            );
+      for (const teamId of teamIds) {
+        try {
+          const { data } = await axios.get<TeamLogoResponse>(
+            `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
+          );
 
-            logos[teamId] = `https://static.soccerway.com/team/${data.img_id}/participant-logo-mobile-100x100/image.png`;
-          } catch (err) {
-            console.error("Failed fetching logo for team:", teamId, err);
-            logos[teamId] = "/logo/placeholder-team.png";
-          }
-        })
-      );
+          console.log(data)
+          const imgId = data.img_id;
+
+          // ✅ Correct Soccerway logo URL format
+          logos[teamId] = `https://static.soccerway.com/team/${imgId}/participant-logo-mobile-100x100/image.png`;
+        } catch (err) {
+          console.error("Failed fetching logo for team:", teamId, err);
+        }
+      }
 
       return logos;
     },
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 1000 * 60 * 60 * 24, // cache logos for 1 day
   });
 }

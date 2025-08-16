@@ -24,7 +24,7 @@ export async function GET() {
         const data = await res.json();
 
         // Make sure to return matches array if it exists
-        return data.matches ?? [];
+        return data ?? [];
       })
     );
 
