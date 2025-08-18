@@ -11,7 +11,7 @@ type Sponsor = {
   _id: string;
   name: string;
   logoUrl?: string;
-  category: 'main' | 'partner' | 'support';
+  category: 'main' | 'partner' | 'support' | 'bronze';
 };
 
 export default function SponsorPage() {
@@ -211,7 +211,7 @@ export default function SponsorPage() {
       {/* Partner Sponsors card */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-md font-semibold text-gray-800">Partner Sponsors</h3>
+          <h3 className="text-md font-semibold text-gray-800">Silver Sponsors</h3>
           <button
             onClick={() => handleAddSponsor('Partner')}
             className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-md"
@@ -244,12 +244,68 @@ export default function SponsorPage() {
                     return (
                         <tr>
                             <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
-                                No partner sponsors found.
+                                No Silver sponsors found.
                             </td>
                         </tr>
                     );
                 }
                 return partnerSponsors.map(s => (
+                    <tr key={s._id}>
+                        <td className="px-4 py-2">
+                            <Image src={s.logoUrl || '/placeholder-logo.png'} alt={s.name} width={80} height={80} className="object-contain" />
+                        </td>
+                        <td className="px-4 py-4 text-black">{s.name}</td>
+                        <td className="px-4 py-4 flex gap-2 cursor-pointer">
+                            <button onClick={() => handleDeleteSponsor(s._id, s.name)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5" /></button>
+                        </td>
+                    </tr>
+                ));
+            })()}
+        </tbody>
+        </table>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-md font-semibold text-gray-800">Bronze Sponsors</h3>
+          <button
+            onClick={() => handleAddSponsor('Bronze')}
+            className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-md"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Sponsor
+          </button>
+        </div>
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-2 text-left font-semibold text-gray-600">Logo</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-600">Name</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {(() => {
+                const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
+                if (loading) {
+                    return (
+                        <tr>
+                            <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
+                                Loading...
+                            </td>
+                        </tr>
+                    );
+                }
+                if (bronzeSponsors.length === 0) {
+                    return (
+                        <tr>
+                            <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
+                                No Bronze sponsors found.
+                            </td>
+                        </tr>
+                    );
+                }
+                return bronzeSponsors.map(s => (
                     <tr key={s._id}>
                         <td className="px-4 py-2">
                             <Image src={s.logoUrl || '/placeholder-logo.png'} alt={s.name} width={80} height={80} className="object-contain" />

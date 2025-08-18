@@ -4,7 +4,7 @@ const sponsorSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { 
     type: String, 
-    enum: ['main', 'partner', 'support'], 
+    enum: ['main', 'partner', 'bronze', 'support'], 
     required: true 
   },
   logoUrl: { type: String },

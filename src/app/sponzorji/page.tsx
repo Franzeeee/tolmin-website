@@ -10,7 +10,7 @@ type Sponsor = {
   _id: string;
   name: string;
   logoUrl?: string;
-  category: 'main' | 'partner' | 'support';
+  category: 'main' | 'partner' | 'support' | 'bronze';
 };
 
 export default function Page() {
@@ -31,6 +31,7 @@ export default function Page() {
   const mainSponsors = sponsors.filter(s => s.category === 'main');
   const partnerSponsors = sponsors.filter(s => s.category === 'partner');
   const supportSponsors = sponsors.filter(s => s.category === 'support');
+  const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -104,6 +105,33 @@ export default function Page() {
             {partnerSponsors.length === 0 ? (
               <p className="text-gray-500"></p>
             ) : partnerSponsors.map(s => (
+              <div
+                key={s._id}
+                className='p-2 border-2 rounded-md shadow h-36 w-50 flex items-center justify-center'
+              >
+                <Image
+                  src={s.logoUrl || ''}
+                  alt={s.name}
+                  width={140}
+                  height={140}
+                  className="object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SILVER SPONSORS */}
+        <section className='w-full min-h-content p-2 px-5 pb-9'>
+          <div className='border-b-2 border-gray-300 pb-3'>
+            <h1 className="text-3xl font-bold text-left text-red-600 mt-4 uppercase">
+              Srebrni sponzorji in donatorji
+            </h1>
+          </div>
+          <div className="w-full py-4 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4">
+            {bronzeSponsors.length === 0 ? (
+              <p className="text-gray-500"></p>
+            ) : bronzeSponsors.map(s => (
               <div
                 key={s._id}
                 className='p-2 border-2 rounded-md shadow h-36 w-50 flex items-center justify-center'

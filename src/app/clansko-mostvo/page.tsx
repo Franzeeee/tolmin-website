@@ -67,40 +67,44 @@ export default function Page() {
             <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none'>
               {tabs.map((tab) => (
               <li
-                key={tab.name}
-                className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
-                }`}
-                onClick={() => setActiveTab(tab.name)}
-                onMouseEnter={() => setHoveredTab(tab.name)}
-                onMouseLeave={() => setHoveredTab(null)}
+              key={tab.name}
+              className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+              currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
+              }`}
+              onClick={() => setActiveTab(tab.name)}
+              onMouseEnter={() => setHoveredTab(tab.name)}
+              onMouseLeave={() => setHoveredTab(null)}
               >
-                <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
-                {tab.name}
-                </Link>
-                {currentTab === tab.name && (
-                <motion.div
-                  layoutId="underline"
-                  className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
-                  transition={{ type: "spring", stiffness: 500, damping: 60 }}
-                />
-                )}
+              <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
+              {tab.name}
+              </Link>
+              {currentTab === tab.name && (
+              <motion.div
+                layoutId="underline"
+                className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+                transition={{ type: "spring", stiffness: 500, damping: 60 }}
+              />
+              )}
               </li>
               ))}
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
             </ul>
-              <Dropdown items={[
-              "2020-2021",
-              "2019-2020",
-              "2018-2019",
-              "2017-2018",
-              "2016-2017",
-              "2015-2016",
-              "2014-2015"
-              ]} 
-              onSelect={() => {}}
-              />
+              {(() => {
+              const now = new Date();
+              const startYear = now.getFullYear(); // current season start (e.g., 2024 for 2024-2025)
+              const minStart = 2014;
+              const seasons: string[] = [];
+              for (let y = startYear; y >= minStart; y--) {
+                seasons.push(`${y}-${y + 1}`);
+              }
+              return (
+                <Dropdown
+                items={seasons}
+                onSelect={() => {}}
+                />
+              );
+              })()}
             </div>
         </section>
 

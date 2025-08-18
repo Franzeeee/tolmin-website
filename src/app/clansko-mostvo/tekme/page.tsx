@@ -94,8 +94,6 @@ export default function Page() {
     const response = await axios.get<ApiItem[]>('/api/tolmin');
     const data = response.data;
 
-    console.log("Fetched matches data:", data);
-
     data.forEach((item) => {
       console.log(item)
       if (Array.isArray(item.data.matches)) {
@@ -303,9 +301,9 @@ export default function Page() {
 
                   {/* Matches in that month */}
                   <div className="w-full grid gap-4">
-                    {matches.map((match, i) => (
+                    {[...matches].reverse().map((match, i) => (
                       <div
-                        key={i}
+                        key={`${match.start}-${i}`}
                         className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
                       >
                         {/* Left: Match Info & Home Team */}
