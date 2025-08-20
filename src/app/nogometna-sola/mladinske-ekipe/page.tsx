@@ -16,17 +16,14 @@ export default function Page() {
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
   const tabs = ["U7", "U9", "U11", "U13", "U15", "U17", "U19"];
-  const tabContent = [U7, U9, U11, U13, U15, U17, U19]; // Store component references
+  const tabContent = [U7, U9, U11, U13, U15, U17, U19]; 
 
-  // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
-
-  // Find the component for the active tab
   const activeIndex = tabs.findIndex(tab => tab === activeTab);
   const ActiveComponent = tabContent[activeIndex];
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50  overflow-x-hidden">
       <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
         <MainNav />
         <video
@@ -37,7 +34,6 @@ export default function Page() {
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
         >
           <source src="/tolmin-header.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
         <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
@@ -60,30 +56,56 @@ export default function Page() {
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
           <div className='relative w-full p-3 flex flex-row items-center justify-between'>
-            <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none justify-center items-center w-full'>
-              {tabs.map((tab, index) => (
-                <li
-                  key={index}
-                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                    currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
-                  }`}
-                  onClick={() => setActiveTab(tab)}
-                  onMouseEnter={() => setHoveredTab(tab)}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  {tab}
-                  {currentTab === tab && (
-                    <motion.div
-                      layoutId="underline"
-                      className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
-                      transition={{ type: "spring", stiffness: 500, damping: 60 }}
-                    />
-                  )}
-                </li>
-              ))}
-              <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
+
+            {/* Mobile dropdown */}
+            <details className="w-full sm:hidden">
+              <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
+                <span className="font-semibold text-gray-800">{currentTab}</span>
+                <span className="ml-2 text-gray-500 select-none">▾</span>
+              </summary>
+              <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`block w-full text-left px-4 py-3 text-sm ${
+                      currentTab === tab
+                        ? "bg-red-50 text-red-600 font-semibold"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
-            </ul>
+            </details>
+
+{/* Desktop / Tablet tabs */}
+<ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0
+  sm:justify-start lg:justify-center">
+  {tabs.map((tab) => (
+    <li
+      key={tab}
+      className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+        currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
+      }`}
+      onClick={() => setActiveTab(tab)}
+      onMouseEnter={() => setHoveredTab(tab)}
+      onMouseLeave={() => setHoveredTab(null)}
+    >
+      {tab}
+      {currentTab === tab && (
+        <motion.div
+          layoutId="underline"
+          className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+          transition={{ type: "spring", stiffness: 500, damping: 60 }}
+        />
+      )}
+    </li>
+  ))}
+  <div className="absolute left-0 right-0 bottom-0 h-[3px] bg-gray-300 pointer-events-none" />
+</ul>
+
           </div>
         </section>
 

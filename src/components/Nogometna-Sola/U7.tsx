@@ -5,12 +5,16 @@ import axios from 'axios'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from 'react'
 
 type FootballSchool = {
   img?: string
   content?: string
-  name?: string
+  name?: string,
+  coaches?: {
+    name: string,
+    phone: string,
+    email: string
+  }[]
 }
 
 const fetchFootballSchool = async (id: string): Promise<FootballSchool> => {
@@ -20,13 +24,6 @@ const fetchFootballSchool = async (id: string): Promise<FootballSchool> => {
 
 export default function U7() {
   const id = '6884cbebf71ec698fd833eb4'
-  const [contact, setContact] = useState([
-    {
-      name: 'Fitim Zabeljaj',
-      contact_number: '041 656 492',
-      email: 'fitim.zabeljaj@example.com',
-    },
-  ])
 
   const {
     data: fetchedData,
@@ -36,18 +33,9 @@ export default function U7() {
     queryFn: () => fetchFootballSchool(id)
   })
 
-  const contentLoaded = !!fetchedData?.content || !!fetchedData?.name
+  console.log(fetchedData)
 
-  useEffect(() => {
-    axios.get('/api/contact')
-    .then(response => {
-      setContact(response.data);
-      console.log('✅ Contact data fetched:', response.data);
-    })
-    .catch(error => {
-      console.error('Error fetching contact data:', error);
-    });
-  },[]);
+  const contentLoaded = !!fetchedData?.content || !!fetchedData?.name
 
   return (
     <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
@@ -104,8 +92,8 @@ export default function U7() {
             </div>
             <div className="w-full uppercase text-black px-3 pb-4 text-center">
               <h1 className="text-xl md:text-2xl text-black font-semibold">pokličite nas</h1>
-              <p className="text-base">Fitim Zabeljaj</p>
-              <p className="text-base">{contact?.[0]?.contact_number}</p>
+              <p className="text-base">{fetchedData?.coaches?.[0]?.name}</p>
+              <p className="text-base">{fetchedData?.coaches?.[0]?.phone}</p>
             </div>
           </div>
 
@@ -117,7 +105,7 @@ export default function U7() {
             <div className="w-full uppercase text-black px-3 pb-6 text-center">
               <h1 className="text-xl md:text-2xl text-black font-semibold">Postavite vprašanje</h1>
               <a
-                href={`mailto:${contact?.[0]?.email ?? 'fitim.zabeljaj@example.com'}`}
+                href={`mailto:${fetchedData?.coaches?.[0]?.email ?? 'fitim.zabeljaj@example.com'}`}
                 className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 inline-block cursor-pointer"
               >
                 začeti
