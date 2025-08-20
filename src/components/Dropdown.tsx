@@ -26,7 +26,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label = "Select", items = [], onSel
         onClick={toggleDropdown}
         className="inline-flex w-full z-20 justify-between items-center gap-2 border border-gray-300 bg-red-600 px-4 py-1.5 text-sm font-medium min-w-40 text-white cursor-pointer hover:bg-red-700 focus:outline-non max-h-11"
       >
-        {selected || label}
+        {selected?.replace('/', ' - ') || label.replace('/', ' - ')}
         <FontAwesomeIcon icon={faChevronDown} className='max-h-5' />
       </button>
 
@@ -39,7 +39,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label = "Select", items = [], onSel
                 onClick={() => handleSelect(item)}
                 className="block w-full px-4 py-2 cursor-pointer text-left text-sm text-gray-700 hover:bg-red-600 hover:text-white"
               >
-                {item}
+                {item.replace('/', ' - ')}
               </button>
             ))}
           </div>

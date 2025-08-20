@@ -48,25 +48,9 @@ export default function Page() {
   const [organizedMatches, setOrganizedMatches] = useState<OrganizedData>({});
   const [seasons, setSeasons] = useState<string[]>([]);
 
-  const corsProxy = "https://cors-anywhere.herokuapp.com/";
 
   const [links] = useState<string[]>([
-    `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/11005/`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&limit=20&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=30&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=60&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=90&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=120&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=150&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=180&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=210&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=240&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=270&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=300&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=330&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=360&onlydetails=true`,
-    `${corsProxy}https://int.soccerway.com/legacy/v1/english/matches/?teamId=11005&before=1690732800&limit=30&offset=390&onlydetails=true`
+    '/api/tolmin'
   ]);
 
   type Team = {
@@ -111,6 +95,7 @@ export default function Page() {
     const data = response.data;
 
     data.forEach((item) => {
+      console.log(item)
       if (Array.isArray(item.data.matches)) {
         item.data.matches.forEach((match: Match) => {
           const season = match.season_info?.name;
@@ -316,9 +301,9 @@ export default function Page() {
 
                   {/* Matches in that month */}
                   <div className="w-full grid gap-4">
-                    {matches.map((match, i) => (
+                    {[...matches].reverse().map((match, i) => (
                       <div
-                        key={i}
+                        key={`${match.start}-${i}`}
                         className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
                       >
                         {/* Left: Match Info & Home Team */}

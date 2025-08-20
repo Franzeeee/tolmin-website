@@ -3,9 +3,40 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
-import Dropdown from '@/components/Dropdown';
+// import Dropdown from '@/components/Dropdown';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import Loading from '@/components/Loading';
+
+type FetchedData = {
+  stages: Array<{
+    id: string;
+    st_name: string;
+    season_info: {
+      id: string;
+      name: string;
+      code: string;
+    };
+    standings: Array<{
+      id: string;
+      teams: Array<{
+        id: string;
+        name: string;
+        goal_against: string;
+        goal_for: string;
+        img_id: string;
+        losses: string;
+        draws: string;
+        wins: string;
+        points: string;
+        ranking: number;
+        ppg: number;
+        played: string;
+      }>;
+    }>;
+  }>;
+};
 
 export default function Page() {
   const pathname = usePathname();
@@ -27,6 +58,24 @@ export default function Page() {
 
   // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
+
+  const [data, setData] = useState<FetchedData | null>(null);
+  const url = "https://int.soccerway.com/v1/english/participant/soccer/full/11005/";
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const res = await fetch(`/api/fetch?url=${encodeURIComponent(url)}`);
+      const json = await res.json();
+      setData(json);
+      setLoading(false);
+
+      console.log("Fetched data:", json.stages[0]);
+    };
+
+    fetchData();
+  }, [pathname]);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -89,7 +138,7 @@ export default function Page() {
               <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
               </div>
           </ul>
-              <Dropdown items={["1", "2"]} onSelect={() => {}} />
+              {/* <Dropdown items={["1", "2"]} onSelect={() => {}} /> */}
           </div>
         </section>
 
@@ -99,7 +148,7 @@ export default function Page() {
                 <thead>
                     <tr className="bg-gray-900 text-white">
                     <th colSpan={6} className="text-left px-4 py-3 text-sm md:text-base">
-                        2. SNL 2024/2025
+                        {data?.stages[0]?.st_name} {data?.stages[0]?.season_info?.code}
                     </th>
                     </tr>
                     <tr className="bg-gray-200 text-gray-700 border-t border-gray-300 uppercase text-xs md:text-sm">
@@ -112,33 +161,53 @@ export default function Page() {
                     </tr>
                 </thead>
                 <tbody>
-                    {[
-                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
-                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
-                    ["TKK TOLMIN", 16, 14, 2, 4, 45],
-                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
-                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
-                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
-                    ["TKK TOLMIN", 16, 14, 2, 4, 45], // Highlight this row
-                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
-                    ["ILIRIJA 1911", 19, 17, 1, 1, 52],
-                    ["BRINJE GROSUPLJE", 16, 14, 2, 4, 45],
-                    ["TKK TOLMIN", 16, 14, 2, 4, 45],
-                    ["SVOBODA LJUBLJANA", 16, 14, 2, 4, 45],
-                    ].map((team, idx) => (
-                    <tr
-                        key={idx}
-                        className={`border-b border-gray-200 ${
-                        team[0] === "TKK TOLMIN" && idx === 6
-                            ? "bg-red-600 text-white"
-                            : "bg-transparent text-gray-800"
-                        }`}
-                    >
-                        {team.map((val, i) => (
-                        <td key={i} className={`px-4 py-3 ${i !== 0 ? 'text-center' : ""}`}>
-                            {val}
+                    {loading && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-6">
+                          <div className="w-full flex justify-center items-center">
+                            <Loading />
+                          </div>
                         </td>
-                        ))}
+                      </tr>
+                    )}
+                    {data?.stages[0]?.standings[0]?.teams?.map((team, idx) => (
+                    <tr
+                      key={team.id ?? idx}
+                      className={`border-b border-gray-200 ${
+                        team?.name === "Tolmin"
+                          ? "bg-red-600 text-white"
+                          : "bg-transparent text-gray-800"
+                      }`}
+                    >
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {team?.img_id ? (
+                            <Image
+                              src={`https://static.soccerway.com/team/${team.img_id}/participant-logo-mobile-100x100/image.png` || '/logo/placeholder-team.png'}
+                              alt={team.name ?? ''}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6 object-cover rounded"
+                              unoptimized
+                            />
+                          ) : (
+                            <Image
+                              src="/logo/placeholder-team.png"
+                              alt={team.name ?? ''}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6 object-cover rounded"
+                              unoptimized
+                            />
+                          )}
+                          <span className="font-medium">{team?.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center">{team?.played}</td>
+                      <td className="px-4 py-3 text-center">{team?.wins}</td>
+                      <td className="px-4 py-3 text-center">{team?.draws}</td>
+                      <td className="px-4 py-3 text-center">{team?.losses}</td>
+                      <td className="px-4 py-3 text-center">{team?.points}</td>
                     </tr>
                     ))}
                 </tbody>
