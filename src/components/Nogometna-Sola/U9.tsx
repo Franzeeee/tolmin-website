@@ -5,6 +5,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useState } from 'react'
 
 type FootballSchool = {
   img?: string
@@ -31,6 +32,26 @@ export default function U7() {
   })
 
   const contentLoaded = !!fetchedData?.content || !!fetchedData?.name
+  
+
+  const [contact, setContact] = useState([
+    {
+      name: "test",
+      contact_number: "041 656 492",
+      email: "test@example.com"
+    }
+  ])
+
+    useEffect(() => {
+    axios.get('/api/contact')
+    .then(response => {
+      setContact(response.data);
+      console.log('✅ Contact data fetched:', response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching contact data:', error);
+    });
+  },[]);
 
   return (
     <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
@@ -90,7 +111,7 @@ export default function U7() {
             <div className="w-full uppercase text-black px-3 pb-4 text-center">
               <h1 className="text-xl md:text-2xl text-black font-semibold">pokličite nas</h1>
               <p className="text-base">Fitim Zabeljaj</p>
-              <p className="text-base">041 656 492</p>
+              <p className="text-base">{contact?.[0]?.contact_number}</p>
             </div>
           </div>
 
@@ -101,7 +122,12 @@ export default function U7() {
             </div>
             <div className="w-full uppercase text-black px-3 pb-6 text-center">
               <h1 className="text-xl md:text-2xl text-black font-semibold">Postavite vprašanje</h1>
-              <p className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 cursor-pointer">začeti</p>
+              <a
+                href={`mailto:${contact?.[0]?.email ?? 'fitim.zabeljaj@example.com'}`}
+                className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 inline-block cursor-pointer"
+              >
+                začeti
+              </a>
             </div>
           </div>
         </div>

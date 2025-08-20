@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function DashboardPage() {
   const [contact, setContact] = useState("Admin Contact");
@@ -11,19 +12,23 @@ export default function DashboardPage() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Example: send update request to your backend API
-      const res = await fetch("/api/admin/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contact, email }),
+      await axios.post('/api/contact', {
+        contact_number: contact,
+        email
+      });
+      Swal.fire({
+        title: "Success",
+        text: "Contact info updated successfully",
+        icon: "success",
       });
 
-      if (!res.ok) throw new Error("Failed to update admin info");
-
-      alert("Saved successfully ✅");
     } catch (err) {
       console.error(err);
-      alert("Error saving data ❌");
+      Swal.fire({
+        title: "Error",
+        text: "Error saving data ❌",
+        icon: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -32,9 +37,10 @@ export default function DashboardPage() {
   useEffect(() => {
     axios.get('/api/contact')
       .then(response => {
-        const { contact_number, email } = response.data;
-        setContact(contact_number);
-        setEmail(email);
+        const data = response.data;
+        setContact(data[0]?.contact_number ?? "");
+        setEmail(data[0]?.email ?? "");
+        console.log("✅ Contact info fetched:", response.data);
       })
       .catch(error => {
         console.error("Error fetching contact info:", error);
@@ -75,7 +81,7 @@ export default function DashboardPage() {
             disabled={loading}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? "Updating..." : "Update Contact"}
           </button>
         </div>
       </div>
