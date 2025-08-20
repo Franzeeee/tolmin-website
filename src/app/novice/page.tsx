@@ -37,8 +37,6 @@ export default function Page() {
     }
   };
 
-  if (loading) return <Loading />;
-
   // Featured article is always first item
   const featured = data?.[0];
   const latestNews = data?.slice(1) || [];
@@ -58,19 +56,19 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
+      <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[500px] lg:max-h-[900px]">
         <MainNav />
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
+          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
         >
           <source src="/tolmin-header.mp4" type="video/mp4" />
         </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
-        <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]" />
+        <div className="flex items-end pb-2 justify-center h-screen max-h-[500px] z-20 relative overflow-hidden lg:max-h-[900px]">
           <motion.h1
             initial={{ x: '110vw' }}
             animate={{ x: '-120vw' }}
@@ -86,6 +84,8 @@ export default function Page() {
           </motion.h1>
         </div>
       </header>
+
+      {loading && <Loading />}
 
       <main className="w-full h-fit max-w-[70rem] bg-gray-50 border-t-4 border-red-600 mx-auto">
         {/* Featured Article */}
@@ -146,7 +146,7 @@ export default function Page() {
                       {news.description || <span className="italic text-gray-400">No description available.</span>}
                     </p>
                     <a
-                      href="#"
+                      href={`/novice/${news._id}`}
                       className="inline-block mt-2 text-sm text-red-600 hover:underline font-medium"
                     >
                       Read More

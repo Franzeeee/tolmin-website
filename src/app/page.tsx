@@ -123,14 +123,22 @@ export default function Page() {
   const [matches, setMatches] = useState<fetchedData | null>(null);
   const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
   const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
+  const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
+  const [futureVenue, setFutureVenue] = useState<string | null>(null);
 
   useEffect(() => {
-    const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${matches?.matches[currentSlide].id}/`);
+    if(matches) {
+      const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide -1].id}/`);
+      const futureMatchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide].id}/`);
 
-    matchInfo.then(response => {
-      setVenue(response.data.venue.detail.name || "No venue data available");
-    });
+      matchInfo.then(response => {
+        setVenue(response.data.venue.detail.name || "No venue data available");
+      });
+      futureMatchInfo.then(response => {
+        setFutureVenue(response.data.venue.detail.name || "No venue data available");
+      });
+    }
   }, [matches, currentSlide]);
 
     // ✅ Updated format function
@@ -157,7 +165,6 @@ export default function Page() {
       try {
         const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
         setMatches(response.data);
-        console.log('Matches fetched successfully:', response.data);
       } catch (error) {
         console.error('Error fetching matches:', error);
       }
@@ -167,7 +174,7 @@ export default function Page() {
   },[]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 max-w-[100vw]">
       <header className="w-full relative h-[60vh] md:h-[80vh] lg:h-[100vh] max-h-[900px] overflow-hidden">
         <MainNav />
         <video
@@ -289,23 +296,23 @@ export default function Page() {
                                   <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                     <p>VS</p>
                                   </div>
-                                  <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <Image src={`https://static.soccerway.com/team/${currentSeasonMatches[currentSlide]?.teams?.[0]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
                                 </div>
 
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                                  <p className='font-semibold'>Monday, May 19, 12:00</p>
-                                  <p className='text-sm font-thin'>Športni park Brajda</p>
+                                  <p className='font-semibold'>{formatMatchDate(currentSeasonMatches[currentSlide]?.start)}</p>
+                                  <p className='text-sm font-thin'>{futureVenue || "No venue data available"}</p>
                                 </div>
                               </>
                             ) : (
-                              <>
+                              <Link href="/clansko-mostvo/lestvica">
                                 <div className='flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4'>
                                   <h2 className='text-2xl'>SNL 3</h2>
                                 </div>
                                 <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
                                   <h1 className='text-7xl text-center uppercase italic font-semibold leading-24 '>ligaška lestvica</h1>
                                 </div>
-                              </>
+                              </Link>
                             )
                               
                             }
@@ -368,7 +375,7 @@ export default function Page() {
                     news.slice(1, 5).map((item, idx) => (
                       <motion.div
                         key={item._id || idx}
-                        className="flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500"
+                        className="flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500 cursor-pointer"
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
@@ -584,7 +591,7 @@ export default function Page() {
             </div>
           </section>
 
-          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+          <section className='w-full min-h-content md:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div className='mb-4'>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">

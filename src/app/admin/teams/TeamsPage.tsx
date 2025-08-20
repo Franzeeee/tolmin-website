@@ -239,7 +239,7 @@ export default function TeamsPage() {
         return { img: uploadResponse.data.url, season };
       } catch (error) {
         Swal.showValidationMessage('Upload failed. Please try again.');
-        console.log(error)
+        console.error('Upload error:', error);
       }
       },
       allowOutsideClick: () => !Swal.isLoading(),

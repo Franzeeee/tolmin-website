@@ -27,7 +27,7 @@ export default function Page() {
       setPassword('');
 
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 

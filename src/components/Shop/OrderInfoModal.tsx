@@ -69,7 +69,6 @@ const handleShipStatus = async (orderId: string) => {
           status: 'Shipped',
         });
 
-        console.log('✅ Order updated:', response.data);
         Swal.fire({
           title: 'Order Shipped',
           text: response.data.message,
@@ -106,7 +105,6 @@ const handleDeliveredStatus = async (orderId: string) => {
           status: 'Delivered',
         });
 
-        console.log('✅ Order updated:', response.data);
         Swal.fire({
           title: 'Order Delivered',
           text: response.data.message,
@@ -143,7 +141,6 @@ const handleCancelStatus = async (orderId: string) => {
           status: 'Cancelled',
         });
 
-        console.log('✅ Order updated:', response.data);
         Swal.fire({
           title: 'Order Cancelled',
           text: response.data.message,

@@ -35,7 +35,6 @@ async function seedFootballSchool() {
   ];
 
   await footballSchoolCollection.insertMany(seedData);
-  console.log('✅ Seeded FootballSchool data successfully.');
   process.exit();
 }
 

@@ -1,41 +1,91 @@
+"use client";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+
 export default function DashboardPage() {
+  const [contact, setContact] = useState("Admin Contact");
+  const [email, setEmail] = useState("admin@example.com");
+  const [loading, setLoading] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await axios.post('/api/contact', {
+        contact_number: contact,
+        email
+      });
+      Swal.fire({
+        title: "Success",
+        text: "Contact info updated successfully",
+        icon: "success",
+      });
+
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        title: "Error",
+        text: "Error saving data ❌",
+        icon: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    axios.get('/api/contact')
+      .then(response => {
+        const data = response.data;
+        setContact(data[0]?.contact_number ?? "");
+        setEmail(data[0]?.email ?? "");
+        console.log("✅ Contact info fetched:", response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching contact info:", error);
+      });
+  },[])
+
   return (
     <div className="space-y-6">
-      {/* Welcome message */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome back, Admin! 👋</h1>
-        <p className="text-gray-600 mt-1">
-          Manage your football club site: update matches, news, shop items, and more.
-        </p>
+      {/* Editable Admin Section */}
+      <div className="bg-white text-black rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Website Contact Settings</h1>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Contact Number</label>
+            <input
+              type="text"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              className="mt-1 w-full rounded-sm p-2 px-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Enter contact name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 w-full rounded-sm p-2 px-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Enter email address"
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {loading ? "Updating..." : "Update Contact"}
+          </button>
+        </div>
       </div>
 
-      {/* Top 4 cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Upcoming Matches</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">3</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">News Articles</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">12</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Merch Products</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">24</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Sponsors</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">8</p>
-        </div>
-      </div>
-
-      {/* Big card below */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">Club Overview</h2>
-        <p className="text-gray-600">
-          Here you can see recent activity, manage content, and keep your club&#39;s website up to date to engage your fans.
-        </p>
-      </div>
     </div>
-  )
+  );
 }

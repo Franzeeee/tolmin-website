@@ -34,21 +34,21 @@ export default function Page() {
   const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
-      <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
+      <header className="w-screen h-screen max-h-[500px] lg:max-h-[900px] grid grid-rows-[auto_1fr] bg-white landing-header">
         <MainNav />
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
+          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
         >
           <source src="/tolmin-header.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
-        <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]" />
+        <div className="flex items-end pb-2 justify-center h-screen max-h-[500px] lg:max-h-[900px] z-20 relative overflow-hidden">
           <motion.h1
             initial={{ x: '110vw' }}
             animate={{ x: '-120vw' }}

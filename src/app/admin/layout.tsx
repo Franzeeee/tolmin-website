@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const dropdownTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const navItems = [
-    { name: 'Dashboard', href: '/admin/dashboard' },
+    { name: 'Contacts', href: '/admin/dashboard' },
     { name: 'Sponzorji', href: '/admin/sponzorji' },
     { name: 'Klub',
       submenu: [
@@ -73,7 +73,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Top nav */}
       <nav className="fixed top-0 w-full bg-white border-b border-gray-200 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="text-xl font-bold text-red-600">Admin Panel</div>
+          <div className="text-xl font-bold text-red-600">Admin</div>
 
           {/* Desktop nav */}
           <div className="hidden md:flex space-x-4 relative">

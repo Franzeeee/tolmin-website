@@ -60,7 +60,6 @@ export default function OrdersPage() {
   useEffect(() => {
     axios.get('/api/orders')
       .then(response => {
-        console.log('Fetched orders:', response.data);
         const ordersWithId = response.data.map((order: Order, idx: number) => ({
           ...order,
           id: order.id ?? idx + 1, // Use existing id or fallback to index+1

@@ -71,7 +71,6 @@ export default function Page() {
       setData(json);
       setLoading(false);
 
-      console.log("Fetched data:", json.stages[0]);
     };
 
     fetchData();
