@@ -34,6 +34,7 @@ export default function Page() {
             setArticle(response.data);
         } catch (error) {
             console.error("Error fetching news:", error);
+            window.location.href = "/404";
         } finally {
             setLoading(false);
         }

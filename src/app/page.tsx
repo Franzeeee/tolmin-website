@@ -176,7 +176,7 @@ export default function Page() {
   },[]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 max-w-[100vw]">
       <header className="w-full relative h-[60vh] md:h-[80vh] lg:h-[100vh] max-h-[900px] overflow-hidden">
         <MainNav />
         <video
@@ -377,7 +377,7 @@ export default function Page() {
                     news.slice(1, 5).map((item, idx) => (
                       <motion.div
                         key={item._id || idx}
-                        className="flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500"
+                        className="flex-1 min-h-[100px] md:max-h-[135px] border-t-4 border-gray-200 pt-3 flex flex-col sm:flex-row gap-4 text-black hover:border-red-500 hover:text-red-600 transition-all duration-500 cursor-pointer"
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.6, ease: "easeIn", delay: idx * 0.2 }}
@@ -593,7 +593,7 @@ export default function Page() {
             </div>
           </section>
 
-          <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+          <section className='w-full min-h-content md:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div className='mb-4'>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
