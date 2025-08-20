@@ -17,7 +17,6 @@ export function useTeamLogos(teamIds: string[]) {
             `/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
           );
 
-          console.log(data)
           const imgId = data.img_id;
 
           // ✅ Correct Soccerway logo URL format

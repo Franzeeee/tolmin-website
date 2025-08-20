@@ -30,7 +30,7 @@ export default function Page() {
     const fetchNews = async () => {
         try {
             const response = await axios.get(`/api/news/${id}`);
-            console.log(response.data);
+
             setArticle(response.data);
         } catch (error) {
             console.error("Error fetching news:", error);

@@ -35,7 +35,6 @@ const Content = () => {
 
     if (formValues) {
       // Handle the formValues here (e.g., send to API)
-      console.log('Tekma data:', formValues)
       Swal.fire('Added!', 'Tekma has been added.', 'success')
     }
   }

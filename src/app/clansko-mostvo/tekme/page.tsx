@@ -95,7 +95,6 @@ export default function Page() {
     const data = response.data;
 
     data.forEach((item) => {
-      console.log(item)
       if (Array.isArray(item.data.matches)) {
         item.data.matches.forEach((match: Match) => {
           const season = match.season_info?.name;
@@ -181,14 +180,6 @@ export default function Page() {
 
   // Fetch logos for current season teams
   const { data: teamLogos, isLoading: logosLoading } = useTeamLogos(currentSeasonTeamIds);
-
-  useEffect(() => {
-    if (selectedSeason) {
-      console.log("Selected season:", selectedSeason);
-      console.log("Matches for selected season:", organizedMatches[selectedSeason] || []);
-      console.log("Team IDs for logos:", currentSeasonTeamIds);
-    }
-  }, [selectedSeason, currentSeasonTeamIds]);
 
   // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {

@@ -3,39 +3,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { data } from './data';
 
 export default function Tab3() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const accordionData = [
-    {
-      title: 'SEZONA 1995/1996',
-      content: [
-        "Po nekaj finančno zelo težkih sezonah, je po zaslugi novega predsednika Stojana Dobravca, ki ga je v klub pritegnila Petra Brelih v začetku leta 1995, NK Tolmin glede financ dobro preskrbljen. Glavni sponzor je v tem času PSC Tolmin, kjer je Stojan Dobravec direktor.",
-        "Problem predstavlja premalo številčen kader ter delovne in študijske obveznosti igralcev, na račun česar trpi kvaliteta treningov. Ekipo sestavljajo: Denis Rutar, Vasja Kovačič, Erik Fon, Anton Fortunat, Robert Rutar, Mitja Taljat, Štefan Dobravec, Uroš Matelič, Gregor Perdih, Iztok Mulič, Uroš Brežan, Štefan Gerbec, Marko Magajne, Marko Bizjak, Damjan Drole, Aleksander Hrast in Zvone Gerbec.",
-        "V tej sezoni za Tolmin ne igrata več Danilo Perše in Borut Nikolaš. V drugem delu sezone dobi trener Slobodan Veličković pomočnika Zvoneta Peršiča. Tolmin se uvrsti na sredino lestvice EPNL.",
-        "Tekmo na Brajdi proti končnemu zmagovalcu lige – Idriji, za katero nastopi in doseže vodilni zadetek na tekmi David Kanalec, si ogleda kar 500 gledalcev. Tolmin izgubi z 0:2."
-      ],
-      // image: '/U7.png',
-      screenshot: '/zgodovina/sezona/1995-1996.png'
-    },
-    {
-      title: 'SEZONA 1996/1997',
-      content: [
-        "Opis za sezono 1996/1997 - prvi odstavek.",
-        "Opis za sezono 1996/1997 - drugi odstavek."
-      ],
-      image: '/U7.png',
-    },
-    {
-      title: 'SEZONA 1997/1998',
-      content: [
-        "Opis za sezono 1997/1998 - prvi odstavek.",
-        "Opis za sezono 1997/1998 - drugi odstavek."
-      ],
-      image: '/U7.png',
-    },
-  ];
+  const accordionData = data;
 
   const handleToggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -80,11 +53,11 @@ export default function Tab3() {
               {isOpen && (
                 <div className="px-4 sm:px-6 py-3 bg-white text-gray-800 flex flex-col gap-3">
                   {item.image && (
-                    <div className="relative w-full min-h-[220px] max-h-[300px] sm:min-h-[350px] sm:max-h-[400px] md:min-h-[400px] md:max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] m-auto">
+                    <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px] lg:h-[420px] max-h-[480px] m-auto overflow-hidden">
                       <Image
                         src={item.image}
                         alt={item.title}
-                        className="object-contain xl:object-cover"
+                        className="object-contain"
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 650px"
                         priority
@@ -124,7 +97,7 @@ export default function Tab3() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4">
-              <h3 className="text-xl font-semibold text-center text-gray-900">
+              <h3 className="text-xl font-semibold text-center text-red-600">
                 {modalItem.title}
               </h3>
               <hr className="my-4 border-gray-200" />

@@ -139,7 +139,6 @@ export default function Page() {
         setFutureVenue(response.data.venue.detail.name || "No venue data available");
       });
     }
-    console.log(currentSeasonMatches[currentSlide]);
   }, [matches, currentSlide]);
 
     // ✅ Updated format function
@@ -166,7 +165,6 @@ export default function Page() {
       try {
         const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
         setMatches(response.data);
-        console.log('Matches fetched successfully:', response.data);
       } catch (error) {
         console.error('Error fetching matches:', error);
       }

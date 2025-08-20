@@ -86,8 +86,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             body: JSON.stringify({ items: cart, email, deliveryMethod, total }),
           });
           const text = await resp.text();
-          console.log('create-payment-intent status:', resp.status);
-          console.log('raw body:', text);
 
           const data = JSON.parse(text);
           if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
