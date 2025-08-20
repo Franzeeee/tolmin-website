@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const corsProxy = "https://cors-anywhere.herokuapp.com/";
-
 type TeamLogoResponse = {
   img_id: string;
 };
@@ -16,7 +14,7 @@ export function useTeamLogos(teamIds: string[]) {
       for (const teamId of teamIds) {
         try {
           const { data } = await axios.get<TeamLogoResponse>(
-            `${corsProxy}https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
+            `/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/${teamId}/`
           );
 
           console.log(data)
@@ -31,6 +29,5 @@ export function useTeamLogos(teamIds: string[]) {
 
       return logos;
     },
-    staleTime: 1000 * 60 * 60 * 24, // cache logos for 1 day
   });
 }

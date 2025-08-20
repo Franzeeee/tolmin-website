@@ -112,32 +112,59 @@ export default function Page() {
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
           <div className='relative w-full p-3 flex flex-row items-center justify-between'>
-            <ul className=' flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none'>
-              {tabs.map((tab) => (
-                <li
+            <div className="relative w-full p-3 flex flex-row items-center justify-between">
+              {/* Mobile: compact dropdown / segmented menu using native <details> for no extra hooks */}
+              <details className="w-full sm:hidden">
+              <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
+                <span className="font-semibold text-gray-800">{currentTab}</span>
+                <span className="ml-2 text-gray-500 select-none">▾</span>
+              </summary>
+
+              <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                {tabs.map((tab) => (
+                <Link
                   key={tab.name}
-                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                    currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
+                  href={tab.link}
+                  className={`block w-full text-left px-4 py-3 text-sm ${
+                  currentTab === tab.name
+                    ? "bg-red-50 text-red-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-50"
                   }`}
                   onClick={() => setActiveTab(tab.name)}
-                  onMouseEnter={() => setHoveredTab(tab.name)}
-                  onMouseLeave={() => setHoveredTab(null)}
                 >
-                  <Link href={activeTab === tab.name ? '#' : tab.link} className=''>
-                    {tab.name}
-                  </Link>
-                  {currentTab === tab.name && (
-                    <motion.div
-                      layoutId="underline"
-                      className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
-                      transition={{ type: "spring", stiffness: 500, damping: 60 }}
-                    />
-                  )}
+                  {tab.name}
+                </Link>
+                ))}
+              </div>
+              </details>
+
+              {/* Desktop / tablet: original horizontal tabs with underline animation */}
+              <ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0">
+              {tabs.map((tab) => (
+                <li
+                key={tab.name}
+                className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+                  currentTab === tab.name ? "text-red-600" : "hover:text-red-600"
+                }`}
+                onClick={() => setActiveTab(tab.name)}
+                onMouseEnter={() => setHoveredTab(tab.name)}
+                onMouseLeave={() => setHoveredTab(null)}
+                >
+                <Link href={activeTab === tab.name ? "#" : tab.link}>
+                  {tab.name}
+                </Link>
+                {currentTab === tab.name && (
+                  <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+                  transition={{ type: "spring", stiffness: 500, damping: 60 }}
+                  />
+                )}
                 </li>
               ))}
-              <div className="absolute left-0 right-0 bottom-2 h-[3px] w-100% bg-gray-300">
-              </div>
-          </ul>
+              <div className="absolute left-0 right-0 bottom-0 h-[3px] bg-gray-300 pointer-events-none" />
+              </ul>
+            </div>
               {/* <Dropdown items={["1", "2"]} onSelect={() => {}} /> */}
           </div>
         </section>
