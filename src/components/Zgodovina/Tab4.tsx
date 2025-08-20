@@ -10,7 +10,7 @@ export default function Tab4() {
     id: number;
     year?: string;
     description?: string;
-    img?: string;
+    imagePreviews?: string;
     // Add other fields as needed based on your API response
   }
 
@@ -58,7 +58,7 @@ export default function Tab4() {
           {/* Image: Image */}
           <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
               <Image 
-                  src={item.img || '/zgodovina/t1.png'}
+                  src={item.imagePreviews?.[0] || '/zgodovina/t1.png'}
                   alt="Example"
                   className="object-contain xl:object-cover"
                   fill
