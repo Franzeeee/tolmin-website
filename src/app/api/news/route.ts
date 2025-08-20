@@ -9,7 +9,7 @@ export async function GET() {
       return NextResponse.json({ message: 'Error fetching news', error: 'Collection not found' }, { status: 500 });
     }
 
-    const members = await teamCollection.find().toArray();
+    const members = await teamCollection.find().sort({ publishedAt: -1 }).toArray();
     return NextResponse.json(members);
   } catch (error) {
     return NextResponse.json({ message: 'Error fetching news', error }, { status: 500 });
