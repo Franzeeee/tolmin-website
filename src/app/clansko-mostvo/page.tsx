@@ -8,6 +8,14 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
+type Team = {
+  position?: string;
+  firstName?: string;
+  lastName?: string;
+  number?: string;
+  img?: string;
+};
+
 export default function Page() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("Epika");
@@ -28,6 +36,18 @@ export default function Page() {
 
   // Determine which tab to show the underline under
   const currentTab = hoveredTab || activeTab;
+
+  const [teamData, setTeamData] = useState<Team[] | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch('/api/teams');
+      const data = await res.json();
+      setTeamData(data);
+      console.log('Fetched team data:', data);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -118,30 +138,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+            {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('goal')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No goalkeepers found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('goal'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
@@ -155,30 +183,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+            {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('def')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No defenders found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('def'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
@@ -192,30 +228,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+                       {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('mid')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No midfielders found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('mid'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
@@ -229,30 +273,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+                        {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('forward')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No forwards found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('forward'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
@@ -266,30 +318,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+            {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('coach')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No coaches found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('coach'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
@@ -303,30 +363,38 @@ export default function Page() {
           </div>
         {/* Player Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-            {Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={index}
-                  className='relative p-5 h-[430px] w-full'
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                  viewport={{ once: true, amount: .3 }}
-                >
-                  <h1 className='absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number'>
-                    01
-                  </h1>
-                  <Image
-                    src='/player1.png'
-                    alt="News Image"
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins'>
-                    <p className='-mb-2 uppercase'>Altin</p>
-                    <p className='text-4xl font-semibold poppins uppercase'>Manxhuka</p>
-                  </div>
-                </motion.div>
-            ))}
+                        {teamData === null ? (
+              <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
+            ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('staff')).length === 0 ? (
+              <div className="col-span-full p-6 text-center text-gray-500">No staff found.</div>
+            ) : (
+              teamData
+                .filter((p: Team) => p.position && p.position.toLowerCase().includes('staff'))
+                .map((player: Team, index: number) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-5 h-[430px] w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                    viewport={{ once: true, amount: .3 }}
+                  >
+                    <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                      {player.number ?? '01'}
+                    </h1>
+                    <Image
+                      src={player.img || '/player1.png'}
+                      alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
+                      <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
+                      <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </section>
 
