@@ -20,9 +20,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { name, img, content } = body;
+    const { name, img, content, coaches } = body;
 
-    if (!name || !content) {
+    if (!name || !content ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     const newMember = await teamCollection.insertOne({
       name,
       img,
-      content
+      content,
+      coaches
     });
 
     return NextResponse.json(

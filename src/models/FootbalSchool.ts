@@ -14,6 +14,22 @@ const footballSchoolSchema = new Schema(
       type: String,
       required: true,
     },
+    coaches: [
+      {
+        name: {
+          type: String,
+          required: false,
+        },
+        phone: {
+          type: String,
+          required: false,
+        },
+        email: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

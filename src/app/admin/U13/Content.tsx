@@ -27,6 +27,15 @@ export default function Content() {
   const [preview, setPreview] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [coach, setCoach] = useState<{
+    name: string;
+    phone: string;
+    email: string;
+  }>({
+    name: '',
+    phone: '',
+    email: '',
+  });
 
   // Handle image input and preview
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +58,13 @@ export default function Content() {
         const item = res.data;
         if (item.img) setPreview(item.img);
         if (item.content) setEditorContent(item.content);
+        if (item.coaches && item.coaches.length > 0) {
+          setCoach({
+            name: item.coaches[0].name || '',
+            phone: item.coaches[0].phone || '',
+            email: item.coaches[0].email || '',
+          });
+        }
       } catch (error) {
         console.error('Error fetching football school data:', error);
         setError('Failed to fetch football school data');
@@ -90,6 +106,7 @@ export default function Content() {
       await axios.put(`/api/football-school/${id}`, {
         img: uploadedUrl,
         content: editorContent,
+        coaches: [coach]
       });
 
       Swal.fire({
@@ -178,6 +195,40 @@ export default function Content() {
                 link_default_protocol: 'https',
             }}
         />
+
+        <h1 className='text-xl text-red-600 font-bold lg:mt-6'>Coach Information:</h1>
+
+        <div>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              value={coach.name}
+              onChange={(e) => setCoach({ ...coach, name: e.target.value })}
+              className="mt-1 w-full rounded-sm p-2 px-3 text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Enter name"
+            />
+          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Contact Number</label>
+          <input
+            type="text"
+            value={coach.phone}
+              onChange={(e) => setCoach({ ...coach, phone: e.target.value })}
+              className="mt-1 w-full rounded-sm p-2 px-3 text-black border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Enter contact number"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={coach.email}
+              placeholder="Enter email address"
+              onChange={(e) => setCoach({ ...coach, email: e.target.value })}
+              className="mt-1 w-full rounded-sm p-2 text-black px-3 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
 
           </div>
 

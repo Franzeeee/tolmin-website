@@ -95,3 +95,7 @@ body {
 .hide-scroll-arrows::-webkit-scrollbar-button {
   display: none;
 }
+
+html, body {
+  overflow-x: hidden !important;
+}
