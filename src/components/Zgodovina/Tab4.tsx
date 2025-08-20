@@ -56,7 +56,7 @@ export default function Tab4() {
           </div>
 
           {/* Image: Image */}
-          <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] flex items-center justify-center">
+          <div className="relative w-full h-[200px] md:h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] flex items-center justify-center">
             <Image
               src={item.imagePreviews?.[0] || '/zgodovina/t1.png'}
               alt={item.year ? `Photo ${item.year}` : 'Photo'}

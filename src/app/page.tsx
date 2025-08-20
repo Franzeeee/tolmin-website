@@ -51,17 +51,57 @@ interface NewsArticle {
   publishedAt: string;
 }
 
+interface Match {
+  id: string;
+  season: string;
+  o_status: string;
+  round: string;
+  stage: {
+    st_name: string;
+  }
+  start: number;
+  teams: Array<{
+    id: string;
+    img_id: string;
+    name: string;
+    o_name: string;
+    pos: number;
+    s_name: string;
+    scores: {
+      FINAL_RESULT: string;
+      RUNNING: string;
+    }
+  }>;
+}
+
+interface fetchedData {
+  code: string;
+  gender: string;
+  country: Array<string>;
+  id: string;
+  img_id: string;
+  kn: string;
+  o_name: string;
+  s_name: string;
+  sport: string;
+  matches: Match[];
+}
+
 export default function Page() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(1);
   const [direction, setDirection] = useState(0);
 
   const handleNext = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    if (finishedMatchesCount > currentSlide) {
+      setDirection(1);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }
   };
   const handlePrev = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    if (finishedMatchesCount > currentSlide) {
+      setDirection(-1);
+      setCurrentSlide((prev) => (prev - 1) % slides.length);
+    }
   };
 
   const [news, setNews] = useState<NewsArticle[]>([]);
@@ -69,7 +109,6 @@ export default function Page() {
   useEffect(() => {
     axios.get('/api/news')
       .then((response) => {
-        console.log(response.data);
         setNews(response.data);
       })
       .catch((error) => {
@@ -80,6 +119,52 @@ export default function Page() {
         });
       });
   }, []);
+
+  const [matches, setMatches] = useState<fetchedData | null>(null);
+  const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
+  const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
+  const [venue, setVenue] = useState<string | null>(null);
+
+  useEffect(() => {
+    const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${matches?.matches[currentSlide].id}/`);
+
+    matchInfo.then(response => {
+      setVenue(response.data.venue.detail.name || "No venue data available");
+    });
+  }, [matches, currentSlide]);
+
+    // ✅ Updated format function
+  function formatMatchDate(unixTimestamp: number): string {
+    const date = new Date(unixTimestamp * 1000); // convert seconds → ms
+
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+      const day = days[date.getUTCDay()];
+    const d = date.getUTCDate().toString().padStart(2, "0");
+    const month = months[date.getUTCMonth()];
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+
+    return `${day}, ${month} ${d}, ${hours}:${minutes}`;
+  }
+
+  useEffect(()=> {
+    const fetchMatches = async () => {
+      try {
+        const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
+        setMatches(response.data);
+        console.log('Matches fetched successfully:', response.data);
+      } catch (error) {
+        console.error('Error fetching matches:', error);
+      }
+    };
+
+    fetchMatches();
+  },[]);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
@@ -140,7 +225,7 @@ export default function Page() {
                             </div>
 
                             {/* Slide Wrapper */}
-                            <div className='relative h-[250px]'>
+                            <div className='relative h-[250px]' key={idx}>
                               <AnimatePresence custom={direction} initial={false}>
                                 <motion.div
                                   key={currentSlide}
@@ -152,20 +237,26 @@ export default function Page() {
                                   exit="exit"
                                   transition={{ duration: 0.5, ease: 'easeInOut' }}
                                 >
-                                  {/* Logos and VS */}
-                                  <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
-                                    <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
-                                    <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
-                                      <p>VS</p>
-                                    </div>
-                                    <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
-                                  </div>
+                                  { matches?.matches && matches.matches.length > 0 ? matches?.matches.filter((match: Match) => match.season  === currentSeason && match.o_status.includes("FINISHED")).map((match: Match, index: number) => (
+                                    <>
+                                      {/* Logos and VS */}
+                                        <div key={index} className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
+                                          <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
+                                          <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
+                                            <p>VS</p>
+                                          </div>
+                                          <Image src={`https://static.soccerway.com/team/${match?.teams?.[1].img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
+                                        </div>
 
-                                  {/* Date and Location */}
-                                  <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                                    <p className='font-semibold'>{slides[currentSlide].date}, 12:00</p>
-                                    <p className='text-sm font-thin'>{slides[currentSlide].location}</p>
-                                  </div>
+                                        {/* Date and Location */}
+                                        <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
+                                          <p className='font-semibold'>{formatMatchDate(match.start)}</p>
+                                          <p className='text-sm font-thin'>{venue}</p>
+                                        </div>
+                                    </>
+                                  )) : (
+                                    <p className='text-white'>No match data available</p>
+                                  )}
                                 </motion.div>
                               </AnimatePresence>
                             </div>
@@ -174,7 +265,7 @@ export default function Page() {
                             <div className='flex justify-between items-center gap-4 mt-4'>
                               <button onClick={handlePrev} className='text-white opacity-50 text-lg hover:opacity-100 w-10 text-start cursor-pointer font-extrabold'>⟨</button>
                               <div className='flex gap-2'>
-                                {slides.map((_, i) => (
+                                {Array.from({ length: finishedMatchesCount }, (_, i) => (
                                   <div
                                     key={i}
                                     className={`h-2 w-2 rounded-full ${i === currentSlide ? 'bg-white' : 'bg-gray-500 opacity-50'}`}
