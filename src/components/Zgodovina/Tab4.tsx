@@ -56,15 +56,16 @@ export default function Tab4() {
           </div>
 
           {/* Image: Image */}
-          <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px]">
-              <Image 
-                  src={item.imagePreviews?.[0] || '/zgodovina/t1.png'}
-                  alt="Example"
-                  className="object-contain xl:object-cover"
-                  fill
-                  sizes="(max-width: 1280px) 100vw, 650px"
-                  priority
-              />
+          <div className="relative w-full h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] flex items-center justify-center">
+            <Image
+              src={item.imagePreviews?.[0] || '/zgodovina/t1.png'}
+              alt={item.year ? `Photo ${item.year}` : 'Photo'}
+              className="object-contain object-center"
+              fill
+              sizes="(max-width: 1280px) 100vw, 650px"
+              priority
+              style={{ objectFit: 'contain', objectPosition: 'center' }}
+            />
           </div>
         </React.Fragment>
       ))
