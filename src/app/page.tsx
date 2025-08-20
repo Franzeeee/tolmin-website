@@ -123,14 +123,23 @@ export default function Page() {
   const [matches, setMatches] = useState<fetchedData | null>(null);
   const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
   const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
+  const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
+  const [futureVenue, setFutureVenue] = useState<string | null>(null);
 
   useEffect(() => {
-    const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${matches?.matches[currentSlide].id}/`);
+    if(matches) {
+      const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide -1].id}/`);
+      const futureMatchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide].id}/`);
 
-    matchInfo.then(response => {
-      setVenue(response.data.venue.detail.name || "No venue data available");
-    });
+      matchInfo.then(response => {
+        setVenue(response.data.venue.detail.name || "No venue data available");
+      });
+      futureMatchInfo.then(response => {
+        setFutureVenue(response.data.venue.detail.name || "No venue data available");
+      });
+    }
+    console.log(currentSeasonMatches[currentSlide]);
   }, [matches, currentSlide]);
 
     // ✅ Updated format function
@@ -289,23 +298,23 @@ export default function Page() {
                                   <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                     <p>VS</p>
                                   </div>
-                                  <Image src={'/enemy-logo.png'} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <Image src={`https://static.soccerway.com/team/${currentSeasonMatches[currentSlide]?.teams?.[0]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
                                 </div>
 
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                                  <p className='font-semibold'>Monday, May 19, 12:00</p>
-                                  <p className='text-sm font-thin'>Športni park Brajda</p>
+                                  <p className='font-semibold'>{formatMatchDate(currentSeasonMatches[currentSlide]?.start)}</p>
+                                  <p className='text-sm font-thin'>{futureVenue || "No venue data available"}</p>
                                 </div>
                               </>
                             ) : (
-                              <>
+                              <Link href="/clansko-mostvo/lestvica">
                                 <div className='flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4'>
                                   <h2 className='text-2xl'>SNL 3</h2>
                                 </div>
                                 <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
                                   <h1 className='text-7xl text-center uppercase italic font-semibold leading-24 '>ligaška lestvica</h1>
                                 </div>
-                              </>
+                              </Link>
                             )
                               
                             }
