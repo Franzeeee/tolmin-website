@@ -58,7 +58,7 @@ export default function Tab4() {
           {/* Image: Image */}
           <div className="relative w-full h-[200px] md:h-[400px] max-h-[500px] xl:w-[650px] xl:h-[650px] xl:max-h-[1200px] flex items-center justify-center">
             <Image
-              src={item.imagePreviews?.[0]}
+              src={item.imagePreviews?.[0] || ""}
               alt={item.year ? `Photo ${item.year}` : 'Photo'}
               className="object-contain object-center"
               fill
