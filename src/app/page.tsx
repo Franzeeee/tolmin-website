@@ -248,9 +248,13 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                             <div className='relative h-[250px]' key={idx}>
                               <AnimatePresence custom={direction} initial={false}>
                                 {matches?.matches && matches.matches.length > 0 ? (
-                                  matches.matches
-                                    .filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED"))
-                                    .map((match: Match, index: number) =>
+                                  (() => {
+                                    const finishedReversed = matches.matches
+                                      .filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED"))
+                                      .slice() // copy before reversing to avoid mutating original
+                                      .reverse();
+
+                                    return finishedReversed.map((match: Match, index: number) =>
                                       index === currentSlide ? (
                                         <motion.div
                                           key={match.id || index}
@@ -304,7 +308,8 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                           </div>
                                         </motion.div>
                                       ) : null
-                                    )
+                                    );
+                                  })()
                                 ) : (
                                   <motion.div
                                     key="no-data"
