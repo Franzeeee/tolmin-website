@@ -14,11 +14,11 @@ import Link from 'next/link';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const slides = [
-  { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
-  { title: "Slide 2", date: "Tuesday, May 20", location: "Central Stadium" },
-  { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
-];
+// const slides = [
+//   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
+//   { title: "Slide 2", date: "Tuesday, May 20", location: "Central Stadium" },
+//   { title: "Slide 3", date: "Wednesday, May 21", location: "Arena Nova" }
+// ];
 
 const slideVariants: Variants = {
   enter: (direction: number) => ({
@@ -127,7 +127,7 @@ export default function Page() {
   const [matches, setMatches] = useState<fetchedData | null>(null);
   const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
   const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
-  const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
+  // const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
   const [futureVenue, setFutureVenue] = useState<string | null>(null);
   const finishedMatches = matches?.matches?.filter(
@@ -154,30 +154,17 @@ export default function Page() {
         axios
           .get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${futureMatch.id}/`)
           .then((res) => setFutureVenue(res.data.venue?.detail?.name ?? "No venue data available"));
-
-        console.log(futureMatch);
       }
     }
   }, [finishedMatches, upcomingMatches, currentSlide]);
 
 
-    // ✅ Updated format function
-  function formatMatchDate(unixTimestamp: number): string {
-    const date = new Date(unixTimestamp * 1000); // convert seconds → ms
-
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-
-      const day = days[date.getUTCDay()];
-    const d = date.getUTCDate().toString().padStart(2, "0");
-    const month = months[date.getUTCMonth()];
-    const hours = date.getUTCHours().toString().padStart(2, "0");
-    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
-
-    return `${day}, ${month} ${d}, ${hours}:${minutes}`;
+  function formatMatchDate(unixTimestamp?: number | null): string {
+    if (!unixTimestamp) return '';
+    const date = new Date(unixTimestamp * 1000); // seconds → ms (local time)
+    const day = date.getDate(); // 1-31
+    const month = date.getMonth() + 1; // 1-12
+    return `${day}.${month}`;
   }
 
   useEffect(()=> {
@@ -192,6 +179,12 @@ export default function Page() {
 
     fetchMatches();
   },[]);
+
+  // Get unique stages
+const allStages = [...new Set(matches?.matches?.map((m: Match) => m.stage))];
+
+// Assume the last one is the current stage (often APIs order chronologically)
+const currentStageName = allStages[allStages.length - 1] ?? null;
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 max-w-[100vw]">
@@ -247,7 +240,7 @@ export default function Page() {
                           <>
                             {/* Carousel Title */}
                             <div className='flex items-center flex-col justify-center p-2 font-semibold text-white uppercase'>
-                              <h1 className='text-5xl font-bold font-poppins'>PreJSJA</h1>
+                              <h1 className='text-5xl font-bold font-poppins'>Zadnja</h1>
                               <h2>SNL</h2>
                             </div>
 
@@ -346,7 +339,7 @@ export default function Page() {
                             {idx == 1 ? (
                               <>
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white uppercase mb-4'>
-                                  <h1 className='text-5xl font-bold font-poppins'>prihajajoče</h1>                              
+                                  <h1 className='text-5xl font-bold font-poppins'>Naslednja</h1>                              
                                   <h2>SNL</h2>
                                 </div>
                                 <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
@@ -365,7 +358,7 @@ export default function Page() {
                             ) : (
                               <Link href="/clansko-mostvo/lestvica">
                                 <div className='flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4'>
-                                  <h2 className='text-2xl'>SNL 3</h2>
+                                  <h2 className='text-2xl'>{currentStageName?.st_name || "3. SNL"}</h2>
                                 </div>
                                 <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
                                   <h1 className='text-7xl text-center uppercase italic font-semibold leading-24 '>ligaška lestvica</h1>
@@ -387,7 +380,7 @@ export default function Page() {
             {/* Header Title */}
             <div>
               <h1 className="text-4xl font-extrabold text-left text-black mt-2 uppercase">
-                Tekme <span className='font-semibold'>nedavne novice</span>
+                Nedavne<span className='font-semibold'> Novice</span>
               </h1>
             </div>
 
@@ -498,7 +491,7 @@ export default function Page() {
                     </div>
                     )}
                 </div>
-                {news.length > 6 && (
+                {news.length > 5 && (
                   <div className="border-t-4 border-gray-200 pt-3">
                     <motion.button
                       onClick={() => (window.location.href = '/novice')}
@@ -506,7 +499,7 @@ export default function Page() {
                       whileTap={{ scale: 1 }}
                       className="w-full bg-red-700 text-white p-2 poppins uppercase cursor-pointer hover:bg-red-700"
                     >
-                      See more
+                      Prikaže Vse
                     </motion.button>
                   </div>
                 )}
@@ -520,7 +513,7 @@ export default function Page() {
 <section className="w-full min-h-content p-2 overflow-hidden border-b-3 border-gray-200 pb-12">
           <div className="mb-4 flex items-end justify-between">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-left text-black mt-4 uppercase">
-              Igralci
+              Ekipa
             </h1>
             <Link href={'/clansko-mostvo'} className="text-gray-700 cursor-pointer hover:text-red-600 transition-colors duration-300 text-sm md:text-base">
               Prikaži vse <FontAwesomeIcon className="text-xs" icon={faAngleRight} />
@@ -564,9 +557,6 @@ export default function Page() {
                       1921 – 1971
                     </h5>
                   </a>
-                  <p className="mb-3 text-3xl text-black poppins">
-                    The History of Nk Tolmin
-                  </p>
                   <div className="flex justify-end">
                     <a
                       href="/zgodovina"
@@ -618,9 +608,6 @@ export default function Page() {
                       1971 – 1995
                     </h5>
                   </a>
-                  <p className="mb-3 text-3xl text-black poppins">
-                    The History of Nk Tolmin
-                  </p>
                   <div className="flex justify-end">
                     <a
                       href="/zgodovina"
