@@ -184,20 +184,11 @@ export default function Page() {
   // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {
     const date = new Date(unixTimestamp * 1000); // convert seconds → ms
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
 
-    const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-    const months = [
-      "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-      "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-    ];
-
-    const day = days[date.getUTCDay()];
-    const d = date.getUTCDate().toString().padStart(2, "0");
-    const month = months[date.getUTCMonth()];
-    const hours = date.getUTCHours().toString().padStart(2, "0");
-    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
-
-    return `${day} ${d} ${month} — ${hours}:${minutes}`;
+    return `${day}.${month}.${year}`;
   }
 
   return (
@@ -313,11 +304,11 @@ export default function Page() {
               ).map(([monthYear, matches]) => (
                 <div key={monthYear} className="mb-10">
                   {/* Month Header */}
-                  <div className='border-b-2 border-gray-200 mb-4 pb-2'>
+                  {/* <div className='border-b-2 border-gray-200 mb-4 pb-2'>
                     <h1 className="text-5xl font-bold text-left mt-2 uppercase text-gray-200">
                       {monthYear}
                     </h1>
-                  </div>
+                  </div> */}
 
                   {/* Matches in that month */}
                   <div className="w-full grid gap-4">

@@ -24,11 +24,11 @@ type OldTeam = {
 
 export default function Page() {
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState("Epika");
+  const [activeTab, setActiveTab] = useState("Ekipa");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
   const [tabs] = useState<{ name: string; link: string }[]>([
-    { name: "Epika", link: "/clansko-mostvo" },
+    { name: "Ekipa", link: "/clansko-mostvo" },
     { name: "Tekme", link: "/clansko-mostvo/tekme" },
     { name: "Lestvica", link: "/clansko-mostvo/lestvica" }
   ]);
@@ -93,7 +93,7 @@ export default function Page() {
             }}
             className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
           >
-            Člansko moštvo - ekipa
+            Člansko moštvo - Ekipa
           </motion.h1>
         </div>
       </header>
@@ -182,7 +182,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Goalkeeper
+                  Vratarji
                 </h1>
               </div>
             {/* Player Cards */}
@@ -190,7 +190,7 @@ export default function Page() {
                 {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('goal')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No goalkeepers found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Vratarji found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('goal'))
@@ -227,7 +227,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Defenders
+                  Branilci
                 </h1>
               </div>
             {/* Player Cards */}
@@ -235,7 +235,7 @@ export default function Page() {
                 {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('def')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No defenders found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Branilci found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('def'))
@@ -272,7 +272,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Midfields
+                  Vezisti
                 </h1>
               </div>
             {/* Player Cards */}
@@ -280,7 +280,7 @@ export default function Page() {
                           {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('mid')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No midfielders found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Vezisti found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('mid'))
@@ -317,7 +317,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Forwards
+                  Napadalci
                 </h1>
               </div>
             {/* Player Cards */}
@@ -325,7 +325,7 @@ export default function Page() {
                             {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('forward')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No forwards found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Napadalci found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('forward'))
@@ -362,7 +362,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Coach
+                  Trener
                 </h1>
               </div>
             {/* Player Cards */}
@@ -370,7 +370,7 @@ export default function Page() {
                 {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('coach')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No coaches found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Trener found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('coach'))
@@ -407,7 +407,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Staff
+                  Strokovni štab
                 </h1>
               </div>
             {/* Player Cards */}
@@ -415,7 +415,7 @@ export default function Page() {
                             {teamData === null ? (
                   <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
                 ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('staff')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No staff found.</div>
+                  <div className="col-span-full p-6 text-center text-gray-500">No Strokovni štab found.</div>
                 ) : (
                   teamData
                     .filter((p: Team) => p.position && p.position.toLowerCase().includes('staff'))

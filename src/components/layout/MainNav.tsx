@@ -28,7 +28,7 @@ const navItems = [
     name: "Člansko moštvo",
     link: "/clansko-mostvo",
     dropdown: [
-      { name: "Člansko moštvo – ekipa", link: "/clansko-mostvo" },
+      { name: "Ekipa", link: "/clansko-mostvo" },
       { name: "Tekme", link: "/clansko-mostvo/tekme" },
       { name: "Lestvica", link: "/clansko-mostvo/lestvica" }
     ]

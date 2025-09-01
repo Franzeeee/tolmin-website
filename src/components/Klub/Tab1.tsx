@@ -1,163 +1,167 @@
-import React from 'react'
-import Image from 'next/image'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faMusic, faPhone } from '@fortawesome/free-solid-svg-icons'
+import React from "react";
+import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faMusic, faPhone, faGlobe } from "@fortawesome/free-solid-svg-icons";
 
 export default function Tab1() {
-    return(<>
-    <div className="w-full p-4 flex h-fit gap-8 flex-col justify-center items-center max-w-5xl">
+  return (
+    <div className="w-full px-6 py-10 flex flex-col items-center max-w-6xl mx-auto text-black">
+      {/* Logo + Title */}
+      <div className="flex flex-col items-center text-center mb-10">
+        <div className="relative w-60 h-40">
+          <Image
+            src="/tolmin-logo-clear.png"
+            alt="Nk Tolmin Logo"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        <h1 className="text-3xl font-bold mt-4 text-red-700">Nogometni klub Tolmin</h1>
+        <p className="text-gray-600">Ustanovljen leta 1921</p>
+      </div>
 
-        {/* Text: Content */}
-        <div className="flex items-start justify-center w-full p-4 py-0 flex-col poppins text-black max">
+      {/* Grid Info */}
+      <div className="grid md:grid-cols-2 gap-8 w-full">
+        {/* Left Column */}
+        <div className="space-y-5">
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3">Osnovne Informacije</h2>
+            <p><span className="font-bold">Naslov:</span> Ulica padlih borcev 1d, 5220 Tolmin</p>
+            <p><span className="font-bold">Barve dresov:</span> rdeče-črna</p>
+            <p><span className="font-bold">Vodstvo kluba:</span> 13-članski odbor, predsednik: Žan Isakoski Drole</p>
+          </div>
 
-            <div className="w-full flex justify-center">
-                <div className="relative w-full max-h-[300px] aspect-video max-w-full xl:w-[450px] xl:max-h-[350px] flex-shrink-0 rounded overflow-hidden">
-                    <Image
-                        src="/tolmin-logo-clear.png"
-                        alt="Nk Tolmin Logo"
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 60vw, 450px"
-                        priority
-                    />
-                </div>
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+              <FontAwesomeIcon icon={faPhone} /> Kontakt
+            </h2>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>041 781 734 (Žan – predsednik)</li>
+              <li>031 714 676 (Tadej – marketing)</li>
+              <li>041 487 698 (Andrej – tekmovanja)</li>
+              <li>041 243 287 (Mojca – sekretarka)</li>
+            </ul>
+          </div>
+
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+              <FontAwesomeIcon icon={faEnvelope} /> E-pošta
+            </h2>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                <a href="mailto:nktolmin1921@gmail.com" className="text-red-600 hover:underline">
+                  nktolmin1921@gmail.com
+                </a>
+              </li>
+              <li>
+                <a href="mailto:nktolmin.mladi@gmail.com" className="text-red-600 hover:underline">
+                  nktolmin.mladi@gmail.com
+                </a>
+              </li>
+              <li>
+                <a href="mailto:znktminke@gmail.com" className="text-red-600 hover:underline">
+                  znktminke@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-5">
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+              <FontAwesomeIcon icon={faGlobe} /> Spletna stran
+            </h2>
+            <p>
+              <a href="https://www.nktolmin.si" target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline">
+                www.nktolmin.si
+              </a>
+            </p>
+          </div>
+
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3">Finančni Podatki</h2>
+            <p><span className="font-bold">TRR:</span> 04753-0000393918 – Nova KBM d.d. Nova Gorica</p>
+            <p><span className="font-bold">Swift:</span> KBMASI2XGOR</p>
+            <p><span className="font-bold">IBAN:</span> SI5604753-0000393918</p>
+            <p><span className="font-bold">Davčna številka:</span> SI50700332</p>
+            <p><span className="font-bold">Matična številka:</span> 5058643000</p>
+          </div>
+
+          <div className="bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+              <FontAwesomeIcon icon={faMusic} /> Himna NK Tolmin
+            </h2>
+            {/* Embedded YouTube video */}
+            <div className="aspect-video w-full rounded-lg overflow-hidden mb-4">
+              <iframe
+                src="https://www.youtube.com/embed/cp5Ur_lthPY"
+                title="Himna NK Tolmin"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
             </div>
 
-            <p className='text-lg text-gray-800 text-justify lg:mt-10'>
-                Naziv:<span className='font-bold'> Nogometni klub Tolmin</span>
-            </p>
-
-            <p className='text-lg text-gray-800 text-justify'>
-                Ustanovitev:<span className='font-bold'> Ulica padlih borcev 1d, 5220 Tolmin</span>
-            </p>
-
-            <p className='text-lg text-gray-800 text-justify'>
-                Osnovna barva dresov:<span className='font-bold'> rdeče-črna</span>
-            </p>
-
-            <p className='text-lg text-gray-800 mb-4 text-justify mt-5'>
-                Naslovaj:<span className='font-bold'> leta 1921</span>
-            </p>
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-                Vodstvo kluba: <span className='font-bold'>13-članski upravni odbor, predsednik kluba: Žan Isakoski Drole</span>
-            </p>
-
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-               <span className='font-bold'><FontAwesomeIcon icon={faPhone} /> Kontakt:</span>
-            </p>
-
-            <ul className="list-disc pl-7 text-lg text-gray-800 mb-4">
-                <li>041 781 734 (Žan – predsednik),</li>
-                <li>031 714 676 (Tadej – marketing)</li>
-                <li>041 487 698 (Andrej – tekmovanja)</li>
-                <li>041 243 287 (Mojca – sekretarka )</li>
-            </ul>
-
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-               <span className='font-bold'><FontAwesomeIcon icon={faEnvelope} /> E-pošta:</span>
-            </p>
-
-            <ul className="list-disc pl-7 text-lg text-gray-800 mb-4">
-                <li>
-                    <a href="mailto:nktolmin1921@gmail.com" className="text-red-600 hover:underline">
-                        nktolmin1921@gmail.com
-                    </a>
-                </li>
-                <li>
-                    <a href="mailto:nktolmin.mladi@gmail.com" className="text-red-600 hover:underline">
-                        nktolmin.mladi@gmail.com
-                    </a>
-                </li>
-                <li>
-                    <a href="mailto:znktminke@gmail.com" className="text-red-600 hover:underline">
-                        znktminke@gmail.com
-                    </a>
-                </li>
-            </ul>
-
-
-            <p className='text-lg text-gray-800 mb-4 text-justify mt-5'>
-                Spletna stran:<span className='font-bold'> www.nktolmin.si</span>
-            </p>
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-                Transakcijski račun: <span className='font-bold'>04753-0000393918 – Nova KBM d.d. Nova Gorica; swift: KBMASI2XGOR; IBAN koda: SI5604753-0000393918 </span>
-            </p>
-
-            <p className='text-lg text-gray-800 mb-4 text-justify mt-5'>
-                Davčna številka:<span className='font-bold'>  SI50700332</span>
-            </p>
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-                Matična številka: <span className='font-bold'>5058643000</span>
-            </p>
-
-            <p className='text-lg text-gray-800 mb-4 text-justify '>
-               <span className='font-bold'><FontAwesomeIcon icon={faMusic} /> Himna NK Tolmin:</span> - Leon Oblak <a
-                 href="https://www.youtube.com/watch?v=cp5Ur_lthPY"
-                 className="text-red-600 hover:underline"
-                 target="_blank"
-                 rel="noopener noreferrer"
-               >
-                  (BESEDILO)
-               </a>:
-               
-            </p>
-
-            <p className='text-gray-800 mb-4 text-justify italic'>
+            <div className="text-gray-700 italic space-y-3">
+                <p>
                 Vrti se žoga, vrti se svet,
                 mi smo nori na nogomet. <br />
                 Vsaka zmaga je nov spomin <br />
                 gremo, gremo, gremo Tolmin.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Vedno polni energije, <br />
                 ko za klub srce nam bije.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj odmeva od gora vse do nižin, samo eden je Tolmin. <br />
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj se sliši preko hribov in dolin, da najboljši je Tolmin.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Teče žoga, teče čas, <br />
                 teče vroča kri v nas. <br />
                 Nogomet je adrenalin, <br />
                 gremo, gremo, gremo Tolmin.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Vedno polni energije, <br />
                 ko za klub srce nam bije.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj odmeva od gora vse do nižin, samo eden je Tolmin. <br />
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj se sliši preko hribov in dolin, da najboljši je Tolmin.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Nogomet na valovih domišljije, <br />
                 tam kjer se Tolminka v Sočo zlije, <br />
                 z nami naj se dvigne do višin <br />
                 nogometni klub Tolmin.
-            </p>
+                </p>
 
-            <p className='text-gray-800 mb-4 text-justify italic'>
+                <p>
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj odmeva od gora vse do nižin, samo eden je Tolmin. <br />
                 Rdeče-črni iz Tolmina, naj se piše zgodovina, <br />
                 naj se sliši preko hribov in dolin, da najboljši je Tolmin.
-            </p>
-
+                </p>
+  </div>
+          </div>
         </div>
-
-
+      </div>
     </div>
-
-    </>)
+  );
 }

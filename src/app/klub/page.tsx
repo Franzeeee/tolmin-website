@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -75,7 +75,7 @@ export default function Page() {
 
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
         <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-visible'>
-          <div className="relative w-full h-[200px] max-h-[300px] xl:w-full xl:h-[350px] xl:max-h-[500px]">
+          {/* <div className="relative w-full h-[200px] max-h-[300px] xl:w-full xl:h-[350px] xl:max-h-[500px]">
               <Image 
                 src={'/club.png'}
                   alt="Example"
@@ -84,7 +84,7 @@ export default function Page() {
                   sizes="(max-width: 1280px) 100vw, 650px"
                   priority
               />
-          </div>
+          </div> */}
 
           <div className='relative w-full p-3 flex flex-row items-center justify-between'>
             <ul className='flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none justify-center items-center w-full'>

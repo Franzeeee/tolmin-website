@@ -25,30 +25,34 @@ export default function Sponsors() {
     };
     fetchSponsors();
   }, []);
-  
+
+  const mainSponsors = sponsors.filter(s => s.category === 'main');
   const partnerSponsors = sponsors.filter(s => s.category === 'partner');
   const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
 
   return (
-    <section className="w-full py-8 bg-gray-950 flex flex-col items-center gap-6">
+    <section className="w-full py-8 bg-white flex flex-col border-t items-center gap-6">
       {/* Main Sponsors */}
-      <div className="w-full border-b border-gray-500 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4">
-        {[
-          '/logo/ziggrad.png',
-          '/logo/hidria_logo.png',
-          '/logo/coronini_logo.png',
-          '/logo/herz_logo.png',
-          '/logo/tkk_logo.png',
-        ].map((src, idx) => (
-          <Image
-            key={idx}
-            src={src}
-            alt={`Main sponsor ${idx + 1}`}
-            width={160}
-            height={160}
-            className="object-contain"
-          />
-        ))}
+      <div className="w-full border-b border-gray-500 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4 md:pb-5">
+        {mainSponsors.map((s) =>
+          s.logoUrl ? (
+            <Image
+              key={s._id}
+              src={s.logoUrl}
+              alt={s.name}
+              width={155}
+              height={155}
+              className="object-contain"
+            />
+          ) : (
+            <div
+              key={s._id}
+              className="w-[135px] h-[135px] flex items-center justify-center bg-gray-800 text-white text-center px-2"
+            >
+              {s.name}
+            </div>
+          )
+        )}
       </div>
 
       {/* Other sponsors */}
