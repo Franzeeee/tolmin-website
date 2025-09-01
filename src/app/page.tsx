@@ -88,21 +88,25 @@ interface fetchedData {
 }
 
 export default function Page() {
-  const [currentSlide, setCurrentSlide] = useState(1);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
 
   const handleNext = () => {
-    if (finishedMatchesCount > currentSlide) {
+    if (finishedMatches.length > 0) {
       setDirection(1);
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % finishedMatches.length);
     }
   };
+
   const handlePrev = () => {
-    if (finishedMatchesCount > currentSlide) {
+    if (finishedMatches.length > 0) {
       setDirection(-1);
-      setCurrentSlide((prev) => (prev - 1) % slides.length);
+      setCurrentSlide((prev) =>
+        prev === 0 ? finishedMatches.length - 1 : prev - 1
+      );
     }
   };
+
 
   const [news, setNews] = useState<NewsArticle[]>([]);
 
@@ -126,20 +130,36 @@ export default function Page() {
   const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
   const [futureVenue, setFutureVenue] = useState<string | null>(null);
+  const finishedMatches = matches?.matches?.filter(
+    (match: Match) =>
+      match.season === currentSeason && match.o_status.includes("FINISHED")
+  ) ?? [];
+
+  const upcomingMatches = matches?.matches?.filter(
+    (match: Match) =>
+      match.season === currentSeason && match.o_status.includes("NOT_STARTED")
+  ) ?? [];
 
   useEffect(() => {
-    if(matches) {
-      const matchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide -1].id}/`);
-      const futureMatchInfo = axios.get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${currentSeasonMatches[currentSlide].id}/`);
+    if (finishedMatches.length > 0) {
+      const match = finishedMatches[currentSlide];
+      if (match) {
+        axios
+          .get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${match.id}/`)
+          .then((res) => setVenue(res.data.venue?.detail?.name ?? "No venue data available"));
+      }
 
-      matchInfo.then(response => {
-        setVenue(response.data.venue.detail.name || "No venue data available");
-      });
-      futureMatchInfo.then(response => {
-        setFutureVenue(response.data.venue.detail.name || "No venue data available");
-      });
+      const futureMatch = upcomingMatches[0]; // next game
+      if (futureMatch) {
+        axios
+          .get(`/api/fetch?url=https://int.soccerway.com/v1/english/match/soccer/full/${futureMatch.id}/`)
+          .then((res) => setFutureVenue(res.data.venue?.detail?.name ?? "No venue data available"));
+
+        console.log(futureMatch);
+      }
     }
-  }, [matches, currentSlide]);
+  }, [finishedMatches, upcomingMatches, currentSlide]);
+
 
     // ✅ Updated format function
   function formatMatchDate(unixTimestamp: number): string {
@@ -234,37 +254,75 @@ export default function Page() {
                             {/* Slide Wrapper */}
                             <div className='relative h-[250px]' key={idx}>
                               <AnimatePresence custom={direction} initial={false}>
-                                <motion.div
-                                  key={currentSlide}
-                                  className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center"
-                                  custom={direction}
-                                  variants={slideVariants}
-                                  initial="enter"
-                                  animate="center"
-                                  exit="exit"
-                                  transition={{ duration: 0.5, ease: 'easeInOut' }}
-                                >
-                                  { matches?.matches && matches.matches.length > 0 ? matches?.matches.filter((match: Match) => match.season  === currentSeason && match.o_status.includes("FINISHED")).map((match: Match, index: number) => (
-                                    <>
-                                      {/* Logos and VS */}
-                                        <div key={index} className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
-                                          <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
-                                          <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
-                                            <p>VS</p>
-                                          </div>
-                                          <Image src={`https://static.soccerway.com/team/${match?.teams?.[1].img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain'  loading="lazy"/>
-                                        </div>
+                                {matches?.matches && matches.matches.length > 0 ? (
+                                  matches.matches
+                                    .filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED"))
+                                    .map((match: Match, index: number) =>
+                                      index === currentSlide ? (
+                                        <motion.div
+                                          key={match.id || index}
+                                          className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center"
+                                          custom={direction}
+                                          variants={slideVariants}
+                                          initial="enter"
+                                          animate="center"
+                                          exit="exit"
+                                          transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                        >
+                                          {/* Logos and VS */}
+                                          <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
+                                            <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' loading="lazy" />
+                                            <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
+                                              <p>VS</p>
+                                            </div>
+                                            {(() => {
+                                              // choose the opponent team by excluding any team with "tolmin" in its name (case-insensitive)
+                                              const opponent =
+                                                match?.teams?.find(t => {
+                                                  const name = (t.o_name || t.name || '').toString();
+                                                  return !/tolmin/i.test(name);
+                                                }) ||
+                                                // fallback to second team, then first team
+                                                match?.teams?.[1] ||
+                                                match?.teams?.[0];
 
-                                        {/* Date and Location */}
-                                        <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                                          <p className='font-semibold'>{formatMatchDate(match.start)}</p>
-                                          <p className='text-sm font-thin'>{venue}</p>
-                                        </div>
-                                    </>
-                                  )) : (
-                                    <p className='text-white'>No match data available</p>
-                                  )}
-                                </motion.div>
+                                              const oppImgId = opponent?.img_id;
+                                              const oppSrc = oppImgId
+                                                ? `https://static.soccerway.com/team/${oppImgId}/participant-logo-mobile-100x100/image.png`
+                                                : '/placeholder-team.png';
+
+                                              return (
+                                                <Image
+                                                  src={oppSrc}
+                                                  alt={opponent?.o_name || opponent?.name || 'Opponent Team Logo'}
+                                                  width={110}
+                                                  height={110}
+                                                  className='w-36 h-36 object-contain'
+                                                  loading="lazy"
+                                                />
+                                              );
+                                            })()}
+                                          </div>
+
+                                          {/* Date and Location */}
+                                          <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
+                                            <p className='font-semibold'>{formatMatchDate(match.start)}</p>
+                                            <p className='text-sm font-thin'>{venue}</p>
+                                          </div>
+                                        </motion.div>
+                                      ) : null
+                                    )
+                                ) : (
+                                  <motion.div
+                                    key="no-data"
+                                    className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-white"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                  >
+                                    No match data available
+                                  </motion.div>
+                                )}
                               </AnimatePresence>
                             </div>
 
@@ -296,11 +354,11 @@ export default function Page() {
                                   <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                     <p>VS</p>
                                   </div>
-                                  <Image src={`https://static.soccerway.com/team/${currentSeasonMatches[currentSlide]?.teams?.[0]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <Image src={`https://static.soccerway.com/team/${upcomingMatches[0]?.teams?.[1]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
                                 </div>
 
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
-                                  <p className='font-semibold'>{formatMatchDate(currentSeasonMatches[currentSlide]?.start)}</p>
+                                  <p className='font-semibold'>{formatMatchDate(upcomingMatches[0]?.start)}</p>
                                   <p className='text-sm font-thin'>{futureVenue || "No venue data available"}</p>
                                 </div>
                               </>
