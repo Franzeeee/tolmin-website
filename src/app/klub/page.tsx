@@ -17,7 +17,7 @@ export default function Page() {
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const [tabs] = useState(["Osnovni podatki", "Članstvo", "Pravilniki", "bradja"]);
+  const [tabs] = useState(["Osnovni podatki", "Članstvo", "Pravilniki", "brajda"]);
   const [tabContent] = useState([Tab1, Tab2, Tab3, Tab4]);
 
 

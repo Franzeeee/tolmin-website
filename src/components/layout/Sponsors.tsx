@@ -28,7 +28,7 @@ export default function Sponsors() {
 
   const mainSponsors = sponsors.filter(s => s.category === 'main');
   const partnerSponsors = sponsors.filter(s => s.category === 'partner');
-  const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
+  // const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
 
   return (
     <section className="w-full py-8 bg-white flex flex-col border-t items-center gap-6">
@@ -77,7 +77,7 @@ export default function Sponsors() {
           )
         )}
 
-        {bronzeSponsors.map((s) =>
+        {/* {bronzeSponsors.map((s) =>
           s.logoUrl ? (
             <Image
               key={s._id}
@@ -95,7 +95,7 @@ export default function Sponsors() {
               {s.name}
             </div>
           )
-        )}
+        )} */}
       </div>
     </section>
   )
