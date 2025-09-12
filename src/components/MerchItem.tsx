@@ -119,7 +119,7 @@ const MerchItem: React.FC = () => {
                       <h5 className="mb-2 text-lg text-center tracking-tight text-gray-700">{item.label}</h5>
                   </a>
                   <a href={`/trgovina/${item.id}`} className="inline-flex justify-center items-center w-full px-3 py-2 text-lg uppercase font-medium text-center text-white bg-gray-900 hover:bg-gray-950 focus:ring-1 focus:outline-none focus:ring-gray-500">
-                      Buy Now
+                      V košarico
                   </a>
               </div>
             </motion.div>

@@ -44,7 +44,7 @@ export default function Page() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
         >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
+          {/* <source src="/tolmin-header.mp4" type="video/mp4" /> */}
           Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]" />
@@ -125,7 +125,7 @@ export default function Page() {
         <section className='w-full min-h-content p-2 px-5 pb-9'>
           <div className='border-b-2 border-gray-300 pb-3'>
             <h1 className="text-3xl font-bold text-left text-red-600 mt-4 uppercase">
-              Srebrni sponzorji in donatorji
+              Bronasti sponzorji in donatorji
             </h1>
           </div>
           <div className="w-full py-4 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4">
