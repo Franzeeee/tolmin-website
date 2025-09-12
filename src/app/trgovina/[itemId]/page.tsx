@@ -79,33 +79,17 @@ useEffect(() => {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 text-black poppins">
       {/* === Header with Video Background === */}
-      <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px] relative overflow-hidden">
+      {/* Hero Banner */}
+      <header className="w-full bg-gradient-to-r from-black via-red-700 to-black flex flex-col items-center justify-center relative overflow-hidden">
         <MainNav />
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
-        >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
-        <div className="flex items-end pb-2 justify-center h-full z-20 relative">
-          <motion.h1
-            initial={{ x: '110vw' }}
-            animate={{ x: '-120vw' }}
-            transition={{
-              repeat: Infinity,
-              repeatType: 'loop',
-              duration: 16,
-              ease: 'linear',
-            }}
-            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase"
-          >
-            Trgovina - {item ? item.name : 'Nalaganje...'}
-          </motion.h1>
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900 to-black opacity-60 pointer-events-none" />
+        <div className="relative mt-20 z-10 flex flex-col items-center justify-center">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg">
+          Trgovina
+          </h1>
+          <p className="text-lg sm:text-2xl text-white font-medium mb-2 text-center drop-shadow">
+        {item ? item.name : 'Nalaganje...'}
+          </p>
         </div>
       </header>
 

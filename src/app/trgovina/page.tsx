@@ -140,7 +140,7 @@ export default function Page() {
                         className="mt-4 text-center font-semibold bg-black text-white text-xs md:text-sm px-4 py-3 cursor-pointer rounded w-[90%] hover:bg-red-700 transition"
                         href={`/trgovina/${item._id}`}
                       >
-                        BUY NOW
+                        V Košarico
                       </a>
                     </div>
 

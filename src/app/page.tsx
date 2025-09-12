@@ -13,6 +13,7 @@ import { faAngleRight, faSoccerBall } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import HistoryCarousel from '@/components/Home/HistoryCarousel';
 
 // const slides = [
 //   { title: "Slide 1", date: "Monday, May 19", location: "Športni park Brajda" },
@@ -197,7 +198,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
           playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
-          <source src="/video/naslovna.mp4" type="video/mp4" />
+          <source src="/video/naslovna-1.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute inset-0 bg-black opacity-60 z-10" />
@@ -527,7 +528,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
           <PlayerCarousel />
         </section>
 
-          <section className='w-full min-h-content lg:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
+          <section className='w-full min-h-content lg:max-h-[930px] p-2 px-1 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
             <div>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
@@ -535,110 +536,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
               </h1>
             </div>
 
-            <div className='w-full h-fit lg:max-h-[800px] mt-4 flex gap-6 overflow-visible flex-col lg:flex-row'>
-              
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 1, ease: "easeOut"}}
-                viewport={{ once: true, amount: .3 }}
-                className="flex-1 bg-white border-b-4 border-red-600 shadow-lg group"
-              >
-                <a className="block">
-                  <div className="w-full h-auto overflow-hidden">
-                    <Image
-                      width={400}
-                      height={100}
-                      src="/history1.png"
-                      alt=""
-                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
-                      style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
-                    />
-                  </div>
-                </a>
-                <div className="p-5">
-                  <a href="#">
-                    <h5 className="mb-2 text-lg font-bold tracking-tight text-red-600">
-                      1921 – 1971
-                    </h5>
-                  </a>
-                  <div className="flex justify-end">
-                    <a
-                      href="/zgodovina"
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                    >
-                      Read more
-                      <svg
-                        className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 14 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M1 5h12m0 0L9 1m4 4L9 9"
-                        />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 1, ease: "easeOut"}}
-                viewport={{ once: true, amount: .3 }}
-                className="flex-1 bg-white border-b-4 border-red-600 shadow-lg group"
-              >
-                <a className="block">
-                  <div className="w-full h-auto overflow-hidden">
-                    <Image
-                      width={400}
-                      height={100}
-                      src="/history2.png"
-                      alt=""
-                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
-                      style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
-                    />
-                  </div>
-                </a>
-                <div className="p-5">
-                  <a href="#">
-                    <h5 className="mb-2 text-lg font-bold tracking-tight text-red-600">
-                      1971 – 1995
-                    </h5>
-                  </a>
-                  <div className="flex justify-end">
-                    <a
-                      href="/zgodovina"
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                    >
-                      Read more
-                      <svg
-                        className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 14 10"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M1 5h12m0 0L9 1m4 4L9 9"
-                        />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+            <HistoryCarousel />
           </section>
 
           <section className='w-full min-h-content md:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>

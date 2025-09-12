@@ -24,8 +24,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url: result.secure_url });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    // Extract error message if available
+    const message =
+      error?.message ||
+      error?.error?.message ||
+      error?.toString() ||
+      'Unknown error';
+    return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }
 }

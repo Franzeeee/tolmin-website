@@ -65,7 +65,7 @@ export default function Page() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] lg:max-h-[900px]"
         >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
+          {/* <source src="/tolmin-header.mp4" type="video/mp4" /> */}
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] lg:max-h-[900px]" />
         <div className="flex items-end pb-2 justify-center h-screen max-h-[500px] z-20 relative overflow-hidden lg:max-h-[900px]">

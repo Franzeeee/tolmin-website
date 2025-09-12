@@ -48,7 +48,7 @@ export default function Page() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
         >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
+          {/* <source src="/tolmin-header.mp4" type="video/mp4" /> */}
           Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />

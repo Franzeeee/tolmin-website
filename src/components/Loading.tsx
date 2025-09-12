@@ -17,7 +17,7 @@ export default function Loading() {
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
             className="text-lg font-semibold text-red-600 tracking-wide"
             >
-            Nalaganje izdelkov...
+            Prosimo Počakajte...
             </motion.span>
         </div>
     )

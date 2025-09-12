@@ -1,20 +1,21 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Tab1 from '@/components/Zgodovina/Tab1';
 import Tab2 from '@/components/Zgodovina/Tab2';
 import Tab3 from '@/components/Zgodovina/Tab3';
 import Tab4 from '@/components/Zgodovina/Tab4';
+import { useSearchParams } from "next/navigation";
 
-const TABS = ["1921 – 1971", "1971 – 1995", "1995 – today", "Photo history"] as const;
+const TABS = ["1921 – 1971", "1971 – 1995", "1995 – today", "Photo History"] as const;
 
 const TAB_COMPONENTS = {
   "1921 – 1971": Tab1,
   "1971 – 1995": Tab2,
   "1995 – today": Tab3,
-  "Photo history": Tab4, // You can replace with actual PhotoTab component
+  "Photo History": Tab4, // You can replace with actual PhotoTab component
 };
 
 export default function Page() {
@@ -24,6 +25,16 @@ export default function Page() {
   const currentTab = hoveredTab || activeTab;
   const ActiveTabComponent = TAB_COMPONENTS[activeTab];
 
+  const searchParams = useSearchParams();
+  const data = searchParams.get("tab");
+
+  useEffect(() => {
+    if (data && TABS.includes(data as typeof TABS[number])) {
+      setActiveTab(data as typeof TABS[number]);
+    }
+  }, [data]);
+  
+  
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       {/* HERO SECTION */}
@@ -36,10 +47,10 @@ export default function Page() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] md:max-h-[700px]  lg:max-h-[900px]"
         >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
+          <source src="/video/history.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] md:max-h-[700px] lg:max-h-[900px]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10 max-h-[500px] md:max-h-[700px] lg:max-h-[900px]" />
         <div className="flex items-end pb-2 justify-center h-screen max-h-[500px] lg:max-h-[900px] md:max-h-[700px]  z-20 relative overflow-hidden">
             <motion.h1
             initial={{ x: typeof window !== "undefined" && window.innerWidth < 640 ? '200vw' : '100vw' }}
@@ -52,7 +63,7 @@ export default function Page() {
             }}
             className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
             >
-            Sponzorji in donatorji
+            Zgodovina
             </motion.h1>
         </div>
       </header>
