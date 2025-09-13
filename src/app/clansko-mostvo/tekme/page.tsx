@@ -345,7 +345,7 @@ export default function Page() {
                               {match.score.replace(' - ', ' : ')}
                             </div>
 
-                            <img
+                            <Image
                               src={
                                 logosLoading
                                   ? "/logo/placeholder-team.png"
