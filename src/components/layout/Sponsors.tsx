@@ -30,7 +30,7 @@ export default function Sponsors() {
 
   // Find TKK sponsor and place it in the middle
   const tkkIndex = mainSponsors.findIndex((s) => s.name.includes('TKK'));
-  let orderedMainSponsors = [...mainSponsors];
+  const orderedMainSponsors = [...mainSponsors];
 
   if (tkkIndex !== -1) {
     const [tkkSponsor] = orderedMainSponsors.splice(tkkIndex, 1);
@@ -43,7 +43,7 @@ export default function Sponsors() {
       {/* Main Sponsors */}
       <div className="w-full border-b border-gray-500 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4 md:pb-5">
         {orderedMainSponsors.map((s) => {
-          const isTKK = s.name.includes('TKK');
+          const isTKK = s.name.includes('Tkk');
           // Container keeps fixed size so other logos don't grow
           return (
             <div

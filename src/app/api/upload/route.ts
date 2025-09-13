@@ -24,14 +24,19 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url: result.secure_url });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload error:', error);
-    // Extract error message if available
-    const message =
-      error?.message ||
-      error?.error?.message ||
-      error?.toString() ||
-      'Unknown error';
+
+    // Safely extract the error message
+    let message = 'Unknown error';
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === 'object' && error && 'message' in error) {
+      message = String((error as { message: unknown }).message);
+    } else if (typeof error === 'string') {
+      message = error;
+    }
+
     return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }
 }
