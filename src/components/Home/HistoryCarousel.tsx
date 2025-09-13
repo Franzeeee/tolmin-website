@@ -41,7 +41,7 @@ const HistoryCarousel = () => {
               whileInView={{ opacity: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
               viewport={{ once: true, amount: 0.3 }}
-              className="flex-1 bg-white border-b-4 border-red-600 shadow-lg group m-2"
+              className="flex-1 bg-white border-b-4 border-red-600 shadow-lg group"
             >
               <a className="block">
                 <div className="w-full h-auto overflow-hidden">
@@ -92,13 +92,13 @@ const HistoryCarousel = () => {
       {/* Navigation Buttons */}
       <button
         onClick={prevSlide}
-        className="absolute top-1/2 left-0 -translate-y-1/2 p-2 bg-white text-gray-900 rounded-full hover:text-gray-950"
+        className="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-white text-gray-900 rounded-full hover:text-gray-950"
       >
         <FaArrowLeft />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute top-1/2 right-0 -translate-y-1/2 p-2 bg-white text-gray-900 rounded-full hover:text-gray-950"
+        className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-white text-gray-900 rounded-full hover:text-gray-950"
       >
         <FaArrowRight />
       </button>
