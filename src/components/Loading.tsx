@@ -7,7 +7,7 @@ export default function Loading() {
             <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            className="mb-4"
+            className="mb-4 "
             >
             <i className="fas fa-futbol fa-2x text-red-600" aria-label="Loading" />
             </motion.div>
