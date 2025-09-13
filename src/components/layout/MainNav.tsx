@@ -23,7 +23,14 @@ const navItems = [
     ]
   },
   { name: "Novice", link: "/novice" },
-  { name: "Zgodovina", link: "/zgodovina" },
+  { name: "Zgodovina", 
+    link: "/zgodovina",
+    dropdown: [
+      { name: "1921 – 1971", link: "/zgodovina?tab=1921%20%E2%80%93%201971" },
+      { name: "1971 – 1995", link: "/zgodovina?tab=1971%20%E2%80%93%201995" },
+      { name: "1995 – Today", link: "/zgodovina?tab=1995%20%E2%80%93%20Today" },
+      { name: "Photo History", link: "/zgodovina?tab=Photo%20History" }
+  ]},
   {
     name: "Člansko moštvo",
     link: "/clansko-mostvo",

@@ -552,10 +552,11 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
 
           <section className='w-full min-h-content md:max-h-[930px] p-2 px-5 overflow-hidden border-b-3 border-gray-200 pb-12'>
             {/* Header Title */}
-            <div className='mb-4'>
+            <div className='mb-4 flex items-end justify-between'>
               <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">
                 Brajda
               </h1>
+              <Link href="/klub" className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300 float-right`}>Oglejte si več <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} /> </Link>
             </div>
             <div className="w-full overflow-x-auto px-4 pb-6">
               <StadiumCarousel />
