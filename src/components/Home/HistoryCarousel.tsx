@@ -31,7 +31,7 @@ const HistoryCarousel = () => {
   return (
     <div className="relative w-full mt-4">
       {/* Carousel */}
-      <div className="flex overflow-hidden">
+      <div className="flex overflow-hidden gap-2">
         {historyCards
           .slice(currentIndex, currentIndex + 2)
           .map((card) => (
