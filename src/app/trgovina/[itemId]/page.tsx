@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Image from 'next/image';
 import axios from 'axios';
