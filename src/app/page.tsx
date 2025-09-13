@@ -271,7 +271,18 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                           <div className='flex items-center justify-center p-2 font-semibold text-white gap-2'>
                                             <Image src={logo} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' loading="lazy" />
                                             <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
-                                              <p>VS</p>
+                                              <p
+                                                className="text-4xl font-bold text-white rounded-xl px-3 py-3 shadow-lg border-2 border-red-700"
+                                                style={{
+                                                  background: "linear-gradient(90deg, #dc2626 0%, #6b0f1a 50%, #000 100%)",
+                                                  boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
+                                                  letterSpacing: "1px",
+                                                }}
+                                              >
+                                                {match?.teams?.[0]?.scores?.FINAL_RESULT}
+                                                <span className="mx-3 text-4xl mb-2 font-extrabold text-gray-200 drop-shadow">:</span>
+                                                {match?.teams?.[1]?.scores?.FINAL_RESULT}
+                                              </p>
                                             </div>
                                             {(() => {
                                               // choose the opponent team by excluding any team with "tolmin" in its name (case-insensitive)
