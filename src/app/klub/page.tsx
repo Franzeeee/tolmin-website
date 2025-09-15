@@ -77,9 +77,14 @@ export default function Page() {
         <MainNav />
         <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900 to-black opacity-60 pointer-events-none" />
         <div className="relative mt-20 z-10 flex flex-col items-center justify-center">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg">
+            <motion.h1
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg"
+            >
             Klub - {{"Osnovni podatki": "Osnovni podatki", "Članstvo": "Članstvo", "Pravilniki": "Pravilniki", "brajda": "Brajda"}[currentTab]}
-          </h1>
+          </motion.h1>
         </div>
       </header>
 
