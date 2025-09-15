@@ -60,7 +60,7 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
       {/* HERO SECTION */}
-      <header className="w-screen max-h-[500px] h-screen grid grid-rows-[auto_1fr] bg-white landing-header md:max-h-[700px]  lg:max-h-[900px]">
+      {/* <header className="w-screen max-h-[500px] h-screen grid grid-rows-[auto_1fr] bg-white landing-header md:max-h-[700px]  lg:max-h-[900px]">
         <MainNav />
         <video
           autoPlay
@@ -69,7 +69,7 @@ export default function Page() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[500px] md:max-h-[700px]  lg:max-h-[900px]"
         >
-          {/* <source src="/tolmin-header.mp4" type="video/mp4" /> */}
+          <source src="/tolmin-header.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[500px] md:max-h-[700px] lg:max-h-[900px]" />
@@ -87,6 +87,21 @@ export default function Page() {
             >
             Novice - {article?.title}
             </motion.h1>
+        </div>
+      </header> */}
+
+      <header className="w-full bg-gradient-to-r from-black via-red-700 to-black flex flex-col items-center justify-center relative overflow-hidden">
+        <MainNav />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900 to-black opacity-60 pointer-events-none" />
+        <div className="relative mt-20 z-10 flex flex-col items-center justify-center">
+            <motion.h1
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg"
+            >
+            Novice - {article?.title ?? 'Loading...'}
+          </motion.h1>
         </div>
       </header>
 
