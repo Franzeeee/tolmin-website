@@ -1,400 +1,598 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import axios, { AxiosRequestConfig } from 'axios';
 import Loading from '@/components/Loading';
-import { useTeamLogos } from '@/app/hooks/useTeamLogos';
 
-export default function Page() {
-  const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState("Epika");
-  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
-  const [tabs] = useState<{ name: string; link: string }[]>([
-    { name: "Epika", link: "/clansko-mostvo" },
-    { name: "Tekme", link: "/clansko-mostvo/tekme" },
-    { name: "Lestvica", link: "/clansko-mostvo/lestvica" }
-  ]);
+interface LivescorePayload {
+  pageProps?: {
+    initialData?: {
+      eventsByMatchType?: Array<{
+        Snm?: string;
+        Sds?: string;
+        Events?: Array<{
+          Tr1?: string | number;
+          Tr2?: string | number;
+          Eps?: string;
+          T1?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          T2?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          Esd?: number | string;
+          Eid?: string | number;
+          Epr?: string | number;
+        }>;
+      }>;
+    };
+  };
+}
+
+/* ------------------------------------------------
+ * Small generic fetch hook (works for JSON & binary)
+ * ------------------------------------------------ */
+function useFetched<T>(url?: string | null, opts?: AxiosRequestConfig) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(!!url);
+  const [error, setError] = useState<unknown>(null);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    const foundTab = tabs.find((tab) => tab.link === pathname);
-    if (foundTab) {
-      setActiveTab(foundTab.name);
+    isMounted.current = true;
+    if (!url) {
+      setData(null);
+      setLoading(false);
+      setError(null);
+      return;
     }
+
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    axios
+      .get<T>(url, opts)
+      .then((res) => {
+        if (cancelled || !isMounted.current) return;
+        setData(res.data);
+      })
+      .catch((err) => {
+        if (cancelled || !isMounted.current) return;
+        setError(err);
+      })
+      .finally(() => {
+        if (cancelled || !isMounted.current) return;
+        setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      isMounted.current = false;
+    };
+  }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { data, loading, error };
+}
+
+/* ------------------------------------------------
+ * Types
+ * ------------------------------------------------ */
+type Match = {
+  id: string;
+  season: string;              // e.g. "2025/2026" derived from date
+  o_status: string;            // FINISHED | NOT_STARTED | LIVE
+  round: string;
+  stage: { st_name: string };
+  start: number;               // epoch ms
+  teams: Array<{
+    id: string;
+    img_id: string;            // LiveScore path e.g. "enet/287782.png"
+    name: string;
+    o_name: string;
+    pos: number;               // 1 home, 2 away
+    s_name: string;
+    scores: {
+      FINAL_RESULT: string;    // side score only (e.g. "2")
+      RUNNING: string;         // side score while live
+    };
+  }>;
+};
+
+/* ------------------------------------------------
+ * Helpers (parsing & formatting)
+ * ------------------------------------------------ */
+const normalizeStatus = (eps?: string) => {
+  switch (eps) {
+    case 'NS': return 'NOT_STARTED';
+    case 'FT': return 'FINISHED';
+    case 'HT':
+    case '1H':
+    case '2H':
+    case 'ET':
+    case 'PEN': return 'LIVE';
+    default: return eps || '';
+  }
+};
+
+const deriveSeasonFromMs = (ms: number) => {
+  const d = new Date(ms);
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth();
+  const start = m >= 6 ? y : y - 1; // season starts in July
+  return `${start}/${start + 1}`;
+};
+
+function parseEsdToEpochMs(esd: number | string): number {
+  const s = esd.toString().padEnd(14, '0'); // yyyymmddHHMMSS
+  const y = Number(s.slice(0, 4));
+  const m = Number(s.slice(4, 6)) - 1;
+  const d = Number(s.slice(6, 8));
+  const H = Number(s.slice(8, 10));
+  const M = Number(s.slice(10, 12));
+  const S = Number(s.slice(12, 14));
+  return Date.UTC(y, m, d, H, M, S);
+}
+
+function safeScore(a?: string | number, b?: string | number): string {
+  const has = (v: string | number | undefined | null): boolean =>
+    v !== undefined && v !== null && v !== '';
+  return has(a) && has(b) ? `${a}-${b}` : '';
+}
+
+const toMatchArray = (payload: LivescorePayload): Match[] => {
+  const blocks = payload?.pageProps?.initialData?.eventsByMatchType ?? [];
+  const out: Match[] = [];
+
+  for (const block of blocks) {
+    const stageName: string = block?.Snm ?? '';
+
+    for (const ev of block?.Events ?? []) {
+      const finalScore = safeScore(ev?.Tr1, ev?.Tr2);
+      const runningScore = ev?.Eps && ev.Eps !== 'NS' ? finalScore : '';
+      const t1 = (ev?.T1 ?? [])[0] ?? {};
+      const t2 = (ev?.T2 ?? [])[0] ?? {};
+      const startMs = ev?.Esd ? parseEsdToEpochMs(ev.Esd) : 0;
+
+      const teams: Match['teams'] = [
+        {
+          id: String(t1.ID ?? ''),
+          img_id: String(t1.Img ?? ''),
+          name: String(t1.Nm ?? ''),
+          o_name: String(t1.Nm ?? ''),
+          pos: 1,
+          s_name: String(t1.Abr ?? ''),
+          scores: {
+            FINAL_RESULT: finalScore ? finalScore.split('-')[0] : '',
+            RUNNING: runningScore ? runningScore.split('-')[0] : '',
+          },
+        },
+        {
+          id: String(t2.ID ?? ''),
+          img_id: String(t2.Img ?? ''),
+          name: String(t2.Nm ?? ''),
+          o_name: String(t2.Nm ?? ''),
+          pos: 2,
+          s_name: String(t2.Abr ?? ''),
+          scores: {
+            FINAL_RESULT: finalScore ? finalScore.split('-')[1] : '',
+            RUNNING: runningScore ? runningScore.split('-')[1] : '',
+          },
+        },
+      ];
+
+      const normalized = normalizeStatus(ev?.Eps);
+      const season = deriveSeasonFromMs(startMs);
+
+      out.push({
+        id: String(ev?.Eid ?? ''),
+        season,
+        o_status: normalized,
+        round: ev?.Epr !== undefined ? String(ev?.Epr) : '',
+        stage: { st_name: stageName },
+        start: startMs,
+        teams,
+      });
+    }
+  }
+  return out;
+};
+
+/* ------------------------------------------------
+ * Tolmin helpers (always left)
+ * ------------------------------------------------ */
+const TOLMIN_IDS = new Set(['11156', '11005']);
+const TOLMIN_NAME_RX = /tolmin/i;
+
+const isTolminTeam = (t?: { id?: string; name?: string; o_name?: string }) => {
+  if (!t) return false;
+  if (TOLMIN_IDS.has(String(t.id))) return true;
+  const n = (t.o_name || t.name || '').toString();
+  return TOLMIN_NAME_RX.test(n);
+};
+
+function orderTolminLeft(match: Match) {
+  const a = match.teams[0];
+  const b = match.teams[1];
+
+  if (isTolminTeam(a)) {
+    return {
+      left: a,
+      right: b,
+      leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+      rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+    };
+  }
+  if (isTolminTeam(b)) {
+    return {
+      left: b,
+      right: a,
+      leftScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+      rightScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+    };
+  }
+  return {
+    left: a,
+    right: b,
+    leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+    rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+  };
+}
+
+/* ------------------------------------------------
+ * Logo fetching (binary -> Blob URL) with fallback
+ * ------------------------------------------------ */
+const objectUrlCache = new Map<string, string>();
+const livescoreLogoUrl = (img_id?: string) =>
+  img_id ? `https://storage.livescore.com/images/team/high/${img_id}` : '';
+
+function useOpponentLogo(imgId?: string) {
+  const lsUrl = livescoreLogoUrl(imgId);
+  const proxyUrl = lsUrl ? `/api/fetch?url=${encodeURIComponent(lsUrl)}` : null;
+
+  const cached = imgId ? objectUrlCache.get(imgId) : null;
+
+  const { data } = useFetched<ArrayBuffer>(cached || !proxyUrl ? null : proxyUrl, {
+    responseType: 'arraybuffer',
+  });
+
+  const placeholderTeam =
+    'https://res.cloudinary.com/du7efjkf3/image/upload/v1758985173/placeholder-team_wwfwbr.png';
+
+  const [src, setSrc] = useState<string>(cached || placeholderTeam);
+
+  useEffect(() => {
+    if (!imgId) {
+      setSrc(placeholderTeam);
+      return;
+    }
+    if (cached) {
+      setSrc(cached);
+      return;
+    }
+    if (!data) return;
+
+    try {
+      const blob = new Blob([data], { type: 'image/png' });
+      const url = URL.createObjectURL(blob);
+      objectUrlCache.set(imgId, url);
+      setSrc(url);
+    } catch {
+      setSrc(placeholderTeam);
+    }
+  }, [data, imgId, cached]);
+
+  return { src };
+}
+
+function OpponentLogo({
+  imgId,
+  alt,
+  className = '',
+}: {
+  imgId?: string;
+  alt?: string;
+  className?: string;
+}) {
+  const { src } = useOpponentLogo(imgId);
+  const SIZE = 'flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px]';
+  return (
+    <Image
+      src={src}
+      alt={alt || 'Team Logo'}
+      width={60}
+      height={60}
+      className={`${SIZE} object-contain ${className}`}
+      sizes="(max-width: 480px) 40px, (max-width: 640px) 48px, (max-width: 768px) 60px, 60px"
+      unoptimized
+    />
+  );
+}
+
+/* ------------------------------------------------
+ * Date util
+ * ------------------------------------------------ */
+function formatMatchDate(ms?: number) {
+  if (!ms) return '';
+  const d = new Date(ms);
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
+/* ------------------------------------------------
+ * Page
+ * ------------------------------------------------ */
+export default function Page() {
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState('Epika');
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+
+  const tabs = useMemo(
+    () => [
+      { name: 'Epika', link: '/clansko-mostvo' },
+      { name: 'Tekme', link: '/clansko-mostvo/tekme' },
+      { name: 'Lestvica', link: '/clansko-mostvo/lestvica' },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    const found = tabs.find((t) => t.link === pathname);
+    if (found) setActiveTab(found.name);
   }, [pathname, tabs]);
 
   const currentTab = hoveredTab || activeTab;
 
-  type OrganizedData = {
-    [season: string]: {
-      enemy: string;
-      enemyId: string; // Added team ID
-      score: string;
-      status: string;
-      stage: {
-        st_name: string;
-      };
-      start: number;
-    }[];
-  };
+  /* -------- Fetch results & fixtures from LiveScore via proxy -------- */
+  const RESULTS_URL =
+    'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156';
+  const FIXTURES_URL =
+    'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
 
-  const [organizedMatches, setOrganizedMatches] = useState<OrganizedData>({});
-  const [seasons, setSeasons] = useState<string[]>([]);
+  const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
+    `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`
+  );
+  const { data: fixturesJson, loading: fixturesLoading, error: fixturesError } = useFetched<LivescorePayload>(
+    `/api/fetch?url=${encodeURIComponent(FIXTURES_URL)}`
+  );
 
+  const parsedResults: Match[] = useMemo(
+    () => (resultsJson ? toMatchArray(resultsJson) : []),
+    [resultsJson]
+  );
+  const parsedFixtures: Match[] = useMemo(
+    () => (fixturesJson ? toMatchArray(fixturesJson) : []),
+    [fixturesJson]
+  );
 
-  const [links] = useState<string[]>([
-    '/api/tolmin'
-  ]);
+  const allMatches = useMemo(() => [...parsedResults, ...parsedFixtures], [parsedResults, parsedFixtures]);
 
-  type Team = {
-    id: string;
-    name: string;
-    scores: {
-      RUNNING?: string;
-    };
-    img: string;
-  };
+  // 🔎 Filter out games that didn't start yet
+  const playedOrLiveMatches = useMemo(
+    () => allMatches.filter((m) => m.o_status !== 'NOT_STARTED'),
+    [allMatches]
+  );
 
-  type Match = {
-    season_info?: {
-      name?: string;
-    };
-    teams: [Team, Team];
-    o_status: string;
-    stage: {
-      st_name: string;
-    };
-    start: number;
-  };
-
-  const fetchAllMatches = async (): Promise<{ organized: OrganizedData; seasons: string[] }> => {
-    const result: OrganizedData = {};
-    const seasonSet = new Set<string>();
-
-    // const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-    // If you only have one link that contains all matches, fetch it once and process its matches array
-    if (links.length === 0) {
-      console.warn("No links provided for fetching matches");
-    } else {
-    try {
-    type ApiItem = {
-      data: {
-        matches: Match[];
-      };
-    };
-
-    const response = await axios.get<ApiItem[]>('/api/tolmin');
-    const data = response.data;
-
-    data.forEach((item) => {
-      if (Array.isArray(item.data.matches)) {
-        item.data.matches.forEach((match: Match) => {
-          const season = match.season_info?.name;
-          if (!season) return;
-
-      seasonSet.add(season);
-
-      const [teamA, teamB] = match.teams;
-      let enemy = "";
-      let enemyId = "";
-      let score = "";
-
-      if (teamA.id === "11005") {
-        enemy = teamB.name;
-        enemyId = teamB.id;
-        score = `${teamA.scores.RUNNING ?? "0"} - ${teamB.scores.RUNNING ?? "0"}`;
-      } else {
-        enemy = teamA.name;
-        enemyId = teamA.id;
-        score = `${teamB.scores.RUNNING ?? "0"} - ${teamA.scores.RUNNING ?? "0"}`;
-      }
-
-      if (!result[season]) result[season] = [];
-      result[season].push({
-        enemy,
-        enemyId,
-        score,
-        status: match.o_status,
-        stage: { st_name: match.stage.st_name },
-        start: match.start
-      });
-      });
-    } else {
-      console.warn("Expected item.matches to be an array", item);
-    }
-    })
-    
-    } catch (error) {
-    console.error("Error fetching tekme from", error);
-    }
-    }
-
-    // Sort seasons like "2025/2026", "2024/2025" -> latest first
-    const sortedSeasons = Array.from(seasonSet).sort((a, b) => {
-      const startA = parseInt(a.split("/")[0], 10);
-      const startB = parseInt(b.split("/")[0], 10);
-      return startB - startA; // descending order
-    });
-
-    return { organized: result, seasons: sortedSeasons };
-  };
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['tekme-matches'],
-    queryFn: fetchAllMatches,
-    staleTime: 1000 * 60 * 60 * 24, // 1 day
-  });
-
-  useEffect(() => {
-    if (data) {
-      setOrganizedMatches(data.organized);
-      setSeasons(data.seasons);
-      setSelectedSeason(data.seasons[0] || null);
-    }
-  }, [data]);
+  // Seasons derived from dates (YYYY/YYYY+1) — latest first
+  const seasons = useMemo(() => {
+    const set = new Set<string>();
+    for (const m of playedOrLiveMatches) set.add(m.season);
+    return Array.from(set).sort((a, b) => parseInt(b) - parseInt(a));
+  }, [playedOrLiveMatches]);
 
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
+  useEffect(() => {
+    if (!selectedSeason && seasons.length) setSelectedSeason(seasons[0]);
+  }, [seasons, selectedSeason]);
 
-  const handleSelectedSeason = (season: string) => {
-    setSelectedSeason(season);
-  };
+  // Filter to chosen season
+  const seasonMatches = useMemo(
+    () => (selectedSeason ? playedOrLiveMatches.filter((m) => m.season === selectedSeason) : []),
+    [playedOrLiveMatches, selectedSeason]
+  );
 
-  // Extract unique team IDs from current season matches
-  const currentSeasonTeamIds = useMemo(() => {
-    if (!selectedSeason || !organizedMatches[selectedSeason]) return [];
-    
-    const teamIds = organizedMatches[selectedSeason]
-      .map(match => match.enemyId)
-      .filter((id, index, arr) => arr.indexOf(id) === index); // Remove duplicates
-    
-    return teamIds;
-  }, [selectedSeason, organizedMatches]);
+  // Group by Month YYYY, newest month on top; matches inside month newest → oldest
+  const monthEntries = useMemo(() => {
+    const buckets = seasonMatches.reduce<Record<string, Match[]>>((acc, m) => {
+      const d = new Date(m.start);
+      const key = d.toLocaleString('sl-SI', { month: 'long', year: 'numeric' });
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(m);
+      return acc;
+    }, {});
 
-  // Fetch logos for current season teams
-  const { data: teamLogos, isLoading: logosLoading } = useTeamLogos(currentSeasonTeamIds);
+    const entries = Object.entries(buckets).map(([label, matches]) => {
+      const maxTs = Math.max(...matches.map((m) => m.start));
+      const sortedMatches = [...matches].sort((a, b) => b.start - a.start);
+      return { label, ts: maxTs, matches: sortedMatches };
+    });
 
-  // ✅ Updated format function
-  function formatMatchDate(unixTimestamp: number): string {
-    const date = new Date(unixTimestamp * 1000); // convert seconds → ms
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+    entries.sort((a, b) => b.ts - a.ts);
+    return entries;
+  }, [seasonMatches]);
 
-    return `${day}.${month}.${year}`;
-  }
+  const loading = resultsLoading || fixturesLoading;
+  const error = resultsError || fixturesError;
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
-      {/* <header className="w-full h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
-        <MainNav />
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
-        >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
-        <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
-          <motion.h1
-            initial={{ x: '110vw' }}
-            animate={{ x: '-120vw' }}
-            transition={{
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 16,
-              ease: "linear"
-            }}
-            className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
-          >
-            Člansko moštvo - tekme
-          </motion.h1>
-        </div>
-      </header> */}
-
       <header className="w-full bg-gradient-to-r from-black via-red-700 to-black flex flex-col items-center justify-center relative overflow-hidden">
         <MainNav />
         <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900 to-black opacity-60 pointer-events-none" />
         <div className="relative mt-20 z-10 flex flex-col items-center justify-center">
-            <motion.h1
+          <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg"
-            >
-              Člansko moštvo - Tekme
-            </motion.h1>
+          >
+            Člansko moštvo - Tekme
+          </motion.h1>
         </div>
       </header>
 
-      <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
-        <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
-          <div className='relative w-full p-3 flex flex-row items-center justify-between'>
+      <main className="w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600">
+        {/* Tabs + season dropdown */}
+        <section className="w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible">
+          <div className="relative w-full p-3 flex flex-row items-center justify-between">
             <div className="relative w-full p-3 flex flex-row items-center justify-between">
-              {/* Mobile: compact dropdown / segmented menu using native <details> for no extra hooks */}
+              {/* Mobile dropdown */}
               <details className="w-full sm:hidden">
-              <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
-                <span className="font-semibold text-gray-800">{currentTab}</span>
-                <span className="ml-2 text-gray-500 select-none">▾</span>
-              </summary>
-
-              <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                {tabs.map((tab) => (
-                <Link
-                  key={tab.name}
-                  href={tab.link}
-                  className={`block w-full text-left px-4 py-3 text-sm ${
-                  currentTab === tab.name
-                    ? "bg-red-50 text-red-600 font-semibold"
-                    : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                  onClick={() => setActiveTab(tab.name)}
-                >
-                  {tab.name}
-                </Link>
-                ))}
-              </div>
+                <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
+                  <span className="font-semibold text-gray-800">{currentTab}</span>
+                  <span className="ml-2 text-gray-500 select-none">▾</span>
+                </summary>
+                <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                  {tabs.map((tab) => (
+                    <Link
+                      key={tab.name}
+                      href={tab.link}
+                      className={`block w-full text-left px-4 py-3 text-sm ${
+                        currentTab === tab.name ? 'bg-red-50 text-red-600 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                      onClick={() => setActiveTab(tab.name)}
+                    >
+                      {tab.name}
+                    </Link>
+                  ))}
+                </div>
               </details>
 
-              {/* Desktop / tablet: original horizontal tabs with underline animation */}
+              {/* Desktop tabs */}
               <ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0">
-              {tabs.map((tab) => (
-                <li
-                key={tab.name}
-                className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
-                  currentTab === tab.name ? "text-red-600" : "hover:text-red-600"
-                }`}
-                onClick={() => setActiveTab(tab.name)}
-                onMouseEnter={() => setHoveredTab(tab.name)}
-                onMouseLeave={() => setHoveredTab(null)}
-                >
-                <Link href={activeTab === tab.name ? "#" : tab.link}>
-                  {tab.name}
-                </Link>
-                {currentTab === tab.name && (
-                  <motion.div
-                  layoutId="underline"
-                  className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
-                  transition={{ type: "spring", stiffness: 500, damping: 60 }}
-                  />
-                )}
-                </li>
-              ))}
-              <div className="absolute left-0 right-0 bottom-0 h-[3px] bg-gray-300 pointer-events-none" />
+                {tabs.map((tab) => (
+                  <li
+                    key={tab.name}
+                    className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 ${
+                      currentTab === tab.name ? 'text-red-600' : 'hover:text-red-600'
+                    }`}
+                    onClick={() => setActiveTab(tab.name)}
+                    onMouseEnter={() => setHoveredTab(tab.name)}
+                    onMouseLeave={() => setHoveredTab(null)}
+                  >
+                    <Link href={activeTab === tab.name ? '#' : tab.link}>{tab.name}</Link>
+                    {currentTab === tab.name && (
+                      <motion.div
+                        layoutId="underline"
+                        className="absolute left-0 right-0 -bottom-1 h-[3px] bg-red-600 rounded"
+                        transition={{ type: 'spring', stiffness: 500, damping: 60 }}
+                      />
+                    )}
+                  </li>
+                ))}
+                <div className="absolute left-0 right-0 bottom-0 h-[3px] bg-gray-300 pointer-events-none" />
               </ul>
             </div>
 
-            <Dropdown label={isLoading ? "Loading..." : error ? "Failed to Load Season" : selectedSeason ?? undefined} items={seasons} onSelect={handleSelectedSeason} />
+            <Dropdown
+              label={loading ? 'Loading...' : error ? 'Failed to Load Season' : selectedSeason ?? undefined}
+              items={seasons}
+              onSelect={setSelectedSeason}
+            />
           </div>
         </section>
 
-        <section className='w-full min-h-content p-2 px-5 overflow-hidden pb-12'>
-          <div className='w-full flex flex-col mb-12'>
-            { isLoading && <Loading /> }
+        {/* Matches */}
+        <section className="w-full min-h-content p-2 px-5 overflow-hidden pb-12">
+          <div className="w-full flex flex-col mb-12">
+            {loading && <Loading />}
 
-             {selectedSeason && organizedMatches[selectedSeason] ? (
-              // ✅ Group matches by month/year
-              Object.entries(
-                organizedMatches[selectedSeason].reduce((acc, match) => {
-                  const date = new Date(match.start * 1000);
-                  const monthYear = date.toLocaleString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  });
-                  if (!acc[monthYear]) acc[monthYear] = [];
-                  acc[monthYear].push(match);
-                  return acc;
-                }, {} as Record<string, typeof organizedMatches[string]>)
-              ).map(([monthYear, matches]) => (
-                <div key={monthYear} className="mb-10">
-                  {/* Month Header */}
-                  {/* <div className='border-b-2 border-gray-200 mb-4 pb-2'>
-                    <h1 className="text-5xl font-bold text-left mt-2 uppercase text-gray-200">
-                      {monthYear}
-                    </h1>
-                  </div> */}
-
-                  {/* Matches in that month */}
-                  <div className="w-full grid gap-4">
-                    {[...matches].reverse().map((match, i) => (
-                      <div
-                        key={`${match.start}-${i}`}
-                        className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-1 items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
-                      >
-                        {/* Left: Match Info & Home Team */}
-                        <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[140px] text-center md:text-left">
-                          <div className="w-full h-full">
-                            <div className="font-extrabold text-base">{match.stage.st_name}</div>
-                            <div className="text-sm">
-                              {formatMatchDate(match.start)} — ŠPORTNI PARK BRAJDA
-                            </div>
-                          </div>
-                          <div className="text-3xl flex items-end justify-end h-full md:absolute md:-bottom-0.5 md:left-0">
-                            NK TOLMIN
-                          </div>
-                        </div>
-
-                        {/* Center: Logos and Score */}
-                        <div className="flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
-                          <div className="flex items-center gap-3">
-                            <Image
-                              src="/tolmin-logo.png"
-                              alt="NK Tolmin"
-                              width={50}
-                              height={50}
-                              className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                            />
-
-                            <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
-                              {match.score.replace(' - ', ' : ')}
-                            </div>
-
-                            <Image
-                              src={
-                                logosLoading
-                                  ? "/logo/placeholder-team.png"
-                                  : teamLogos?.[match.enemyId] || "/logo/placeholder-team.png"
-                              }
-                              alt={match.enemy}
-                              width={50}
-                              height={50}
-                              className="w-10 h-10 md:w-[60px] md:h-[60px]"
-                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                const img = e.currentTarget;
-                                // avoid infinite loop if placeholder is missing/broken
-                                if (!img.src.includes('/logo/placeholder-team.png')) {
-                                  img.onerror = null;
-                                  img.src = "/logo/placeholder-team.png";
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Right: Away Team */}
-                        <div className="text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
-                          {match.enemy}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              !isLoading && <p className="text-gray-500 text-center">No matches available</p>
+            {Boolean(error) && !loading && (
+              <p className="text-center text-red-600">Napaka pri nalaganju tekem.</p>
             )}
 
+            {!loading && !error && selectedSeason && monthEntries.length === 0 && (
+              <p className="text-gray-500 text-center">Ni razpoložljivih tekem.</p>
+            )}
+
+            {!loading &&
+              !error &&
+              selectedSeason &&
+              monthEntries.length > 0 &&
+              monthEntries.map(({ label, matches }) => (
+                <div key={label} className="mb-10">
+                  <div className="mb-2">
+                    <h2 className="text-xl font-semibold text-gray-600 uppercase tracking-wide">{label}</h2>
+                  </div>
+
+                  <div className="w-full grid gap-4">
+                    {matches.map((match) => {
+                      const { left, right, leftScore, rightScore } = orderTolminLeft(match);
+                      const opponent = isTolminTeam(left) ? right : left;
+
+                      // HOME if Tolmin's 'pos' is 1, AWAY if 2
+                      const tolminSide = isTolminTeam(left) ? left : right;
+                      const venue = tolminSide?.pos === 1 ? 'HOME' : 'AWAY';
+
+                      return (
+                        <div
+                          key={match.id}
+                          className="grid [grid-template-columns:minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
+                        >
+                          {/* LEFT — Tolmin info */}
+                          <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[120px] text-center md:text-left">
+                            <div className="w-full">
+                              <div className="font-extrabold text-base">{match.stage.st_name}</div>
+                              <div className="text-sm">{formatMatchDate(match.start)} — {venue}</div>
+                            </div>
+                            <div className="text-3xl md:absolute md:-bottom-0.5 md:left-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                              NK TOLMIN
+                            </div>
+                          </div>
+
+                          {/* CENTER — crests + score (Tolmin always left), locked centered */}
+                          <div className="justify-self-center flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
+                            <div className="flex items-center gap-3">
+                              {/* Tolmin (static crest, responsive) */}
+                              <Image
+                                src="https://res.cloudinary.com/du7efjkf3/image/upload/v1758985156/tolmin-logo_wo20bu.png"
+                                alt="NK Tolmin"
+                                width={60}
+                                height={60}
+                                className="w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px] object-contain"
+                                priority={false}
+                              />
+
+                              {/* Score */}
+                              <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
+                                {leftScore} <span className="mx-1">:</span> {rightScore}
+                              </div>
+
+                              {/* Opponent crest (via blob proxy) */}
+                              <OpponentLogo
+                                imgId={opponent?.img_id}
+                                alt={opponent?.o_name || opponent?.name || 'Opponent'}
+                              />
+                            </div>
+                          </div>
+
+                          {/* RIGHT — Opponent name (truncate so it can’t push center) */}
+                          <div className="text-2xl md:text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
+                            <span className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                              {opponent?.o_name || opponent?.name || 'Nasprotnik'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
           </div>
         </section>
       </main>
