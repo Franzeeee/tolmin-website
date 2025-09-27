@@ -219,11 +219,6 @@ function orderTolminLeft(match: Match) {
   };
 }
 
-function getOpponent(match: Match) {
-  const opp = match.teams.find((t) => !isTolminTeam(t));
-  return opp || match.teams[1] || match.teams[0];
-}
-
 /* ------------------------------------------------
  * Logo fetching (binary -> Blob URL) with fallback
  * ------------------------------------------------ */
@@ -400,8 +395,6 @@ export default function Page() {
 
   const loading = resultsLoading || fixturesLoading;
   const error = resultsError || fixturesError;
-
-  const TOLMIN_LOGO_CLASSES = 'w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px] object-contain';
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
