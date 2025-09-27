@@ -125,12 +125,13 @@ export default function Page() {
       });
   }, []);
 
-  const [matches, setMatches] = useState<fetchedData | null>(null);
+  const [matches] = useState<fetchedData | null>(null);
   const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
   const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
   // const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
   const [futureVenue, setFutureVenue] = useState<string | null>(null);
+  const [testLogo, setTestLogo] = useState<string>('/placeholder-team.png');
   const finishedMatches = matches?.matches?.filter(
     (match: Match) =>
       match.season === currentSeason && match.o_status.includes("FINISHED")
@@ -197,35 +198,37 @@ export default function Page() {
   };
 
   const fetchedLogo = async () => {
-  try {
-    const target = `https://storage.livescore.com/images/team/medium/enet/206079.png`;
-    const response = await axios.get(`/api/fetch?url=${target}`, {
-      responseType: 'arraybuffer', // Treat the response as binary data
-    });
+    try {
+      const target = `https://storage.livescore.com/images/team/medium/enet/206079.png`;
+      const response = await axios.get(`/api/fetch?url=${target}`, {
+        responseType: 'arraybuffer',
+      });
 
-    // Create a Blob from the binary data and generate an object URL
-    const imageBlob = new Blob([response.data], { type: 'image/png' });
-    const imageUrl = URL.createObjectURL(imageBlob);
+      // Convert the arraybuffer to a base64 string
+      const base64String = btoa(
+        new Uint8Array(response.data)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      );
 
-    // ✅ Log it
-    console.log("🟢 Fetched Blob Image URL:", imageUrl);
+      const imageBase64Url = `data:image/png;base64,${base64String}`;
 
-    // ✅ Automatically open it in a new tab (only works if triggered by a user action or allowed)
-    window.open(imageUrl, '_blank');
+      // Log it
+      console.log("🧬 Base64 Image URL:", imageBase64Url);
+      setTestLogo(imageBase64Url); // Update state with base64 image URL
 
-    // ✅ Optionally, create a clickable link in the DOM
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.textContent = 'Click to open fetched image blob';
-    link.target = '_blank';
-    document.body.appendChild(link);
+      // Set the image source
+      const imgElement = document.getElementById('opponent-logo') as HTMLImageElement | null;
+      if (imgElement) {
+        imgElement.src = imageBase64Url;
+      }
 
-  } catch (err) {
-    console.error("❌ Error fetching image:", err);
-  }
-};
+    } catch (err) {
+      console.error("❌ Error fetching base64 image:", err);
+    }
+  };
 
-fetchedLogo();
+  fetchedLogo();
+
 
   fetchMatches();
 }, []);
@@ -415,7 +418,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                   <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                     <p>VS</p>
                                   </div>
-                                  <Image src={`https://static.soccerway.com/team/${upcomingMatches[0]?.teams?.[1]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <Image src={testLogo} alt="Team Logo" width={110} height={110} className='w-30 h-30 object-contain' />
                                 </div>
 
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>
