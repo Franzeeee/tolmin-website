@@ -125,12 +125,13 @@ export default function Page() {
       });
   }, []);
 
-  const [matches, setMatches] = useState<fetchedData | null>(null);
+  const [matches] = useState<fetchedData | null>(null);
   const currentSeason = `${new Date().getFullYear().toString()}/${(new Date().getFullYear() + 1).toString()}`;
   const finishedMatchesCount = (matches?.matches?.filter((match: Match) => match.season === currentSeason && match.o_status.includes("FINISHED")) ?? []).length;
   // const currentSeasonMatches = matches?.matches?.filter((match: Match) => match.season === currentSeason) ?? [];
   const [venue, setVenue] = useState<string | null>(null);
   const [futureVenue, setFutureVenue] = useState<string | null>(null);
+  const [testLogo, setTestLogo] = useState<string>('/placeholder-team.png');
   const finishedMatches = matches?.matches?.filter(
     (match: Match) =>
       match.season === currentSeason && match.o_status.includes("FINISHED")
@@ -168,18 +169,70 @@ export default function Page() {
     return `${day}.${month}`;
   }
 
-  useEffect(()=> {
-    const fetchMatches = async () => {
-      try {
-        const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
-        setMatches(response.data);
-      } catch (error) {
-        console.error('Error fetching matches:', error);
-      }
-    };
+  // useEffect(()=> {
+  //   const fetchMatches = async () => {
+  //     try {
+  //       // const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
+  //       const responseTest = await axios.get(`/api/fetch?url=https://www.scorebat.com/api/v2cf/team/tolmin/?_=1758930322509&Key-Pair-Id=APKAZ3YVMJ2W32ZACXVO&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6XC9cL3d3dy5zY29yZWJhdC5jb21cL2FwaVwvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc1ODkzMDU1MX19fV19&Signature=cie4lu9-BJeJvurQdJfEMzzzhJvdlrE9pFjKsT662L6aKi1BkS7yjZAQhMoWPJaTQ2j7-rH70GqamqOCGIM2LULr1FuxBNs~UFKjJcVBYTn3QOm7HJQUE96VA0EQYe8PGBAUEa5XETZj-92PHHNzUGM7nSCrbe3OK~zqyvTvJhxcCedlkfwA9ogckOT~tCRYJWpEcL7P8kPwIvtkk1Pfzkx-BWS-ZaWxLsBzarfaC~~S04O8j8lHDrQsxHGRELneyILYXL7N9wL7jnA67KdMw-qQ8eN-TyAd2bZguD-kaGCy3SbdOHixMM7bFahXi1RbRtjkKx~4jmG0zfbgLYUDcA__`);
+  //       console.log('Scorebat response:', responseTest.data);
+  //       // setMatches(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching matches:', error);
+  //     }
+  //   };
 
-    fetchMatches();
-  },[]);
+  //   fetchMatches();
+  // },[]);
+
+  useEffect(() => {
+  const fetchMatches = async () => {
+    try {
+      const target =
+        `https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`; // keep full string
+
+      const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
+      console.log("Scorebat response:", response.data);
+    } catch (err) {
+      console.error("Error fetching matches:", err);
+    }
+  };
+
+  const fetchedLogo = async () => {
+    try {
+      const target = `https://storage.livescore.com/images/team/medium/enet/206079.png`;
+      const response = await axios.get(`/api/fetch?url=${target}`, {
+        responseType: 'arraybuffer',
+      });
+
+      // Convert the arraybuffer to a base64 string
+      const base64String = btoa(
+        new Uint8Array(response.data)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      );
+
+      const imageBase64Url = `data:image/png;base64,${base64String}`;
+
+      // Log it
+      console.log("🧬 Base64 Image URL:", imageBase64Url);
+      setTestLogo(imageBase64Url); // Update state with base64 image URL
+
+      // Set the image source
+      const imgElement = document.getElementById('opponent-logo') as HTMLImageElement | null;
+      if (imgElement) {
+        imgElement.src = imageBase64Url;
+      }
+
+    } catch (err) {
+      console.error("❌ Error fetching base64 image:", err);
+    }
+  };
+
+  fetchedLogo();
+
+
+  fetchMatches();
+}, []);
+
 
   // Get unique stages
 const allStages = [...new Set(matches?.matches?.map((m: Match) => m.stage))];
@@ -303,6 +356,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                               return (
                                                 <Image
                                                   src={oppSrc}
+                                                  id='opponent-logo'
                                                   alt={opponent?.o_name || opponent?.name || 'Opponent Team Logo'}
                                                   width={110}
                                                   height={110}
@@ -364,7 +418,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                   <div className='min-w-[50px] flex items-center justify-center text-4xl font-bebas'>
                                     <p>VS</p>
                                   </div>
-                                  <Image src={`https://static.soccerway.com/team/${upcomingMatches[0]?.teams?.[1]?.img_id}/participant-logo-mobile-100x100/image.png`} alt="Team Logo" width={110} height={110} className='w-36 h-36 object-contain' />
+                                  <Image src={testLogo} alt="Team Logo" width={110} height={110} className='w-30 h-30 object-contain' />
                                 </div>
 
                                 <div className='flex items-center flex-col justify-center p-2 font-semibold text-white'>

@@ -43,7 +43,7 @@ const HistoryCarousel = () => {
               viewport={{ once: true, amount: 0.3 }}
               className="flex-1 bg-white border-b-4 border-red-600 shadow-lg group"
             >
-              <a className="block">
+              <a className="block" href={card.link}>
                 <div className="w-full h-auto overflow-hidden">
                   <Image
                     width={400}
@@ -61,9 +61,9 @@ const HistoryCarousel = () => {
                     {card.title}
                   </h5>
                 </a>
-                <div className="flex justify-end">
+                {/* <div className="flex justify-end">
                   <a
-                    href={card.link}
+                    
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                   >
                     Read more
@@ -83,7 +83,7 @@ const HistoryCarousel = () => {
                       />
                     </svg>
                   </a>
-                </div>
+                </div> */}
               </div>
             </motion.div>
           ))}
