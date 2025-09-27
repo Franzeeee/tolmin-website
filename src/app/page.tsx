@@ -168,18 +168,68 @@ export default function Page() {
     return `${day}.${month}`;
   }
 
-  useEffect(()=> {
-    const fetchMatches = async () => {
-      try {
-        const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
-        setMatches(response.data);
-      } catch (error) {
-        console.error('Error fetching matches:', error);
-      }
-    };
+  // useEffect(()=> {
+  //   const fetchMatches = async () => {
+  //     try {
+  //       // const response = await axios.get('/api/fetch?url=https://int.soccerway.com/v1/english/participant/soccer/full/11005/');
+  //       const responseTest = await axios.get(`/api/fetch?url=https://www.scorebat.com/api/v2cf/team/tolmin/?_=1758930322509&Key-Pair-Id=APKAZ3YVMJ2W32ZACXVO&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6XC9cL3d3dy5zY29yZWJhdC5jb21cL2FwaVwvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc1ODkzMDU1MX19fV19&Signature=cie4lu9-BJeJvurQdJfEMzzzhJvdlrE9pFjKsT662L6aKi1BkS7yjZAQhMoWPJaTQ2j7-rH70GqamqOCGIM2LULr1FuxBNs~UFKjJcVBYTn3QOm7HJQUE96VA0EQYe8PGBAUEa5XETZj-92PHHNzUGM7nSCrbe3OK~zqyvTvJhxcCedlkfwA9ogckOT~tCRYJWpEcL7P8kPwIvtkk1Pfzkx-BWS-ZaWxLsBzarfaC~~S04O8j8lHDrQsxHGRELneyILYXL7N9wL7jnA67KdMw-qQ8eN-TyAd2bZguD-kaGCy3SbdOHixMM7bFahXi1RbRtjkKx~4jmG0zfbgLYUDcA__`);
+  //       console.log('Scorebat response:', responseTest.data);
+  //       // setMatches(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching matches:', error);
+  //     }
+  //   };
 
-    fetchMatches();
-  },[]);
+  //   fetchMatches();
+  // },[]);
+
+  useEffect(() => {
+  const fetchMatches = async () => {
+    try {
+      const target =
+        `https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`; // keep full string
+
+      const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
+      console.log("Scorebat response:", response.data);
+    } catch (err) {
+      console.error("Error fetching matches:", err);
+    }
+  };
+
+  const fetchedLogo = async () => {
+  try {
+    const target = `https://storage.livescore.com/images/team/medium/enet/206079.png`;
+    const response = await axios.get(`/api/fetch?url=${target}`, {
+      responseType: 'arraybuffer', // Treat the response as binary data
+    });
+
+    // Create a Blob from the binary data and generate an object URL
+    const imageBlob = new Blob([response.data], { type: 'image/png' });
+    const imageUrl = URL.createObjectURL(imageBlob);
+
+    // ✅ Log it
+    console.log("🟢 Fetched Blob Image URL:", imageUrl);
+
+    // ✅ Automatically open it in a new tab (only works if triggered by a user action or allowed)
+    window.open(imageUrl, '_blank');
+
+    // ✅ Optionally, create a clickable link in the DOM
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.textContent = 'Click to open fetched image blob';
+    link.target = '_blank';
+    document.body.appendChild(link);
+
+  } catch (err) {
+    console.error("❌ Error fetching image:", err);
+  }
+};
+
+fetchedLogo();
+
+  fetchMatches();
+}, []);
+
 
   // Get unique stages
 const allStages = [...new Set(matches?.matches?.map((m: Match) => m.stage))];
@@ -303,6 +353,7 @@ const currentStageName = allStages[allStages.length - 1] ?? null;
                                               return (
                                                 <Image
                                                   src={oppSrc}
+                                                  id='opponent-logo'
                                                   alt={opponent?.o_name || opponent?.name || 'Opponent Team Logo'}
                                                   width={110}
                                                   height={110}

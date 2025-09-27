@@ -36,7 +36,7 @@ export default function U7() {
   const contentLoaded = !!fetchedData?.content || !!fetchedData?.name
 
   return (
-    <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
+    <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col items-center justify-center bg-gray-50">
       {/* Left: Image */}
       {!fetchedData?.img ? (
         <div className="flex items-center justify-center w-full h-[300px] xl:w-[650px] xl:h-[500px] bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded relative overflow-hidden transition-all duration-700">

@@ -1,4 +1,3 @@
-// app/api/fetch/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -25,8 +24,37 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const data = await res.json();
-    return NextResponse.json(data); // 🔥 return data directly
+    // Check content type to determine how to handle the response
+    const contentType = res.headers.get("Content-Type");
+
+    if (contentType?.includes("application/json")) {
+      // Handle JSON responses
+      const jsonData = await res.json();
+      return NextResponse.json(jsonData);
+    } else if (contentType?.includes("image/")) {
+      // Handle image responses (e.g., PNG, JPG)
+      const imageBuffer = await res.arrayBuffer();
+      return new NextResponse(imageBuffer, {
+        headers: {
+          "Content-Type": contentType ?? "application/octet-stream", // Pass the exact image type or fallback
+        },
+      });
+    } else if (contentType?.includes("text/")) {
+      // Handle text responses (e.g., plain text, HTML)
+      const textData = await res.text();
+      return new NextResponse(textData, {
+        headers: { "Content-Type": contentType ?? "text/plain" },
+      });
+    } else {
+      // Handle other content types (e.g., PDF, audio, etc.)
+      const blob = await res.blob();
+      return new NextResponse(blob, {
+        headers: {
+          "Content-Type": contentType ?? "application/octet-stream",
+        },
+      });
+    }
+
   } catch (err) {
     console.error(err);
     return NextResponse.json(

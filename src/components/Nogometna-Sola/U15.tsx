@@ -37,7 +37,7 @@ export default function U7() {
 
 
   return (
-    <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col xl:flex-row">
+    <div className="w-full p-4 flex h-fit gap-8 xl:gap-3 flex-col items-center justify-center bg-gray-50">
       {/* Left: Image */}
     {isLoading ? (
       // SHOW LOADING PLACEHOLDER

@@ -7,15 +7,17 @@ import Tab1 from '@/components/Zgodovina/Tab1';
 import Tab2 from '@/components/Zgodovina/Tab2';
 import Tab3 from '@/components/Zgodovina/Tab3';
 import Tab4 from '@/components/Zgodovina/Tab4';
+import Tab5 from '@/components/Zgodovina/Tab5';
 import { useSearchParams } from "next/navigation";
 
-const TABS = ["1921 – 1971", "1971 – 1995", "1995 – today", "Photo History"] as const;
+const TABS = ["1921 – 1971", "1971 – 1995", "1995 – 2014", "2014 - Danes" , "Foto Zgodovina"] as const;
 
 const TAB_COMPONENTS = {
   "1921 – 1971": Tab1,
   "1971 – 1995": Tab2,
-  "1995 – today": Tab3,
-  "Photo History": Tab4, // You can replace with actual PhotoTab component
+  "1995 – 2014": Tab3,
+  "2014 - Danes": Tab5,
+  "Foto Zgodovina": Tab4,
 };
 
 export default function Page() {
