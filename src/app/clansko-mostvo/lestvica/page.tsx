@@ -126,8 +126,12 @@ export default function Page() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as LiveScoreTables;
         setData(json);
-      } catch (e: any) {
-        setErr(e?.message || 'Failed to load table.');
+            } catch (e) {
+        if (e instanceof Error) {
+          setErr(e.message);
+        } else {
+          setErr('Failed to load table.');
+        }
       } finally {
         setLoading(false);
       }

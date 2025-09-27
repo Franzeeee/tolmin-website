@@ -10,6 +10,38 @@ import Link from 'next/link';
 import axios, { AxiosRequestConfig } from 'axios';
 import Loading from '@/components/Loading';
 
+
+interface LivescorePayload {
+  pageProps?: {
+    initialData?: {
+      eventsByMatchType?: Array<{
+        Snm?: string;
+        Sds?: string;
+        Events?: Array<{
+          Tr1?: string | number;
+          Tr2?: string | number;
+          Eps?: string;
+          T1?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          T2?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          Esd?: number | string;
+          Eid?: string | number;
+          Epr?: string | number;
+        }>;
+      }>;
+    };
+  };
+}
+
 /* ------------------------------------------------
  * Small generic fetch hook (works for JSON & binary)
  * ------------------------------------------------ */
@@ -116,11 +148,12 @@ function parseEsdToEpochMs(esd: number | string): number {
 }
 
 function safeScore(a?: string | number, b?: string | number): string {
-  const has = (v: any) => v !== undefined && v !== null && v !== '';
+  const has = (v: string | number | undefined | null): boolean =>
+    v !== undefined && v !== null && v !== '';
   return has(a) && has(b) ? `${a}-${b}` : '';
 }
 
-const toMatchArray = (payload: any): Match[] => {
+const toMatchArray = (payload: LivescorePayload): Match[] => {
   const blocks = payload?.pageProps?.initialData?.eventsByMatchType ?? [];
   const out: Match[] = [];
 

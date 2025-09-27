@@ -81,6 +81,36 @@ interface FetchedData {
   matches: Match[];
 }
 
+interface LivescorePayload {
+  pageProps?: {
+    initialData?: {
+      eventsByMatchType?: Array<{
+        Snm?: string;
+        Sds?: string;
+        Events?: Array<{
+          Tr1?: string | number;
+          Tr2?: string | number;
+          Eps?: string;
+          T1?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          T2?: Array<{
+            ID?: string | number;
+            Img?: string;
+            Nm?: string;
+            Abr?: string;
+          }>;
+          Esd?: number | string;
+          Eid?: string | number;
+          Epr?: string | number;
+        }>;
+      }>;
+    };
+  };
+}
 /* ------------------ Helpers ------------------ */
 
 const normalizeStatus = (eps?: string) => {
@@ -133,13 +163,13 @@ function parseEsdToEpochMs(esd: number | string): number {
 }
 
 function safeScore(a?: string | number, b?: string | number): string {
-  const has = (v: any) => v !== undefined && v !== null && v !== '';
+  const has = (v: string | number | undefined) =>
+    v !== undefined && v !== null && String(v).trim() !== '';
   return has(a) && has(b) ? `${a}-${b}` : '';
 }
 
 /* ------------ Mapper from Livescore JSON ------------ */
-
-const toMatchArray = (payload: any): Match[] => {
+const toMatchArray = (payload: LivescorePayload): Match[] => {
   const blocks = payload?.pageProps?.initialData?.eventsByMatchType ?? [];
   const out: Match[] = [];
 
