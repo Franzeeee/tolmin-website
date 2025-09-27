@@ -45,7 +45,7 @@ interface LivescorePayload {
 /* ------------------------------------------------
  * Small generic fetch hook (works for JSON & binary)
  * ------------------------------------------------ */
-function useFetched<T = any>(url?: string | null, opts?: AxiosRequestConfig) {
+function useFetched<T>(url?: string | null, opts?: AxiosRequestConfig) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(!!url);
   const [error, setError] = useState<unknown>(null);
@@ -65,10 +65,10 @@ function useFetched<T = any>(url?: string | null, opts?: AxiosRequestConfig) {
     setError(null);
 
     axios
-      .get(url, opts)
+      .get<T>(url, opts)
       .then((res) => {
         if (cancelled || !isMounted.current) return;
-        setData(res.data as T);
+        setData(res.data);
       })
       .catch((err) => {
         if (cancelled || !isMounted.current) return;
@@ -364,10 +364,10 @@ export default function Page() {
   const FIXTURES_URL =
     'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
 
-  const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<any>(
+  const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
     `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`
   );
-  const { data: fixturesJson, loading: fixturesLoading, error: fixturesError } = useFetched<any>(
+  const { data: fixturesJson, loading: fixturesLoading, error: fixturesError } = useFetched<LivescorePayload>(
     `/api/fetch?url=${encodeURIComponent(FIXTURES_URL)}`
   );
 
