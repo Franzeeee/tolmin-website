@@ -483,8 +483,8 @@ export default function Page() {
   }, [finishedMatches, upcomingMatches, currentSlide]);
 
   // Stage names
-  const allStageNames = [...new Set(matches?.matches?.map((m) => m.stage.st_name) ?? [])];
-  const currentStageName = allStageNames[allStageNames.length - 1] ?? null;
+  // const allStageNames = [...new Set(matches?.matches?.map((m) => m.stage.st_name) ?? [])];
+  // const currentStageName = allStageNames[allStageNames.length - 1] ?? null;
 
   // Reusable responsive size classes for the static Tolmin crest
   const TOLMIN_LOGO_CLASSES =
