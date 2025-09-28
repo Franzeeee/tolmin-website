@@ -1,5 +1,3 @@
-import { title } from "process";
-
 export const data = [
     {
         title: 'SEZONA 2014/2015',
