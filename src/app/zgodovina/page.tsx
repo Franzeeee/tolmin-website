@@ -10,15 +10,15 @@ import Tab4 from '@/components/Zgodovina/Tab4';
 import Tab5 from '@/components/Zgodovina/Tab5';
 import { useSearchParams } from "next/navigation";
 
-const TABS = ["1921 – 1971", "1971 – 1995", "1995 – 2014", "2014 - Danes" , "Foto Zgodovina"] as const;
+const TABS = ["1921 – 1971", "1971 – 1995", "1995 – 2014", "2014 – Danes", "Foto Zgodovina"] as const;
 
 const TAB_COMPONENTS = {
   "1921 – 1971": Tab1,
   "1971 – 1995": Tab2,
   "1995 – 2014": Tab3,
-  "2014 - Danes": Tab5,
+  "2014 – Danes": Tab5,
   "Foto Zgodovina": Tab4,
-};
+} as const;
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>("1921 – 1971");
@@ -30,10 +30,17 @@ export default function Page() {
   const searchParams = useSearchParams();
   const data = searchParams.get("tab");
 
+  const normalizeTitle = (s: string) =>
+    s
+      .replace(/\s*[-–]\s*/g, " – ") // normalize any dash w/ spaces to en dash
+      .replace(/\s+/g, " ")
+      .trim();
+
   useEffect(() => {
-    if (data && TABS.includes(data as typeof TABS[number])) {
-      setActiveTab(data as typeof TABS[number]);
-    }
+    if (!data) return;
+    const normalized = normalizeTitle(data);
+    const match = (TABS as readonly string[]).find(t => normalizeTitle(t) === normalized);
+    if (match) setActiveTab(match as typeof TABS[number]);
   }, [data]);
   
   
