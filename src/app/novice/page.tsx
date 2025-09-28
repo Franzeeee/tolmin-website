@@ -129,7 +129,7 @@ export default function Page() {
                     {featured.description || <span className="italic text-gray-400">No description available.</span>}
                 </p>
                 <a href={`novice/${featured._id}`} className="text-sm text-red-600 mt-3 hover:underline">
-                  Read More
+                  Preberi več
                 </a>
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function Page() {
                       href={`/novice/${news._id}`}
                       className="inline-block mt-2 text-sm text-red-600 hover:underline font-medium"
                     >
-                      Read More
+                      Preberi več
                     </a>
                   </div>
                 </div>
@@ -227,10 +227,14 @@ function formatDate(date: Date | string) {
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffDays >= 1) {
-    return published.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return published.toLocaleDateString('sl-SI', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
   } else if (diffHours >= 1) {
-    return `${diffHours}h ago`;
+    return `${diffHours} h nazaj`;
   } else {
-    return `${diffMins}min ago`;
+    return `${diffMins} min nazaj`;
   }
 }

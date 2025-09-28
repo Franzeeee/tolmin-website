@@ -8,8 +8,8 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 const historyCards = [
   { id: 1, img: "/history1.png", title: "1921 – 1971", link: "/zgodovina?tab=1921%20%E2%80%93%201971" },
   { id: 2, img: "/history2.png", title: "1971 – 1995", link: "/zgodovina?tab=1971%20%E2%80%93%201995" },
-  { id: 3, img: "/zgodovina/p3.png", title: "1995 – Today", link: "/zgodovina?tab=1995%20%E2%80%93%20Today" },
-  { id: 4, img: "/history4.jpg", title: "Photo History", link: "/zgodovina?tab=Photo%20History" },
+  { id: 3, img: "/zgodovina/p3.png", title: "1995 – 2014", link: "/zgodovina?tab=1995%20%E2%80%93%202014" },
+  { id: 4, img: "/history4.jpg", title: "Foto Zgodovina", link: "/zgodovina?tab=Foto%20Zgodovina" },
 ];
 
 

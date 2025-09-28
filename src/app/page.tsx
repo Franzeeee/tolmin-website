@@ -457,7 +457,7 @@ export default function Page() {
     };
 
     fetchMatches();
-  }, [upcomingMatches]);
+  }, []);
 
   /* -------- venue fetch -------- */
   useEffect(() => {
@@ -483,8 +483,8 @@ export default function Page() {
   }, [finishedMatches, upcomingMatches, currentSlide]);
 
   // Stage names
-  const allStageNames = [...new Set(matches?.matches?.map((m) => m.stage.st_name) ?? [])];
-  const currentStageName = allStageNames[allStageNames.length - 1] ?? null;
+  // const allStageNames = [...new Set(matches?.matches?.map((m) => m.stage.st_name) ?? [])];
+  // const currentStageName = allStageNames[allStageNames.length - 1] ?? null;
 
   // Reusable responsive size classes for the static Tolmin crest
   const TOLMIN_LOGO_CLASSES =
@@ -552,7 +552,7 @@ export default function Page() {
                       <AnimatePresence custom={direction} initial={false}>
                         {finishedMatches.length > 0 ? (
                           (() => {
-                            const finishedReversed = finishedMatches.slice().reverse();
+                            const finishedReversed = finishedMatches.slice();
                             return finishedReversed.map((match: Match, index: number) =>
                               index === currentSlide ? (
                                 <motion.div
@@ -729,7 +729,7 @@ export default function Page() {
                     ) : (
                       <Link href="/clansko-mostvo/lestvica">
                         <div className="flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4">
-                          <h2 className="text-2xl">{currentStageName || '3. SNL'}</h2>
+                          <h2 className="text-2xl">{'3. SNL'}</h2>
                         </div>
                         <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
                           <h1 className="text-7xl text-center uppercase italic font-semibold leading-24 ">
