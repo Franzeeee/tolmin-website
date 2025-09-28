@@ -729,7 +729,7 @@ export default function Page() {
                     ) : (
                       <Link href="/clansko-mostvo/lestvica">
                         <div className="flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4">
-                          <h2 className="text-2xl">{currentStageName || '3. SNL'}</h2>
+                          <h2 className="text-2xl">{'3. SNL'}</h2>
                         </div>
                         <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
                           <h1 className="text-7xl text-center uppercase italic font-semibold leading-24 ">

@@ -149,7 +149,7 @@ export default function Page() {
 
         {/* Sidebar - Latest Articles */}
         <aside className="w-full lg:w-1/3 flex flex-col gap-4">
-          <h2 className="text-xl font-bold border-b pb-2 text-red-600">Latest Articles</h2>
+            <h2 className="text-xl font-bold border-b pb-2 text-red-600">Zadnje Novice</h2>
           <div className="grid gap-4">
             {suggestions.slice(0, 5).map(article => (
               <Link 
@@ -167,7 +167,7 @@ export default function Page() {
                 </div>
                 <div className="p-2 flex flex-col justify-between py-4">
                   <h3 className="text-sm font-semibold text-red-500">{article.title}</h3>
-                  <span className="text-xs text-gray-500">Read more</span>
+                  <span className="text-xs text-gray-500">Preberi več</span>
                 </div>
               </Link>
             ))}
@@ -182,21 +182,21 @@ export default function Page() {
 
 // Helper function for date formatting
 function formatDate(date: Date | string) {
-    if (!date) return '';
-    const published = new Date(date);
-    const now = new Date();
-    const diffMs = now.getTime() - published.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
+  if (!date) return '';
+  const published = new Date(date);
+  const now = new Date();
+  const diffMs = now.getTime() - published.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
 
-    const formattedDate = published.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const formattedDate = published.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
 
-    if (diffDays >= 1) {
-        return formattedDate;
-    } else if (diffHours >= 1) {
-        return `${diffHours}h ago • ${formattedDate}`;
-    } else {
-        return `${diffMins}min ago • ${formattedDate}`;
-    }
+  if (diffDays >= 1) {
+    return formattedDate;
+  } else if (diffHours >= 1) {
+    return `${diffHours} ur nazaj • ${formattedDate}`;
+  } else {
+    return `${diffMins} min nazaj • ${formattedDate}`;
+  }
 }
