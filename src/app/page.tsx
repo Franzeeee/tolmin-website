@@ -457,7 +457,7 @@ export default function Page() {
     };
 
     fetchMatches();
-  }, [upcomingMatches]);
+  }, []);
 
   /* -------- venue fetch -------- */
   useEffect(() => {
@@ -552,7 +552,7 @@ export default function Page() {
                       <AnimatePresence custom={direction} initial={false}>
                         {finishedMatches.length > 0 ? (
                           (() => {
-                            const finishedReversed = finishedMatches.slice().reverse();
+                            const finishedReversed = finishedMatches.slice();
                             return finishedReversed.map((match: Match, index: number) =>
                               index === currentSlide ? (
                                 <motion.div
