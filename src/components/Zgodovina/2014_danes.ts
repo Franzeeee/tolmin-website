@@ -34,6 +34,7 @@ export const data = [
         "Pri rdeče-črnih smo v tej sezoni spremljali tudi precej novih obrazov, ki so sicer večinoma izhajali iz našega kluba. Po nekaj tekem so odigrali Aleksandar Mandić, Aleksander Konec, Benjamin Srebrnič,  Blaž Karba, Fitim Zabelaj, Ivan Medic, Jernej Leban, Žan Bratina, pa tudi Sašo Ogrič in Uroš Rutar. Pomembnejšo vlogo med novinci v ekipi so imeli Aleš Rutar, Blaž Drašček, Jan Zaletelj, Jani Šturm, Matic Perše in Miha Torkar. Ekipi so bili priključeni tudi najobetavnejši mladinci: Danijel Šturm, Tim Kutin in vratar Jaka Konec. V Tolminu smo v tej sezoni dočakali tudi nastope Francoza iz Martiniqua Gillesa ter dveh Američanov - Nicholasa Tunica in Bruca Dowlina. Slednji je tudi v kasnejših sezonah v Tolminu pustil  zelo pozitiven vtis. Proti koncu sezone sta TKK Tolminu pomagala tudi Gregor Kos in Tine Kravanja, ki sta sicer nastopala v futsal prvenstvu.",
         "Janu Kraglju je v tej sezoni kot pomočnik pomagal Nejc Rutar. "
         ],
+        image: '/zgodovina/sezona-img/2016-2017.jpeg',
     },
     {
         title: 'SEZONA 2017/2018',

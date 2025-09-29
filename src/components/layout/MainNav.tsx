@@ -28,7 +28,8 @@ const navItems = [
     dropdown: [
       { name: "1921 – 1971", link: "/zgodovina?tab=1921%20%E2%80%93%201971" },
       { name: "1971 – 1995", link: "/zgodovina?tab=1971%20%E2%80%93%201995" },
-      { name: "1995 – Today", link: "/zgodovina?tab=1995%20%E2%80%93%20Today" },
+      { name: "1995 – 2014", link: "/zgodovina?tab=1995%20%E2%80%93%202014" },
+      { name: "2014 – danes", link: "/zgodovina?tab=2014%20%E2%80%93%20danes" },
       { name: "Foto Zgodovina", link: "/zgodovina?tab=Photo%20History" }
   ]},
   {
