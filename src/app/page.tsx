@@ -7,7 +7,6 @@ import Image from 'next/image';
 import logo from '../../public/tolmin-logo.png';
 import PlayerCarousel from '../components/PlayerCarousel';
 import MerchItem from '@/components/MerchItem';
-import StadiumCarousel from '@/components/Home/StadiumCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight, faSoccerBall } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
