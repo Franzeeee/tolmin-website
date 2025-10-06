@@ -7,6 +7,7 @@ import Dropdown from '@/components/Dropdown';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Loading from '@/components/Loading';
 
 type Team = {
   position?: string;
@@ -60,11 +61,14 @@ export default function Page() {
       const oldTeamData = await oldTeamRes.json();
 
       setOldTeamData(oldTeamData)
-
       setTeamData(data);
     };
     fetchData();
   }, []);
+
+  // helpers
+  const isGoalkeeper = (p: Team) => p.position && p.position.toLowerCase().includes('goal');
+  const nonGoalkeepers = (arr: Team[]) => arr.filter(p => !isGoalkeeper(p));
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -114,7 +118,7 @@ export default function Page() {
       </header>
       
       <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
-        <section className='w-full min-h-content max-h-[930px] p-2 px-5 pb-9 overflow-visible'>
+        <section className='w-full min-h-content p-2 px-5 pb-9 overflow-visible'>
             <div className='relative w-full p-3 flex flex-col sm:flex-row items-center justify-between'>
               <div className="relative w-full p-3 flex flex-row items-center justify-between">
                 {/* Mobile: compact dropdown / segmented menu using native <details> for no extra hooks */}
@@ -192,23 +196,21 @@ export default function Page() {
 
         { activeSeason === currentYear && (
           <>
-            {/* GoalKeeper Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
+            {/* Vratarji Section */}
+            <section className='w-full min-h-content p-2 px-5 overflow-hidden pb-12'>
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
                   Vratarji
                 </h1>
               </div>
-            {/* Player Cards */}
               <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
                 {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('goal')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Vratarji found.</div>
+                  <Loading />
+                ) : teamData.filter(isGoalkeeper).length === 0 ? (
+                  <div className="col-span-full p-6 text-center text-gray-500">Ni igralcev</div>
                 ) : (
                   teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('goal'))
+                    .filter(isGoalkeeper)
                     .map((player: Team, index: number) => (
                       <motion.div
                         key={index}
@@ -237,203 +239,20 @@ export default function Page() {
               </div>
             </section>
 
-            {/* Defenders Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
+            {/* Players Section (everyone else) */}
+            <section className='w-full min-h-content p-2 px-5 overflow-hidden pb-12'>
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Branilci
+                  Igralci
                 </h1>
               </div>
-            {/* Player Cards */}
               <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
                 {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('def')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Branilci found.</div>
+                    <Loading />
+                ) : nonGoalkeepers(teamData).length === 0 ? (
+                    <div className="col-span-full p-6 text-center text-gray-500">Ni igralcev.</div>
                 ) : (
-                  teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('def'))
-                    .map((player: Team, index: number) => (
-                      <motion.div
-                        key={index}
-                        className="relative p-5 h-[430px] w-full"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                        viewport={{ once: true, amount: .3 }}
-                      >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
-                          {player.number ?? '01'}
-                        </h1>
-                        <Image
-                          src={player.img || '/player1.png'}
-                          alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
-                          <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
-                          <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
-                        </div>
-                      </motion.div>
-                    ))
-                )}
-              </div>
-            </section>
-
-            {/* Midfields Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
-              <div className='border-b-2 border-gray-300 mb-4 pb-2'>
-                <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Vezisti
-                </h1>
-              </div>
-            {/* Player Cards */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                          {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('mid')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Vezisti found.</div>
-                ) : (
-                  teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('mid'))
-                    .map((player: Team, index: number) => (
-                      <motion.div
-                        key={index}
-                        className="relative p-5 h-[430px] w-full"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                        viewport={{ once: true, amount: .3 }}
-                      >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
-                          {player.number ?? '01'}
-                        </h1>
-                        <Image
-                          src={player.img || '/player1.png'}
-                          alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
-                          <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
-                          <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
-                        </div>
-                      </motion.div>
-                    ))
-                )}
-              </div>
-            </section>
-
-            {/* Forwards Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
-              <div className='border-b-2 border-gray-300 mb-4 pb-2'>
-                <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Napadalci
-                </h1>
-              </div>
-            {/* Player Cards */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                            {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('forward')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Napadalci found.</div>
-                ) : (
-                  teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('forward'))
-                    .map((player: Team, index: number) => (
-                      <motion.div
-                        key={index}
-                        className="relative p-5 h-[430px] w-full"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                        viewport={{ once: true, amount: .3 }}
-                      >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
-                          {player.number ?? '01'}
-                        </h1>
-                        <Image
-                          src={player.img || '/player1.png'}
-                          alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
-                          <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
-                          <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
-                        </div>
-                      </motion.div>
-                    ))
-                )}
-              </div>
-            </section>
-
-            {/* Coach Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
-              <div className='border-b-2 border-gray-300 mb-4 pb-2'>
-                <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Trener
-                </h1>
-              </div>
-            {/* Player Cards */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('coach')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Trener found.</div>
-                ) : (
-                  teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('coach'))
-                    .map((player: Team, index: number) => (
-                      <motion.div
-                        key={index}
-                        className="relative p-5 h-[430px] w-full"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                        viewport={{ once: true, amount: .3 }}
-                      >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
-                          {player.number ?? '01'}
-                        </h1>
-                        <Image
-                          src={player.img || '/player1.png'}
-                          alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute w-full px-4 left-0 pb-5 bottom-0 bg-black/50 flex flex-col justify-end text-white p-4 bottom-red-gradient h-50 poppins">
-                          <p className="-mb-2 uppercase">{player.firstName ?? 'First'}</p>
-                          <p className="text-4xl font-semibold poppins uppercase">{player.lastName ?? 'Last'}</p>
-                        </div>
-                      </motion.div>
-                    ))
-                )}
-              </div>
-            </section>
-
-            {/* Staff Section */}
-            <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-hidden pb-12'>
-            {/* Header Title */}
-              <div className='border-b-2 border-gray-300 mb-4 pb-2'>
-                <h1 className="text-6xl font-bold text-left text-black mt-2 uppercase">
-                  Strokovni štab
-                </h1>
-              </div>
-            {/* Player Cards */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                            {teamData === null ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">Loading team data...</div>
-                ) : teamData.filter((p: Team) => p.position && p.position.toLowerCase().includes('staff')).length === 0 ? (
-                  <div className="col-span-full p-6 text-center text-gray-500">No Strokovni štab found.</div>
-                ) : (
-                  teamData
-                    .filter((p: Team) => p.position && p.position.toLowerCase().includes('staff'))
+                  nonGoalkeepers(teamData)
                     .map((player: Team, index: number) => (
                       <motion.div
                         key={index}
@@ -502,5 +321,3 @@ export default function Page() {
     </div>
   );
 }
-
-
