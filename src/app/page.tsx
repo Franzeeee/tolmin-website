@@ -901,24 +901,18 @@ export default function Page() {
             </Link>
           </div>
           <div className="w-full overflow-x-auto px-4 pb-6">
-            <StadiumCarousel />
-          </div>
-          <div className={`w-full p-2 px-7 poppins text-justify flex flex-col gap-4 text-gray-900`}>
-            <p>
-              <span className="font-bold text-black">Športni park Brajda</span> je že dolga desetletja dom
-              tolminskih nogometašev. V letu 1962 je Občinska zveza za telesno vzgojo v Tolminu finančno podprla
-              izgradnjo novega stadiona, ki je bil svečano odprt leta 1967.
-            </p>
-            <p>
-              Športni park Brajda meri 38.787 m2. Park obsega atletski in nogometni stadion, zunanja športna igrišča,
-              teniški igrišči in spremljajoče objekte. Nogometni stadion ima glavno in pomožno nogometno igrišče.
-              Tribuna ima 250 sedežev. Športni kompleks je namenjen šolski športni vzgoji, športni vadbi in tekmovanjem
-              v atletiki, nogometu, malem nogometu, košarki, rokometu, tenisu in odbojki na mivki ter športni
-              rekreaciji. Vsako leto športni park obišče 21.000 uporabnikov in obiskovalcev.
-            </p>
-            <p>
-              Leta 2014 je bil nogometni stadion na Brajdi posodobljen za potrebe nastopanja članskega moštva v 2.SNL.
-            </p>
+            <Link href="/klub">
+              <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]">
+                <Image
+                  src="/Stadium/stadium-latest.jpeg"
+                  alt="Športni park Brajda"
+                  fill
+                  className="object-cover rounded-lg shadow-lg"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+                  priority={false}
+                />
+              </div>
+            </Link>
           </div>
         </section>
 
