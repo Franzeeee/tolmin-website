@@ -126,7 +126,7 @@ const Carousel: React.FC = () => {
                   transition={{ duration: 1, ease: "easeOut", delay: i * 0.1 }}
                   viewport={{ once: true, amount: .3 }}
                 >
-                  <h1 className="absolute top-2 right-3 text-red-600 z-2 text-4xl font-bold poppins uppercase player-number">
+                  <h1 className="absolute top-2 right-3 text-red-600 z-2 text-5xl font-bold poppins uppercase player-number">
                     {item.number}
                   </h1>
                   <Image
