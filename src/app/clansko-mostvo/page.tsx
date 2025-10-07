@@ -218,7 +218,7 @@ export default function Page() {
                         transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                         viewport={{ once: true, amount: .3 }}
                       >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                        <h1 className="absolute top-2 right-3 text-red-600 z-2 text-4xl font-bold poppins uppercase player-number">
                           {player.number ?? '01'}
                         </h1>
                         <Image
@@ -264,7 +264,7 @@ export default function Page() {
                         transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                         viewport={{ once: true, amount: .3 }}
                       >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                        <h1 className="absolute top-2 right-3 text-red-600 z-2 text-4xl font-bold poppins uppercase player-number">
                           {player.number ?? '01'}
                         </h1>
                         <Image
@@ -309,7 +309,7 @@ export default function Page() {
                         transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                         viewport={{ once: true, amount: .3 }}
                       >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                        <h1 className="absolute top-2 right-3 text-red-600 z-2 text-4xl font-bold poppins uppercase player-number">
                           {player.number ?? '01'}
                         </h1>
                         <Image
@@ -354,7 +354,7 @@ export default function Page() {
                         transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                         viewport={{ once: true, amount: .3 }}
                       >
-                        <h1 className="absolute top-2 right-3 text-white z-2 text-4xl font-bold poppins uppercase player-number">
+                        <h1 className="absolute top-2 right-3 text-red-600 z-2 text-4xl font-bold poppins uppercase player-number">
                           {player.number ?? '01'}
                         </h1>
                         <Image
