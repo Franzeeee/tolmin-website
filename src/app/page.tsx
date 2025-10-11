@@ -405,7 +405,7 @@ export default function Page() {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const target = `https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
+        const target = `https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
         const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
         const parsed: Match[] = toMatchArray(response.data);
 
@@ -445,7 +445,7 @@ export default function Page() {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const target = `https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
+        const target = `https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
         const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
         const parsed: Match[] = toMatchArray(response.data);
 
