@@ -360,9 +360,9 @@ export default function Page() {
 
   /* -------- Fetch results & fixtures from LiveScore via proxy -------- */
   const RESULTS_URL =
-    'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156';
+    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156';
   const FIXTURES_URL =
-    'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
+    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
 
   const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
     `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`

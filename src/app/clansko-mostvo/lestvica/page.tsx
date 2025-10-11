@@ -115,7 +115,7 @@ export default function Page() {
   const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
 
   const url =
-    'https://www.livescore.com/_next/data/mHrG2d_CriJL21mKBtNhu/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579';
+    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579';
 
   useEffect(() => {
     const fetchData = async () => {
