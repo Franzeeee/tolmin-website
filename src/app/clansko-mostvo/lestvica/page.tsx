@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { use, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Loading from '@/components/Loading';
+import { fetchAndStoreApiKey } from "@/util/apiKey";
 
 const TOLMIN_ID = '11156';
 
@@ -86,6 +87,7 @@ function indexByKind(blocks: LeagueBlock[]) {
 
 export default function Page() {
   const pathname = usePathname();
+  const [apiKey, setApiKey] = useState<string | null>(null);
 
   // Top nav tabs across the squad section
   const tabs = useMemo(
@@ -101,6 +103,15 @@ export default function Page() {
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const currentTab = hoveredTab || activeTab;
 
+
+  useEffect(() => {
+    const getKey = async () => {
+      const key = await fetchAndStoreApiKey();
+      setApiKey(key);
+    }
+    getKey();
+  }, []);
+
   useEffect(() => {
     const found = tabs.find((t) => t.link === pathname);
     if (found) setActiveTab(found.name);
@@ -115,7 +126,7 @@ export default function Page() {
   const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
 
   const url =
-    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579';
+    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579`;
 
   useEffect(() => {
     const fetchData = async () => {

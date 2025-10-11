@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-// import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -11,102 +10,88 @@ import Tab2 from '@/components/Klub/Tab2';
 import Tab3 from '@/components/Klub/Tab3';
 import Tab4 from '@/components/Klub/Tab4';
 
-
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Osnovni podatki");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const [tabs] = useState(["Osnovni podatki", "Članstvo", "Pravilniki", "brajda"]);
-  const [tabContent] = useState([Tab1, Tab2, Tab3, Tab4]);
+  const tabs = ["Osnovni podatki", "Članstvo", "Pravilniki", "Brajda"] as const;
+  const tabContent = [Tab1, Tab2, Tab3, Tab4];
 
+  type TabKey = typeof tabs[number];
+  const tabLabels: Record<TabKey, string> = {
+    "Osnovni podatki": "Osnovni podatki",
+    "Članstvo": "Članstvo",
+    "Pravilniki": "Pravilniki",
+    "Brajda": "Brajda"
+  };
 
-  const currentTab = hoveredTab || activeTab;
+  const currentTab: TabKey = (hoveredTab || activeTab) as TabKey;
+  const Active = tabContent[tabs.findIndex(t => t === activeTab)];
 
-  // Handle scroll to toggle the button
+  // Scroll-to-top button visibility
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 500) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-    };
+    const handleScroll = () => setShowScrollTop(window.scrollY > 500);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Scroll to top smoothly
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
-      {/* <header className="w-screen h-screen grid grid-rows-[auto_1fr] bg-white landing-header max-h-[900px]">
-        <MainNav />
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 max-h-[900px]"
-        >
-          <source src="/tolmin-header.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-55 z-10 max-h-[900px]" />
-        <div className="flex items-end pb-2 justify-center h-screen max-h-[900px] z-20 relative overflow-hidden">
-          <motion.h1
-            initial={{ x: '110vw' }}
-            animate={{ x: '-120vw' }}
-            transition={{
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 16,
-              ease: "linear"
-            }}
-            className="text-9xl z-20 font-extrabold text-white opacity-60 header-text select-none text-nowrap pointer-events-none uppercase poppins"
-          >
-            Klub - {{"Osnovni podatki": "Osnovni podatki", "Članstvo": "Članstvo", "Pravilniki": "Pravilniki", "bradja": "Bradja"}[currentTab]}
-          </motion.h1>
-        </div>
-      </header> */}
-
       <header className="w-full bg-gradient-to-r from-black via-red-700 to-black flex flex-col items-center justify-center relative overflow-hidden">
         <MainNav />
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900 to-black opacity-60 pointer-events-none" />
         <div className="relative mt-20 z-10 flex flex-col items-center justify-center">
-            <motion.h1
+          <motion.h1
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg"
-            >
-            Klub - {{"Osnovni podatki": "Osnovni podatki", "Članstvo": "Članstvo", "Pravilniki": "Pravilniki", "brajda": "Brajda"}[currentTab]}
+          >
+            Klub - {tabLabels[currentTab as TabKey]}
           </motion.h1>
         </div>
       </header>
 
-      <main className='w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600'>
-        <section className='w-full min-h-content max-h-[930px] p-2 px-5 overflow-visible'>
-          {/* <div className="relative w-full h-[200px] max-h-[300px] xl:w-full xl:h-[350px] xl:max-h-[500px]">
-              <Image 
-                src={'/club.png'}
-                  alt="Example"
-                  className="object-contain xl:object-contain"
-                  fill
-                  sizes="(max-width: 1280px) 100vw, 650px"
-                  priority
-              />
-          </div> */}
+      <main className="w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600">
+        <section className="w-full min-h-content max-h-[930px] p-2 px-5 overflow-visible">
+          <div className="relative w-full p-3 flex flex-row items-center justify-between">
+            {/* Mobile dropdown */}
+            <details className="w-full sm:hidden">
+              <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
+                <span className="font-semibold text-gray-800">{currentTab}</span>
+                <span className="ml-2 text-gray-500 select-none">▾</span>
+              </summary>
+              <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab(tab);
+                      // close the <details> after selection
+                      const parent = (e.currentTarget.closest('details') as HTMLDetailsElement | null);
+                      if (parent) parent.open = false;
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm ${
+                      currentTab === tab
+                        ? "bg-red-50 text-red-600 font-semibold"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            </details>
 
-          <div className='relative w-full p-3 flex flex-row items-center justify-between'>
-            <ul className='flex flex-row gap-6 text-lg font-semibold text-gray-800 select-none justify-center items-center w-full'>
-              {tabs.map((tab, index) => (
+            {/* Desktop / Tablet tabs */}
+            <ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0 sm:justify-start lg:justify-center">
+              {tabs.map((tab) => (
                 <li
-                  key={index}
-                  className={`relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 uppercase ${
+                  key={tab}
+                  className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 uppercase ${
                     currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
                   }`}
                   onClick={() => setActiveTab(tab)}
@@ -123,13 +108,13 @@ export default function Page() {
                   )}
                 </li>
               ))}
-              <div className="absolute left-0 right-0 bottom-2 h-[3px] bg-gray-300 max-w-6xl m-auto" />
+              <div className="absolute left-0 right-0 bottom-0 h-[3px] bg-gray-300 pointer-events-none" />
             </ul>
           </div>
         </section>
 
-        <section className='w-full min-h-content p-2 px-5 pb-9 flex items-center justify-center'>
-          {React.createElement(tabContent[tabs.findIndex(tab => tab === activeTab)])}
+        <section className="w-full min-h-content p-2 px-5 pb-9 flex items-center justify-center">
+          {Active ? <Active /> : null}
         </section>
       </main>
 

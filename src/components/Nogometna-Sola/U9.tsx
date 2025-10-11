@@ -79,7 +79,7 @@ export default function U7() {
           </div>
         ) : (
           <div
-            className="text-black pb-10 w-1/2 mx-auto"
+            className="text-black pb-10 w-full lg:w-1/2 mx-auto"
             dangerouslySetInnerHTML={{
               __html: fetchedData?.content || fetchedData?.name || 'U9 Nogometna Šola',
             }}

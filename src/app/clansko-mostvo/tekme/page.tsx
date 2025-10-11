@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import axios, { AxiosRequestConfig } from 'axios';
 import Loading from '@/components/Loading';
+import { fetchAndStoreApiKey } from "@/util/apiKey";
 
 
 interface LivescorePayload {
@@ -341,6 +342,15 @@ export default function Page() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('Epika');
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getKey = async () => {
+      const key = await fetchAndStoreApiKey();
+      setApiKey(key);
+    };
+    getKey();
+  }, []);
 
   const tabs = useMemo(
     () => [
@@ -360,9 +370,9 @@ export default function Page() {
 
   /* -------- Fetch results & fixtures from LiveScore via proxy -------- */
   const RESULTS_URL =
-    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156';
+    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
   const FIXTURES_URL =
-    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
+    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
 
   const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
     `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`
