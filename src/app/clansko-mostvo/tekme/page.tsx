@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import axios, { AxiosRequestConfig } from 'axios';
 import Loading from '@/components/Loading';
+import { fetchAndStoreApiKey } from "@/util/apiKey";
 
 
 interface LivescorePayload {
@@ -341,6 +342,15 @@ export default function Page() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('Epika');
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getKey = async () => {
+      const key = await fetchAndStoreApiKey();
+      setApiKey(key);
+    };
+    getKey();
+  }, []);
 
   const tabs = useMemo(
     () => [
@@ -360,9 +370,9 @@ export default function Page() {
 
   /* -------- Fetch results & fixtures from LiveScore via proxy -------- */
   const RESULTS_URL =
-    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156';
+    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
   const FIXTURES_URL =
-    'https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156';
+    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
 
   const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
     `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`
@@ -507,94 +517,134 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Matches */}
-        <section className="w-full min-h-content p-2 px-5 overflow-hidden pb-12">
-          <div className="w-full flex flex-col mb-12">
-            {loading && <Loading />}
+{/* Matches */}
+<section className="w-full min-h-content p-2 px-5 overflow-hidden pb-12">
+  <div className="w-full flex flex-col mb-12">
+    {loading && <Loading />}
 
-            {Boolean(error) && !loading && (
-              <p className="text-center text-red-600">Napaka pri nalaganju tekem.</p>
-            )}
+    {Boolean(error) && !loading && (
+      <p className="text-center text-red-600">Napaka pri nalaganju tekem.</p>
+    )}
 
-            {!loading && !error && selectedSeason && monthEntries.length === 0 && (
-              <p className="text-gray-500 text-center">Ni razpoložljivih tekem.</p>
-            )}
+    {!loading && !error && selectedSeason && monthEntries.length === 0 && (
+      <p className="text-gray-500 text-center">Ni razpoložljivih tekem.</p>
+    )}
 
-            {!loading &&
-              !error &&
-              selectedSeason &&
-              monthEntries.length > 0 &&
-              monthEntries.map(({ label, matches }) => (
-                <div key={label} className="mb-10">
-                  <div className="mb-2">
-                    <h2 className="text-xl font-semibold text-gray-600 uppercase tracking-wide">{label}</h2>
-                  </div>
-
-                  <div className="w-full grid gap-4">
-                    {matches.map((match) => {
-                      const { left, right, leftScore, rightScore } = orderTolminLeft(match);
-                      const opponent = isTolminTeam(left) ? right : left;
-
-                      // HOME if Tolmin's 'pos' is 1, AWAY if 2
-                      const tolminSide = isTolminTeam(left) ? left : right;
-                      const venue = tolminSide?.pos === 1 ? 'HOME' : 'AWAY';
-
-                      return (
-                        <div
-                          key={match.id}
-                          className="grid [grid-template-columns:minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 p-4 px-0 text-black border-b-2 border-gray-200 poppins"
-                        >
-                          {/* LEFT — Tolmin info */}
-                          <div className="flex md:items-start items-center md:justify-start justify-center flex-col relative h-full md:min-h-[120px] text-center md:text-left">
-                            <div className="w-full">
-                              <div className="font-extrabold text-base">{match.stage.st_name}</div>
-                              <div className="text-sm">{formatMatchDate(match.start)} — {venue}</div>
-                            </div>
-                            <div className="text-3xl md:absolute md:-bottom-0.5 md:left-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                              NK TOLMIN
-                            </div>
-                          </div>
-
-                          {/* CENTER — crests + score (Tolmin always left), locked centered */}
-                          <div className="justify-self-center flex flex-col items-center justify-center gap-2 mt-4 md:mt-0">
-                            <div className="flex items-center gap-3">
-                              {/* Tolmin (static crest, responsive) */}
-                              <Image
-                                src="https://res.cloudinary.com/du7efjkf3/image/upload/v1758985156/tolmin-logo_wo20bu.png"
-                                alt="NK Tolmin"
-                                width={60}
-                                height={60}
-                                className="w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px] object-contain"
-                                priority={false}
-                              />
-
-                              {/* Score */}
-                              <div className="text-3xl md:text-4xl bg-gray-200 p-2 px-4 md:p-3 md:px-5 rounded poppins">
-                                {leftScore} <span className="mx-1">:</span> {rightScore}
-                              </div>
-
-                              {/* Opponent crest (via blob proxy) */}
-                              <OpponentLogo
-                                imgId={opponent?.img_id}
-                                alt={opponent?.o_name || opponent?.name || 'Opponent'}
-                              />
-                            </div>
-                          </div>
-
-                          {/* RIGHT — Opponent name (truncate so it can’t push center) */}
-                          <div className="text-2xl md:text-3xl w-full text-center md:text-right flex items-end justify-center md:justify-end h-full mt-2 md:mt-0">
-                            <span className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                              {opponent?.o_name || opponent?.name || 'Nasprotnik'}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+    {!loading &&
+      !error &&
+      selectedSeason &&
+      monthEntries.length > 0 &&
+      monthEntries.map(({ label, matches }) => (
+        <div key={label} className="mb-10">
+          <div className="mb-2">
+            <h2 className="text-sm sm:text-base md:text-xl font-semibold text-gray-600 uppercase tracking-wide">
+              {label}
+            </h2>
           </div>
-        </section>
+
+          <div className="w-full grid gap-2 sm:gap-3 md:gap-4">
+            {matches.map((match) => {
+              const { left, right, leftScore, rightScore } = orderTolminLeft(match);
+              const opponent = isTolminTeam(left) ? right : left;
+
+              // HOME if Tolmin's 'pos' is 1, AWAY if 2
+              const tolminSide = isTolminTeam(left) ? left : right;
+              const venue = tolminSide?.pos === 1 ? "HOME" : "AWAY";
+
+              return (
+<div
+  key={match.id}
+  className="
+    border-b border-gray-200 poppins
+    p-3 md:px-0
+    grid gap-2
+    grid-cols-1
+    md:[grid-template-columns:minmax(0,1fr)_auto_minmax(0,1fr)]
+    md:items-center
+  "
+>
+  {/* LEFT (meta + NK TOLMIN on desktop) */}
+  <div className="md:col-start-1 md:row-start-1 h-full">
+    <div className="flex md:flex-col items-center md:items-start justify-between md:justify-start h-full md:min-h-[120px]">
+      {/* Meta */}
+      <div className="w-full text-black">
+        <div className="font-semibold text-xs sm:text-sm">{match.stage.st_name}</div>
+        <div className="flex items-center gap-2 md:mt-1 text-[11px] sm:text-xs text-gray-600">
+          <span>{formatMatchDate(match.start)}</span>
+          <span className="hidden sm:inline">—</span>
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold ${
+              venue === 'HOME' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+            }`}
+          >
+            {venue}
+          </span>
+        </div>
+      </div>
+
+      {/* Desktop: NK TOLMIN anchored at bottom of left pane */}
+      <div className="hidden md:block text-3xl font-extrabold max-w-full truncate mt-auto md:text-transparent text-black">
+        NK TOLMIN
+      </div>
+    </div>
+  </div>
+
+  {/* CENTER (crests + score) */}
+  <div className="justify-self-center flex flex-col items-center justify-center gap-2 mt-1 md:mt-0 text-black">
+    <div className="flex items-center gap-3">
+      {/* NK Tolmin logo + name (name below logo on md+) */}
+      <div className="flex flex-col items-center">
+        <Image
+          src="https://res.cloudinary.com/du7efjkf3/image/upload/v1758985156/tolmin-logo_wo20bu.png"
+          alt="NK Tolmin"
+          width={80}
+          height={80}
+          className="w-8 h-8 sm:w-10 sm:h-10 md:w-[60px] md:h-[60px] object-contain"
+        />
+        <span className="hidden md:block mt-1 text-base font-semibold text-black text-center">
+          NK TOLMIN
+        </span>
+      </div>
+      <div className="text-2xl sm:text-3xl md:text-4xl bg-gray-200 px-3 py-1 sm:px-4 sm:py-2 md:px-5 md:py-3 rounded leading-none">
+        {leftScore} <span className="mx-1">:</span> {rightScore}
+      </div>
+      {/* Opponent logo + name (name below logo on md+) */}
+      <div className="flex flex-col items-center">
+        <OpponentLogo
+          imgId={opponent?.img_id}
+          alt={opponent?.o_name || opponent?.name || 'Opponent'}
+        />
+        <span className="hidden md:block mt-1 text-base font-semibold text-black text-center max-w-[100px] truncate">
+          {opponent?.o_name || opponent?.name || 'Nasprotnik'}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {/* RIGHT (opponent name on desktop) */}
+  <div className="hidden md:flex md:col-start-3 md:row-start-1 items-end justify-end md:text-transparent text-black">
+    <span className="text-3xl max-w-full truncate">
+      {opponent?.o_name || opponent?.name || 'Nasprotnik'}
+    </span>
+  </div>
+
+  {/* MOBILE names row (hidden on desktop) */}
+  <div className="grid grid-cols-2 gap-1 md:hidden">
+    <div className="text-center text-lg sm:text-xl font-bold truncate text-black">NK TOLMIN</div>
+    <div className="text-center text-lg sm:text-xl truncate text-black">
+      {opponent?.o_name || opponent?.name || 'Nasprotnik'}
+    </div>
+  </div>
+</div>
+
+              );
+            })}
+          </div>
+        </div>
+      ))}
+  </div>
+</section>
+
       </main>
     </div>
   );

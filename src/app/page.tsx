@@ -14,6 +14,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import HistoryCarousel from '@/components/Home/HistoryCarousel';
 import placeholderLogo from '../../public/logo/placeholder-team.png';
+import { fetchAndStoreApiKey } from "@/util/apiKey";
 
 const slideVariants: Variants = {
   enter: (direction: number) => ({
@@ -368,6 +369,21 @@ export default function Page() {
   const [matches, setMatches] = useState<FetchedData | null>(null);
   const [venue, setVenue] = useState<string | null>(null);
   const [futureVenue, setFutureVenue] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    // Store API key in state
+    fetchAndStoreApiKey()
+      .then((key) => setApiKey(key || null))
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error fetching API key',
+          text: error?.message || 'Failed to fetch API key for matches.',
+        });
+      });
+  }, []);
 
   const handleNext = () => {
     if (finishedMatches.length > 0) {
@@ -405,7 +421,7 @@ export default function Page() {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const target = `https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
+        const target = `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
         const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
         const parsed: Match[] = toMatchArray(response.data);
 
@@ -427,7 +443,7 @@ export default function Page() {
     };
 
     fetchMatches();
-  }, []);
+  }, [apiKey]);
 
   /* -------- derive season & filtered lists -------- */
   const currentSeason = deriveSeasonFromMs(Date.now());
@@ -445,7 +461,7 @@ export default function Page() {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const target = `https://www.livescore.com/_next/data/nvstvvHIPnFDwGFa8CR__/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
+        const target = `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
         const response = await axios.get(`/api/fetch?url=${encodeURIComponent(target)}`);
         const parsed: Match[] = toMatchArray(response.data);
 
@@ -456,7 +472,7 @@ export default function Page() {
     };
 
     fetchMatches();
-  }, []);
+  }, [apiKey]);
 
   /* -------- venue fetch -------- */
   useEffect(() => {
