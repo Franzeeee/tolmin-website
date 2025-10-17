@@ -80,14 +80,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {!isAdmin && (
                 <div className="w-full p-5 bg-red-600 text-gray-200 poppins flex items-center justify-between">
                   <div className="flex gap-5 text-sm -mb-1">
-                    <p>(c) 2018, Tolmin Football Club</p>
+                    <p>
+                      © {new Date().getFullYear() !== 2018 ? `–${new Date().getFullYear()}` : ''}, NK Tolmin Football Club
+                    </p>
                     <p>Legal notice and cookies | Website development</p>
                   </div>
                   <div className='flex gap-4'>
-                    <Image src="/logo/instagram.png" alt="Instagram" width={25} height={25} />
-                    <Image src="/logo/facebook.png" alt="Facebook" width={25} height={25} />
-                    <Image src="/logo/youtube.png" alt="YouTube" width={25} height={25} />
-                    <Image src="/logo/linkedin.png" alt="LinkedIn" width={25} height={25} />
+                    <a href="https://www.instagram.com/nktolmin/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                      <Image src="/logo/instagram.png" alt="Instagram" width={25} height={25} />
+                    </a>
+                    <a href="https://www.facebook.com/NKTolmin" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                      <Image src="/logo/facebook.png" alt="Facebook" width={25} height={25} />
+                    </a>
+                    <a href="https://www.youtube.com/@nktolmin" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                      <Image src="/logo/youtube.png" alt="YouTube" width={25} height={25} />
+                    </a>
+                    <a href="https://www.linkedin.com/company/nk-tolmin/?originalSubdomain=si" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                      <Image src="/logo/linkedin.png" alt="LinkedIn" width={25} height={25} />
+                    </a>
                   </div>
                 </div>
               )}

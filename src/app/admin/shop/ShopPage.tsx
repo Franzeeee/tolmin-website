@@ -234,7 +234,7 @@ const handleSave = async () => {
           <h3 className="text-sm font-semibold text-gray-500">Total Products</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">{products.length}</p>
         </div>
-        {/* <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Orders</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">56</p>
         </div>
@@ -245,7 +245,7 @@ const handleSave = async () => {
         <div className="bg-white rounded-lg shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Customer Inquiries</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">5</p>
-        </div> */}
+        </div>
       </div>
 
       {/* Products Grid */}
