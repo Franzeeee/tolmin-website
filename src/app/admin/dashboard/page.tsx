@@ -25,7 +25,6 @@ export default function DashboardPage() {
         if (key) setCurrentMasked(maskKey(key));
       })
       .catch(() => {
-        // no key found or error; keep quiet
         setCurrentMasked(null);
       });
   }, []);
@@ -67,13 +66,47 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* 🎥 Tutorial Video Section */}
+      <div className="bg-white text-black rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-3 text-gray-800">
+          Kako pridobiti API ključ
+        </h2>
+        <div className="mb-4">
+          <video
+            className="w-full h-1/2 rounded-lg shadow"
+            controls
+          >
+            <source src="/video/api-tutorial.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p className="text-sm text-gray-600">
+          Oglejte si zgornji video, da izveste, kako pridobiti svoj API ključ, nato ga
+          prilepite v spodnje polje.
+        </p>
+        {/* Visit this link to get an API key */}
+        <div className="mt-2">
+          <a
+            href="https://livescore.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-600 hover:underline"
+          >
+            Obiščite livescore za pridobitev API ključa
+          </a>
+        </div>
+      </div>
+
+      {/* 🔑 Upload Section */}
       <div className="bg-white text-black rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">
           Naloži API ključ tukaj
         </h1>
+
         {currentMasked && (
           <p className="text-sm text-gray-500 mb-4">
-            Trenutno shranjen ključ: <span className="font-mono">{currentMasked}</span>
+            Trenutno shranjen ključ:{" "}
+            <span className="font-mono">{currentMasked}</span>
           </p>
         )}
 

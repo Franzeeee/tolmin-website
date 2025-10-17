@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const dropdownTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const navItems = [
-    { name: 'Contacts', href: '/admin/dashboard' },
+    { name: 'API', href: '/admin/dashboard' },
     { name: 'Sponzorji', href: '/admin/sponzorji' },
     { name: 'Klub',
       submenu: [
