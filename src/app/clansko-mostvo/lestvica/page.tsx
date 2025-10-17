@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Loading from '@/components/Loading';
 import { fetchAndStoreApiKey } from "@/util/apiKey";
+import { getTeamLogo } from '@/util/getTeamLogo';
 
 const TOLMIN_ID = '11156';
 
@@ -315,7 +316,7 @@ export default function Page() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Image
-                              src={logoSrc}
+                              src={getTeamLogo(team.name) || logoSrc}
                               alt={team.name ?? 'Team'}
                               width={24}
                               height={24}
