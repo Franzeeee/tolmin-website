@@ -14,6 +14,7 @@ const logos = [
   "NK-Vipava.png",
   "NK-Ziri.png",
   "tolmin-logo.png",
+  "NK-Dob.png",
 ];
 
 // Basic string similarity function

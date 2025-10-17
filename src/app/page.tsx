@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import HistoryCarousel from '@/components/Home/HistoryCarousel';
 import placeholderLogo from '../../public/logo/placeholder-team.png';
 import { fetchAndStoreApiKey } from "@/util/apiKey";
+import { getTeamLogo } from '@/util/getTeamLogo';
 
 const slideVariants: Variants = {
   enter: (direction: number) => ({
@@ -336,10 +337,12 @@ function TeamLogo({
   imgId,
   alt,
   className = '',
+  teamName,
 }: {
   imgId?: string;
   alt?: string;
   className?: string;
+  teamName?: string;
 }) {
   const src = useLivescoreLogo(imgId);
 
@@ -349,10 +352,10 @@ function TeamLogo({
 
   return (
     <Image
-      src={src}
+      src={getTeamLogo(teamName) || src}
       alt={alt || 'Team Logo'}
-      width={144}
-      height={144}
+      width={133}
+      height={133}
       className={`${SIZE_CLASSES} object-contain ${className}`}
       sizes="(max-width: 480px) 64px, (max-width: 640px) 80px, (max-width: 768px) 96px, (max-width: 1024px) 112px, 144px"
       unoptimized
@@ -629,6 +632,7 @@ export default function Page() {
                                             <TeamLogo
                                               imgId={opponent?.img_id}
                                               alt={opponent?.o_name || opponent?.name || 'Opponent Logo'}
+                                              teamName={opponent?.o_name || opponent?.name || ""}
                                             />
                                             <p className="mt-2 text-sm font-semibold text-white text-center">
                                               {opponent?.o_name || opponent?.name || 'Opponent'}
@@ -727,6 +731,7 @@ export default function Page() {
                                 <TeamLogo
                                   imgId={opponent?.img_id}
                                   alt={opponent?.o_name || opponent?.name || 'Opponent'}
+                                  teamName={opponent?.o_name || opponent?.name || ""}
                                 />
                                 <p className="mt-2 text-sm font-semibold text-white text-center">
                                   {opponent?.o_name || opponent?.name || 'Opponent'}

@@ -10,6 +10,7 @@ import Link from 'next/link';
 import axios, { AxiosRequestConfig } from 'axios';
 import Loading from '@/components/Loading';
 import { fetchAndStoreApiKey } from "@/util/apiKey";
+import { getTeamLogo } from '@/util/getTeamLogo';
 
 
 interface LivescorePayload {
@@ -303,16 +304,18 @@ function OpponentLogo({
   imgId,
   alt,
   className = '',
+  teamName,
 }: {
   imgId?: string;
   alt?: string;
   className?: string;
+  teamName?: string;
 }) {
   const { src } = useOpponentLogo(imgId);
   const SIZE = 'flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px]';
   return (
     <Image
-      src={src}
+      src={getTeamLogo(teamName) || src}
       alt={alt || 'Team Logo'}
       width={60}
       height={60}
@@ -613,6 +616,7 @@ export default function Page() {
         <OpponentLogo
           imgId={opponent?.img_id}
           alt={opponent?.o_name || opponent?.name || 'Opponent'}
+          teamName={opponent?.o_name || opponent?.name || undefined}
         />
         <span className="hidden md:block mt-1 text-base font-semibold text-black text-center max-w-[100px] truncate">
           {opponent?.o_name || opponent?.name || 'Nasprotnik'}
