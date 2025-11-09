@@ -104,7 +104,7 @@ export default function U7() {
               <FontAwesomeIcon icon={faEnvelope} className="text-2xl text-white" />
             </div>
             <div className="w-full uppercase text-black px-3 pb-6 text-center">
-              <h1 className="text-xl md:text-2xl text-black font-semibold">Postavite vprašanje</h1>
+              <h1 className="text-xl md:text-2xl text-black font-semibold">Pišite nam</h1>
               <a
                 href={`mailto:${fetchedData?.coaches?.[0]?.email ?? 'fitim.zabeljaj@example.com'}`}
                 className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 inline-block cursor-pointer"

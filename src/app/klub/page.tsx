@@ -9,11 +9,39 @@ import Tab1 from '@/components/Klub/Tab1';
 import Tab2 from '@/components/Klub/Tab2';
 import Tab3 from '@/components/Klub/Tab3';
 import Tab4 from '@/components/Klub/Tab4';
+import { useSearchParams } from "next/navigation";
+
+const TABS = ["Osnovni podatki", "Članstvo", "Pravilniki", "Brajda"] as const;
+
+const TAB_COMPONENTS = {
+  "Osnovni podatki": Tab1,
+  "Članstvo": Tab2,
+  "Pravilniki": Tab3,
+  "Brajda": Tab4,
+} as const;
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("Osnovni podatki");
-  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<typeof TABS[number]>("Osnovni podatki");
+  const [hoveredTab, setHoveredTab] = useState<typeof TABS[number] | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const searchParams = useSearchParams();
+  const data = searchParams.get("tab");
+
+    const normalizeTitle = (s: string) =>
+      s
+        .replace(/\s*[-–]\s*/g, " – ") // normalize any dash w/ spaces to en dash
+        .replace(/\s+/g, " ")
+        .trim();
+  
+    useEffect(() => {
+      if (!data) return;
+      const normalized = normalizeTitle(data);
+      const match = (TABS as readonly string[]).find(t => normalizeTitle(t) === normalized);
+      if (match) setActiveTab(match as typeof TABS[number]);
+    }, [data]);
+    
+
 
   const tabs = ["Osnovni podatki", "Članstvo", "Pravilniki", "Brajda"] as const;
   const tabContent = [Tab1, Tab2, Tab3, Tab4];
