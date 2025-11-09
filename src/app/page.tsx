@@ -1031,14 +1031,14 @@ export default function Page() {
           <div className="mb-4 flex items-end justify-between">
             <h1 className="text-4xl font-extrabold text-left text-black mt-4 uppercase">Brajda</h1>
             <Link
-              href="/klub"
+              href="/klub?tab=Brajda"
               className={`text-gray-700 cursor-pointer hover:text-red-600 transition-color duration-300 float-right`}
             >
               Oglejte si več <FontAwesomeIcon className={`text-xs`} icon={faAngleRight} />{' '}
             </Link>
           </div>
           <div className="w-full overflow-x-auto px-4 pb-6">
-            <Link href="/klub">
+            <Link href="/klub?tab=Brajda" className="block w-full max-w-7xl mx-auto">
               <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]">
                 <Image
                   src="/Stadium/stadium-latest.jpeg"

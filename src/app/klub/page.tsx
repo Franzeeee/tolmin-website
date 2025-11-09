@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -9,53 +9,53 @@ import Tab1 from '@/components/Klub/Tab1';
 import Tab2 from '@/components/Klub/Tab2';
 import Tab3 from '@/components/Klub/Tab3';
 import Tab4 from '@/components/Klub/Tab4';
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const TABS = ["Osnovni podatki", "Članstvo", "Pravilniki", "Brajda"] as const;
+type TabKey = typeof TABS[number];
 
-const TAB_COMPONENTS = {
+const TAB_COMPONENTS: Record<TabKey, React.ComponentType> = {
   "Osnovni podatki": Tab1,
   "Članstvo": Tab2,
   "Pravilniki": Tab3,
   "Brajda": Tab4,
-} as const;
+};
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState<typeof TABS[number]>("Osnovni podatki");
-  const [hoveredTab, setHoveredTab] = useState<typeof TABS[number] | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>("Osnovni podatki");
+  const [hoveredTab, setHoveredTab] = useState<TabKey | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const data = searchParams.get("tab");
 
-    const normalizeTitle = (s: string) =>
-      s
-        .replace(/\s*[-–]\s*/g, " – ") // normalize any dash w/ spaces to en dash
-        .replace(/\s+/g, " ")
-        .trim();
-  
-    useEffect(() => {
-      if (!data) return;
-      const normalized = normalizeTitle(data);
-      const match = (TABS as readonly string[]).find(t => normalizeTitle(t) === normalized);
-      if (match) setActiveTab(match as typeof TABS[number]);
-    }, [data]);
-    
+  const normalizeTitle = (s: string) =>
+    s
+      .replace(/\s*[-–]\s*/g, " – ") // normalize any dash into en dash w/ spaces
+      .replace(/\s+/g, " ")
+      .trim();
 
+  // Read ?tab= from URL on load / change
+  useEffect(() => {
+    const fromUrl = searchParams.get('tab');
+    if (!fromUrl) return;
 
-  const tabs = ["Osnovni podatki", "Članstvo", "Pravilniki", "Brajda"] as const;
-  const tabContent = [Tab1, Tab2, Tab3, Tab4];
+    const normalized = normalizeTitle(fromUrl);
+    const match = (TABS as readonly string[]).find(t => normalizeTitle(t) === normalized);
+    if (match) setActiveTab(match as TabKey);
+  }, [searchParams]);
 
-  type TabKey = typeof tabs[number];
-  const tabLabels: Record<TabKey, string> = {
-    "Osnovni podatki": "Osnovni podatki",
-    "Članstvo": "Članstvo",
-    "Pravilniki": "Pravilniki",
-    "Brajda": "Brajda"
+  // Helper: set tab + update URL (?tab=)
+  const setTabAndUrl = (tab: TabKey) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab); // URLSearchParams handles encoding (en dash etc.)
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const currentTab: TabKey = (hoveredTab || activeTab) as TabKey;
-  const Active = tabContent[tabs.findIndex(t => t === activeTab)];
+  const currentTab = hoveredTab || activeTab;
+  const ActiveTabComponent = TAB_COMPONENTS[activeTab];
 
   // Scroll-to-top button visibility
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function Page() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white uppercase mb-4 text-center drop-shadow-lg"
           >
-            Klub - {tabLabels[currentTab as TabKey]}
+            Klub – {currentTab}
           </motion.h1>
         </div>
       </header>
@@ -92,13 +92,12 @@ export default function Page() {
                 <span className="ml-2 text-gray-500 select-none">▾</span>
               </summary>
               <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                {tabs.map((tab) => (
+                {TABS.map((tab) => (
                   <button
                     key={tab}
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveTab(tab);
-                      // close the <details> after selection
+                      setTabAndUrl(tab);
                       const parent = (e.currentTarget.closest('details') as HTMLDetailsElement | null);
                       if (parent) parent.open = false;
                     }}
@@ -116,13 +115,13 @@ export default function Page() {
 
             {/* Desktop / Tablet tabs */}
             <ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0 sm:justify-start lg:justify-center">
-              {tabs.map((tab) => (
+              {TABS.map((tab) => (
                 <li
                   key={tab}
                   className={`flex-shrink-0 relative px-2 pb-2 cursor-pointer z-10 transition-colors duration-200 uppercase ${
                     currentTab === tab ? 'text-red-600' : 'hover:text-red-600'
                   }`}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => setTabAndUrl(tab)}
                   onMouseEnter={() => setHoveredTab(tab)}
                   onMouseLeave={() => setHoveredTab(null)}
                 >
@@ -142,7 +141,7 @@ export default function Page() {
         </section>
 
         <section className="w-full min-h-content p-2 px-5 pb-9 flex items-center justify-center">
-          {Active ? <Active /> : null}
+          <ActiveTabComponent />
         </section>
       </main>
 
