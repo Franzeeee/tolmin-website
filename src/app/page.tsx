@@ -484,7 +484,7 @@ export default function Page() {
 
     const match = finishedMatches[currentSlide];
     if (match?.id) {
-     const tolminTeam = match.teams.find((t) => isTolminTeam(t));
+    //  const tolminTeam = match.teams.find((t) => isTolminTeam(t));
     //  setVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
     } else {
       // setVenue(null);
@@ -492,9 +492,8 @@ export default function Page() {
 
     const futureMatch = upcomingMatches[0];
     if (futureMatch?.id) {
-      const tolminTeam = futureMatch.teams.find((t) => isTolminTeam(t));
+      // const tolminTeam = futureMatch.teams.find((t) => isTolminTeam(t));
       // setFutureVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
-      console.log("Future match: ", futureMatch, tolminTeam, tolminTeam?.pos);
     } else {
       // setFutureVenue(null);
     }
