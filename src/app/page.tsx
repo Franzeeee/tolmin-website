@@ -270,10 +270,10 @@ function orderTolminLeft(match: Match) {
 }
 
 // Get the opponent team (the one that's NOT Tolmin)
-function getOpponent(match: Match) {
-  const opp = match.teams.find((t) => !isTolminTeam(t));
-  return opp || match.teams[1] || match.teams[0];
-}
+// function getOpponent(match: Match) {
+//   const opp = match.teams.find((t) => !isTolminTeam(t));
+//   return opp || match.teams[1] || match.teams[0];
+// }
 
 /* ------------ Proxy image loader (Blob -> objectURL) ------------ */
 
@@ -370,8 +370,8 @@ export default function Page() {
   const [direction, setDirection] = useState(0);
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [matches, setMatches] = useState<FetchedData | null>(null);
-  const [venue, setVenue] = useState<string | null>(null);
-  const [futureVenue, setFutureVenue] = useState<string | null>(null);
+  // const [venue, setVenue] = useState<string | null>(null);
+  // const [futureVenue, setFutureVenue] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState<string | null>(null);
 
 
@@ -485,18 +485,18 @@ export default function Page() {
     const match = finishedMatches[currentSlide];
     if (match?.id) {
      const tolminTeam = match.teams.find((t) => isTolminTeam(t));
-     setVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
+    //  setVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
     } else {
-      setVenue(null);
+      // setVenue(null);
     }
 
     const futureMatch = upcomingMatches[0];
     if (futureMatch?.id) {
       const tolminTeam = futureMatch.teams.find((t) => isTolminTeam(t));
-      setFutureVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
+      // setFutureVenue(tolminTeam?.pos === 1 ? 'HOME' : 'AWAY');
       console.log("Future match: ", futureMatch, tolminTeam, tolminTeam?.pos);
     } else {
-      setFutureVenue(null);
+      // setFutureVenue(null);
     }
   }, [finishedMatches, upcomingMatches, currentSlide]);
 

@@ -33,13 +33,20 @@ const Carousel: React.FC = () => {
     setIsLoading(true);
     axios.get('/api/teams')
       .then(response => {
-        setCards(response.data.map((team: { _id: string | number, firstName: string, lastName: string, number: number, img?: string }) => ({
-          id: team._id,
-          firstName: team.firstName,
-          lastName: team.lastName,
-          number: team.number,
-          img: team.img
-        })));
+        setCards(
+          response.data
+            .filter((team: { position?: string }) => {
+              const position = String(team.position || '').toLowerCase();
+              return position !== 'coach' && position !== 'staff';
+            })
+            .map((team: { _id: string | number, firstName: string, lastName: string, number: number, img?: string }) => ({
+              id: team._id,
+              firstName: team.firstName,
+              lastName: team.lastName,
+              number: team.number,
+              img: team.img
+            }))
+        );
       })
       .catch(async (error) => {
         console.error('Error fetching teams:', error);
