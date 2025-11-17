@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Optional: check if number already exists
-    const existing = await teamCollection.findOne({ number });
-    if (existing) {
-      return NextResponse.json({ error: `Player #${number} already exists` }, { status: 409 });
-    }
+    // const existing = await teamCollection.findOne({ number });
+    // if (existing) {
+    //   return NextResponse.json({ error: `Player #${number} already exists` }, { status: 409 });
+    // }
 
     const newMember = await teamCollection.insertOne({
       firstName,
