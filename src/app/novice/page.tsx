@@ -15,6 +15,7 @@ interface News {
   content: string;
   publishedAt: Date;
   source?: "facebook" | "website";
+  fbLink?: string;
 }
 
 export default function Page() {
@@ -60,6 +61,7 @@ export default function Page() {
           content: msg,
           publishedAt: post.created_time ? new Date(post.created_time) : new Date(),
           source: "facebook",
+          fbLink: `https://www.facebook.com/${post.id}`
         };
       });
 
@@ -145,9 +147,25 @@ export default function Page() {
                   {featured.description || <em className="text-gray-400">No description available.</em>}
                 </p>
 
-                <a href={`novice/${featured._id}`} className="text-sm text-red-600 mt-3 hover:underline">
-                  Preberi več
-                </a>
+                <div className="mt-4">
+                  {featured.source === "facebook" ? (
+                    <a
+                      href={featured.fbLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      Odpri na Facebooku →
+                    </a>
+                  ) : (
+                    <a
+                      href={`novice/${featured._id}`}
+                      className="text-sm text-red-600 hover:underline"
+                    >
+                      Preberi več
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </section>
@@ -191,12 +209,23 @@ export default function Page() {
                       {news.description || <em className="text-gray-400">No description available.</em>}
                     </p>
 
-                    <a
-                      href={`/novice/${news._id}`}
-                      className="inline-block mt-2 text-sm text-red-600 hover:underline font-medium"
-                    >
-                      Preberi več
-                    </a>
+                    {news.source === "facebook" ? (
+                      <a
+                        href={news.fbLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-2 text-sm text-blue-600 hover:underline font-medium"
+                      >
+                        Odpri na Facebooku →
+                      </a>
+                    ) : (
+                      <a
+                        href={`/novice/${news._id}`}
+                        className="inline-block mt-2 text-sm text-red-600 hover:underline font-medium"
+                      >
+                        Preberi več
+                      </a>
+                    )}
                   </div>
                 </div>
               ))
