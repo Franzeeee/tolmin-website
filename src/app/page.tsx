@@ -843,124 +843,133 @@ export default function Page() {
                   </>
                   ) : (
                     <>
-                    {idx === 1 ? (
-                      <>
-                      <div className="flex items-center flex-col justify-center p-2 font-semibold text-white uppercase mb-4">
-                        <h1 className="text-5xl font-bold font-poppins">Naslednja</h1>
-                        <h2>SNL</h2>
-                      </div>
-
-                      <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
-                        {(() => {
-                        const next = upcomingMatches[0];
-                        const tolminTeam = next?.teams.find((t) => isTolminTeam(t));
-                        const opponent = next
-                          ? next.teams.find((t) => !isTolminTeam(t)) || next.teams[0]
-                          : undefined;
-
-                        // If Tolmin is at pos === 1 they were HOME -> show Tolmin on left.
-                        // If pos === 2 they were AWAY -> show Tolmin on right.
-                        // Fallback to left.
-                        const tolminOnLeft =
-                          tolminTeam?.pos === 1 ? true : tolminTeam?.pos === 2 ? false : true;
-
-                        const Left = () =>
-                          tolminOnLeft ? (
-                          <div className="flex flex-col items-center">
-                            <Image
-                            src={logo}
-                            alt="Tolmin"
-                            width={110}
-                            height={110}
-                            className={TOLMIN_LOGO_CLASSES}
-                            sizes="(max-width: 480px) 64px,
-                                (max-width: 640px) 80px,
-                                (max-width: 768px) 96px,
-                                (max-width: 1024px) 112px,
-                                144px"
-                            priority={false}
-                            />
-                            <p className="mt-2 text-sm font-semibold text-white">Tolmin</p>
+                      {idx === 1 ? (
+                        <>
+                          <div className="flex items-center flex-col justify-center p-2 font-semibold text-white uppercase mb-4">
+                            <h1 className="text-5xl font-bold font-poppins">Naslednja</h1>
+                            <h2>SNL</h2>
                           </div>
+
+                          {upcomingMatches.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center p-8 text-white">
+                              <p className="text-4xl md:text-3xl lg:text-3xl font-extrabold text-center uppercase">Ni naslednje tekme</p>
+                              <p className="text-lg md:text-sm opacity-80 mt-3 text-center">Trenutno ni razpoložljivih prihajajočih tekem</p>
+                            </div>
                           ) : (
-                          <div className="flex flex-col items-center">
-                            <TeamLogo
-                            imgId={opponent?.img_id}
-                            alt={opponent?.o_name || opponent?.name || 'Opponent'}
-                            teamName={opponent?.o_name || opponent?.name || ""}
-                            />
-                            <p className="mt-2 text-sm font-semibold text-white text-center">
-                            {opponent?.o_name || opponent?.name || 'Opponent'}
-                            </p>
+                            <>
+                              <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
+                                {(() => {
+                                  const next = upcomingMatches[0];
+                                  const tolminTeam = next?.teams.find((t) => isTolminTeam(t));
+                                  const opponent = next
+                                    ? next.teams.find((t) => !isTolminTeam(t)) || next.teams[0]
+                                    : undefined;
+
+                                  // If Tolmin is at pos === 1 they are HOME -> show Tolmin on left.
+                                  // If pos === 2 they are AWAY -> show Tolmin on right.
+                                  // Fallback to left.
+                                  const tolminOnLeft =
+                                    tolminTeam?.pos === 1 ? true : tolminTeam?.pos === 2 ? false : true;
+
+                                  const Left = () =>
+                                    tolminOnLeft ? (
+                                      <div className="flex flex-col items-center">
+                                        <Image
+                                          src={logo}
+                                          alt="Tolmin"
+                                          width={110}
+                                          height={110}
+                                          className={TOLMIN_LOGO_CLASSES}
+                                          sizes="(max-width: 480px) 64px,
+                                                    (max-width: 640px) 80px,
+                                                    (max-width: 768px) 96px,
+                                                    (max-width: 1024px) 112px,
+                                                    144px"
+                                          priority={false}
+                                        />
+                                        <p className="mt-2 text-sm font-semibold text-white">Tolmin</p>
+                                      </div>
+                                    ) : (
+                                      <div className="flex flex-col items-center">
+                                        <TeamLogo
+                                          imgId={opponent?.img_id}
+                                          alt={opponent?.o_name || opponent?.name || 'Opponent'}
+                                          teamName={opponent?.o_name || opponent?.name || ""}
+                                        />
+                                        <p className="mt-2 text-sm font-semibold text-white text-center">
+                                          {opponent?.o_name || opponent?.name || 'Opponent'}
+                                        </p>
+                                      </div>
+                                    );
+
+                                  const Right = () =>
+                                    tolminOnLeft ? (
+                                      <div className="flex flex-col items-center">
+                                        <TeamLogo
+                                          imgId={opponent?.img_id}
+                                          alt={opponent?.o_name || opponent?.name || 'Opponent'}
+                                          teamName={opponent?.o_name || opponent?.name || ""}
+                                        />
+                                        <p className="mt-2 text-sm font-semibold text-white text-center">
+                                          {opponent?.o_name || opponent?.name || 'Opponent'}
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      <div className="flex flex-col items-center">
+                                        <Image
+                                          src={logo}
+                                          alt="Tolmin"
+                                          width={110}
+                                          height={110}
+                                          className={TOLMIN_LOGO_CLASSES}
+                                          sizes="(max-width: 480px) 64px,
+                                                    (max-width: 640px) 80px,
+                                                    (max-width: 768px) 96px,
+                                                    (max-width: 1024px) 112px,
+                                                    144px"
+                                          priority={false}
+                                        />
+                                        <p className="mt-2 text-sm font-semibold text-white">Tolmin</p>
+                                      </div>
+                                    );
+
+                                  return (
+                                    <>
+                                      {/* LEFT */}
+                                      <Left />
+
+                                      {/* VS */}
+                                      <div className="min-w-[50px] flex items-center justify-center text-4xl font-bebas">
+                                        <p className="text-xl md:text-2xl font-bold">VS</p>
+                                      </div>
+
+                                      {/* RIGHT */}
+                                      <Right />
+                                    </>
+                                  );
+                                })()}
+                              </div>
+
+                              <div className="flex items-center flex-col justify-center p-2 font-semibold text-white">
+                                <p className="font-semibold">{formatMatchDateMs(upcomingMatches[0]?.start)}</p>
+                                {/* <p className="text-sm font-thin">{futureVenue || 'No venue data available'}</p> */}
+                              </div>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <Link href="/clansko-mostvo/lestvica">
+                          <div className="flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4">
+                            <h2 className="text-2xl">{'3. SNL'}</h2>
                           </div>
-                          );
-
-                        const Right = () =>
-                          tolminOnLeft ? (
-                          <div className="flex flex-col items-center">
-                            <TeamLogo
-                            imgId={opponent?.img_id}
-                            alt={opponent?.o_name || opponent?.name || 'Opponent'}
-                            teamName={opponent?.o_name || opponent?.name || ""}
-                            />
-                            <p className="mt-2 text-sm font-semibold text-white text-center">
-                            {opponent?.o_name || opponent?.name || 'Opponent'}
-                            </p>
+                          <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
+                            <h1 className="text-7xl text-center uppercase italic font-semibold leading-24 ">
+                              ligaška lestvica
+                            </h1>
                           </div>
-                          ) : (
-                          <div className="flex flex-col items-center">
-                            <Image
-                            src={logo}
-                            alt="Tolmin"
-                            width={110}
-                            height={110}
-                            className={TOLMIN_LOGO_CLASSES}
-                            sizes="(max-width: 480px) 64px,
-                                (max-width: 640px) 80px,
-                                (max-width: 768px) 96px,
-                                (max-width: 1024px) 112px,
-                                144px"
-                            priority={false}
-                            />
-                            <p className="mt-2 text-sm font-semibold text-white">Tolmin</p>
-                          </div>
-                          );
-
-                        return (
-                          <>
-                          {/* LEFT */}
-                          <Left />
-
-                          {/* VS */}
-                          <div className="min-w-[50px] flex items-center justify-center text-4xl font-bebas">
-                            <p className="text-xl md:text-2xl font-bold">VS</p>
-                          </div>
-
-                          {/* RIGHT */}
-                          <Right />
-                          </>
-                        );
-                        })()}
-                      </div>
-
-                      <div className="flex items-center flex-col justify-center p-2 font-semibold text-white">
-                        <p className="font-semibold">{formatMatchDateMs(upcomingMatches[0]?.start)}</p>
-                        {/* <p className="text-sm font-thin">{futureVenue || 'No venue data available'}</p> */}
-                      </div>
-                      </>
-                    ) : (
-                      <Link href="/clansko-mostvo/lestvica">
-                        <div className="flex items-center flex-col justify-center p-2 pt-4 font-semibold text-white uppercase mb-4">
-                          <h2 className="text-2xl">{'3. SNL'}</h2>
-                        </div>
-                        <div className="flex items-center justify-center p-2 font-semibold text-white gap-2">
-                          <h1 className="text-7xl text-center uppercase italic font-semibold leading-24 ">
-                            ligaška lestvica
-                          </h1>
-                        </div>
-                      </Link>
-                    )}
-                  </>
+                        </Link>
+                      )}
+                    </>
                 )}
               </motion.div>
             ))}
