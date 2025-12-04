@@ -46,6 +46,8 @@ interface NewsArticle {
   description: string;
   image: string;
   publishedAt: string;
+  source?: "facebook" | "website";
+  fbLink?: string;
 }
 
 type Match = {
@@ -406,19 +408,103 @@ export default function Page() {
 
   /* -------- fetch news -------- */
   useEffect(() => {
-    axios
-      .get('/api/news')
-      .then((response) => {
-        setNews(response.data);
-      })
-      .catch((error) => {
+    const fetchAllNews = async () => {
+      try {
+        // 1) WEBSITE NEWS
+        const websiteRes = await axios.get('/api/news');
+        const websiteData = Array.isArray(websiteRes.data) ? (websiteRes.data as unknown[]) : [];
+        const websiteNews: NewsArticle[] = websiteData.map((it) => {
+          const item = it as Record<string, unknown>;
+
+          const idNum =
+            typeof item.id === 'number' ? item.id : Number(item.id ?? item._id ?? 0);
+
+          const _idStr = String(item._id ?? item.id ?? idNum ?? '');
+
+          const title = String(item.title ?? item.heading ?? '(ni naslova)');
+          const description = String(item.description ?? item.summary ?? '');
+          const content = String(item.content ?? description);
+          const image = String(item.image ?? item.thumbnail ?? '/news.png');
+
+          const rawPublished = item.publishedAt ?? item.createdAt ?? new Date().toISOString();
+          const publishedAt =
+            typeof rawPublished === 'string'
+              ? rawPublished
+              : rawPublished instanceof Date
+              ? rawPublished.toISOString()
+              : String(rawPublished);
+
+          return {
+            id: Number(idNum),
+            _id: _idStr,
+            title,
+            description,
+            content,
+            image,
+            publishedAt,
+            source: 'website',
+          } as NewsArticle;
+        });
+
+        // 2) FACEBOOK NEWS
+        const fbRes = await fetch(
+          "https://graph.facebook.com/v19.0/246298295547553/posts?fields=id,message,created_time,full_picture&access_token=EAAZASw9eWtiYBQFszCz9r44eb3v2gAxID4ZCKqgXOMcc1qLRA1rmYI7HFrpAbeMKN3zfWCsOFllcFTvNZBHHLfooKb0uTCseHSZAeaunZAZAIrWZBykNk83b5Y9iTGbKNhZB2bRMUyMOHuchSk8Q04Xgtwvt5O7SFgqBisTZAc5SFHEJXB6h4mOGxMO5ZBZCOdzLV4IIxGHK8Y562NtVyXWhDcZD"
+        );
+        const fbJson = await fbRes.json();
+
+        interface FbPost {
+          id?: string;
+          message?: string;
+          created_time?: string;
+          full_picture?: string;
+        }
+
+        const fbData: FbPost[] = (fbJson as { data?: FbPost[] })?.data ?? [];
+
+        const fbNews: NewsArticle[] = fbData.map((post) => {
+          const msg = post.message ?? '';
+          const [title, ...bodyParts] = msg.split('\n');
+          const body = bodyParts.join('\n');
+
+          const idStr = post.id ?? '';
+          const [pageId = '', postId = ''] = idStr.split('_');
+
+          const numericId = postId ? Number(postId) || 0 : Number(idStr) || 0;
+
+          return {
+            id: numericId,
+            _id: idStr,
+            title: title || '(ni naslova)',
+            description: body,
+            content: msg,
+            image: post.full_picture ?? '/news.png',
+            publishedAt: post.created_time ?? new Date().toISOString(),
+            source: 'facebook',
+            fbLink: pageId && postId ? `https://www.facebook.com/${pageId}/posts/${postId}` : undefined,
+          };
+        });
+
+        // 3) MERGE & SORT RESULTS
+        const combined = [...websiteNews, ...fbNews].sort(
+          (a, b) =>
+            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        );
+
+        // 4) UPDATE STATE ONCE
+        setNews(combined);
+
+      } catch (error: unknown) {
         Swal.fire({
           icon: 'error',
           title: 'Error fetching news',
-          text: error.message,
+          text: (error as Error).message,
         });
-      });
+      }
+    };
+
+    fetchAllNews();
   }, []);
+
 
   /* -------- fetch matches -------- */
   useEffect(() => {
@@ -893,7 +979,16 @@ export default function Page() {
           <div className="flex flex-col lg:grid [grid-template-rows:.8fr_1.2fr] md:[grid-template-rows:1fr_1fr] lg:[grid-template-rows:1fr]  lg:[grid-template-columns:1.8fr_1.2fr] h-full gap-5">
             {/* Main News */}
             <motion.div
-              onClick={() => (window.location.href = `/novice/${news[0]?._id}`)}
+              onClick={() => {
+                const item = news[0];
+                if (item?.source === 'facebook' && item.fbLink) {
+                  // open FB post in a new tab
+                  window.open(item.fbLink, '_blank');
+                } else {
+                  // internal news page
+                  window.location.href = `/novice/${item?._id}`;
+                }
+              }}
               className="relative p-5 min-h-[400px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-[650px] cursor-pointer group"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -939,7 +1034,13 @@ export default function Page() {
                       whileInView={{ opacity: 1 }}
                       transition={{ duration: 0.6, ease: 'easeIn', delay: idx * 0.2 }}
                       viewport={{ once: true }}
-                      onClick={() => (window.location.href = `/novice/${item._id}`)}
+                      onClick={() => {
+                        if (item?.source === 'facebook' && item?.fbLink) {
+                          window.open(item.fbLink, '_blank');
+                        } else {
+                          window.location.href = `/novice/${item._id}`;
+                        }
+                      }}
                     >
                       <Image
                         src={item.image || '/news.png'}
@@ -948,7 +1049,7 @@ export default function Page() {
                         height={800}
                         className="object-cover w-full sm:w-[200px]"
                       />
-                      <div className="flex gap-1 flex-col w-full">
+                      <div className="flex gap-1 flex-col w-full overflow-hidden">
                         <p className="text-left text-xs text-gray-500 lg:text-right">
                           {item.publishedAt
                             ? new Date(item.publishedAt).toLocaleDateString('sl-SI', {
@@ -958,7 +1059,16 @@ export default function Page() {
                               })
                             : ''}
                         </p>
-                        <h1 className="font-semibold text-lg">{item.title}</h1>
+                        {/* truncated title */}
+                        {(() => {
+                          const MAX_TITLE = 70;
+                          const t = String(item.title ?? '');
+                          return (
+                            <h1 className="font-semibold text-lg">
+                              {t.length > MAX_TITLE ? `${t.slice(0, MAX_TITLE - 3)}...` : t}
+                            </h1>
+                          );
+                        })()}
                       </div>
                     </motion.div>
                   ))
