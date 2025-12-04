@@ -27,19 +27,6 @@ export async function POST(request: NextRequest) {
     if (!firstName) errors.push('firstName is required');
     if (!lastName) errors.push('lastName is required');
 
-    if (number === undefined || number === null || number === '') {
-      errors.push('number is required');
-    } else if (typeof number !== 'number') {
-      // allow numeric strings like "10" but reject other types
-      if (typeof number === 'string') {
-      if (!/^\d+$/.test(number.trim())) {
-        errors.push('number must be a numeric value (e.g. "10" or 10)');
-      }
-      } else {
-      errors.push('number must be a numeric value');
-      }
-    }
-
     if (!position) errors.push('position is required');
 
     if (errors.length > 0) {

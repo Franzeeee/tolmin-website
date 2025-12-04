@@ -13,7 +13,7 @@ const TeamMemberSchema = new Schema({
   },
   number: {
     type: Number,
-    required: true,
+    required: false,
   },
   img: {
     type: String,
