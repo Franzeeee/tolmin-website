@@ -21,6 +21,14 @@ interface News {
   fbLink?: string;
 }
 
+interface FacebookPost {
+  id: string;
+  message?: string;
+  created_time: string;
+  full_picture?: string;
+}
+
+
 export default function Page() {
   const { id } = useParams();
   const [loading, setLoading] = React.useState(true);
@@ -50,7 +58,7 @@ export default function Page() {
 
         const fbJson = await fbRes.json();
 
-        const fbPosts: News[] = (fbJson.data || []).map((post: any, index: number) => {
+        const fbPosts: News[] = (fbJson.data || []).map((post: FacebookPost) => {
           const msg = post.message ?? "";
           const [title, ...bodyParts] = msg.split("\n");
           const body = bodyParts.join("\n");
