@@ -45,7 +45,7 @@ export const data = [
             "Združena selekcija mladincev (U19) in kadetov (U17) v tej sezoni uspešno nastopa v Primorski nogometni ligi. Pri starejših dečkih (U15) štirje naši fantje igrajo v 1. slovenski ligi za ekipo Bilj in dva za ekipo Gorice, preostali pa v tekmovanju MNZ Nova Gorica za Tolmin. Prav tako v tekmovanjih MNZ Nova Gorica uspešno nastopajo vse naše preostale selekcije U13, U11, U9 in U7.  Aktivnosti mlajših klubskih selekcij v tem letu začne aktivneje sponzorsko podpirati podjetje Hidria.",
             "Klub v tej sezoni posluje relativno nemoteno in nadaljuje svoj razvoj, kljub temu, da je predvsem v svojem drugoligaškem obdobju ustvaril določen dolg. Ta se je skozi sezone, ki so sledile reševal s toleranco in pomočjo določenih dobaviteljev ter članov kluba."
         ],
-        image: '/zgodovina/sezona-img/2017-2018.jpg',
+        image: '/zgodovina/sezona-img/2017-2018.jpeg',
     },
     {
         title: 'SEZONA 2018/2019',
@@ -56,6 +56,7 @@ export const data = [
             "Nogometni klub Tolmin je v tej sezoni dosegel pomemben mejnik v svojem razvoju. Ob glavnem sponzorju, TKK d.o.o., ki je že nekaj let prispeval pomemben delež v proračun našega kluba, je  NK Tolmin sklenil pomemben sponzorski dogovor tudi s podjetjem Hidria d.o.o.. Hidria je s podpisom večletne pogodbe z NK Tolmin postala glavni sponzor naših mlajših selekcij, uradno pa smo ustanovili tudi Nogometno šolo Hidria Tolmin (NŠ HT). Prvi strokovni in organizacijski vodja je postal Jan Kragelj.",
             "Jeseni leta 2018 je NK Tolmin zakorakal v novo štiriletno mandatno obdobje. 13-članski upravni odbor kluba je tokrat zamenjal 4 svoje člane, s tem da se predsednik, tajnik in blagajnik niso menjali. Mandata niso podaljšali: Borut Nikolaš, Sebastjan Cencič, Borut Jermol in Dani Oblak. Slednji je postal član disciplinske komisije. Novi člani UO kluba so postali: David Kanalec, Greta Rejc, Peter Kavčič in Zoran Vasiljević."
         ],
+        image: '/zgodovina/sezona-img/2018-2019.jpeg',
     },
     {
         title: 'SEZONA 2019/2020',
@@ -79,6 +80,11 @@ export const data = [
             "Pri mlajših selekcijah je bilo delo oteženo zaradi epidemije in posledičnih omejitev gibanja in združevanja tudi v tej sezoni. Pohvala gre vsem trenerjem in zlasti novemu vodji nogometne šole, Klemnu Jarcu, da so uspeli pripraviti program in precejšen del otrok animirati za vadbo tudi v času prepovedi treniranja na igriščih. Do novembra 2020 je šolo vse od njene ustanovitve uspešno vodil Jan Kragelj. Pod okriljem NŠ Hidria Tolmin je v tej sezoni delovalo 11 trenerjev ter 149 otrok. Poleg tega smo organizirali ali sodelovali tudi s krožki v Bovcu, na Mostu na Soči in na Šentviški Gori.",
             "Leto 2020 je za NK Tolmin, kljub veliki negotovosti sredi leta, prineslo zelo dober finančni rezultat, s čimer je klub poravnal večji del dolga iz drugoligaških in predhodnih časov. Klub je imel v tem letu, glede na predhodna obdobja, nižje tako prihodke, kot odhodke, vendar pa so bili odhodki znižani v večji meri. Računamo, da bo klub praznovanje svoje 100. obletnice, avgusta 2021, in nov volilni občni zbor leta 2022, dočakal v solidni finančni kondiciji."
         ],
-
+        image: '/zgodovina/sezona-img/2020-2021.jpeg',
+    },
+    {
+        title: 'SEZONA 2023/2024',
+        content: [''],
+        image: '/zgodovina/sezona-img/2023-2024.jpeg',
     }
 ];
