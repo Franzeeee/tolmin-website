@@ -15,4 +15,4 @@ const resultSchema = new Schema(
 );
 
 const Result = models.Result || model('Result', resultSchema);
-export default resultSchema;
+export default Result;
