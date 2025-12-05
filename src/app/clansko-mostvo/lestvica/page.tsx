@@ -231,7 +231,7 @@ export default function Page() {
         </section>
 
         {/* Kind switcher (All / Home / Away) */}
-        <section className="w-full px-5 pb-3">
+        <section className="w-full px-5 pb-3 flex items-center justify-between poppins">
           <div className="flex gap-2">
             {(['all', 'home', 'away'] as const).map((k) => (
               <button
@@ -247,6 +247,29 @@ export default function Page() {
               </button>
             ))}
           </div>
+            <div className="flex items-center gap-3">
+            <select
+              id="seasonYear"
+              defaultValue={new Date().getFullYear()}
+              onChange={(e) => {
+              // navigate to same page with a year query param (no additional fetch implemented here)
+              const year = e.target.value;
+              const url = new URL(window.location.href);
+              url.searchParams.set('year', year);
+              window.location.href = url.toString();
+              }}
+              className="px-3 py-2 rounded text-sm font-semibold bg-white text-gray-700 border outline-1 outline-red-500 border-gray-200 hover:bg-gray-50"
+            >
+              {Array.from({ length: 6 }).map((_, i) => {
+              const y = new Date().getFullYear() - i;
+              return (
+                <option key={y} value={y}>
+                {y}
+                </option>
+              );
+              })}
+            </select>
+            </div>
         </section>
 
         {/* Table */}
