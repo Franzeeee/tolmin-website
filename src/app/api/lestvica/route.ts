@@ -51,7 +51,7 @@ function isValidImage(file: File): boolean {
 /* ---------------- GET ---------------- */
 export async function GET(): Promise<NextResponse> {
   try {
-    const collection = await getCollection('results') as any;
+    const collection = await getCollection('results');
 
     if (!collection) {
       return NextResponse.json(
@@ -78,7 +78,7 @@ export async function GET(): Promise<NextResponse> {
 /* ---------------- POST ---------------- */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const collection = await getCollection('results') as any;
+    const collection = await getCollection('results');
 
     if (!collection) {
       return NextResponse.json(
@@ -167,7 +167,14 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Missing id' }, { status: 400 })
     }
 
-    const collection = await getCollection('results') as any;
+    const collection = await getCollection('results');
+
+    if (!collection) {
+      return NextResponse.json(
+        { error: 'Failed to connect to database' },
+        { status: 500 }
+      );
+    }
 
     await collection.deleteOne({
       _id: new (require('mongodb').ObjectId)(id),
