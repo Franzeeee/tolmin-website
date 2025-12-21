@@ -2,7 +2,11 @@ import { Schema, model, models } from 'mongoose';
 
 const resultSchema = new Schema(
   {
-    season: {
+    season_start: {
+      type: String,
+      required: true,
+    },
+    season_end: {
       type: String,
       required: true,
     },

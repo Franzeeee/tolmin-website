@@ -226,33 +226,33 @@ const isTolminTeam = (t?: { id?: string; name?: string; o_name?: string }) => {
   return TOLMIN_NAME_RX.test(n);
 };
 
-function orderTolminLeft(match: Match) {
-  const a = match.teams[0];
-  const b = match.teams[1];
+// function orderTolminLeft(match: Match) {
+//   const a = match.teams[0];
+//   const b = match.teams[1];
 
-  if (isTolminTeam(a)) {
-    return {
-      left: a,
-      right: b,
-      leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-      rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-    };
-  }
-  if (isTolminTeam(b)) {
-    return {
-      left: b,
-      right: a,
-      leftScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-      rightScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-    };
-  }
-  return {
-    left: a,
-    right: b,
-    leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-    rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-  };
-}
+//   if (isTolminTeam(a)) {
+//     return {
+//       left: a,
+//       right: b,
+//       leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+//       rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+//     };
+//   }
+//   if (isTolminTeam(b)) {
+//     return {
+//       left: b,
+//       right: a,
+//       leftScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+//       rightScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+//     };
+//   }
+//   return {
+//     left: a,
+//     right: b,
+//     leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
+//     rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
+//   };
+// }
 
 /* ------------------------------------------------
  * Logo fetching (binary -> Blob URL) with fallback
@@ -547,8 +547,8 @@ export default function Page() {
 
         <div className="w-full grid gap-2 sm:gap-3 md:gap-4">
         {matches.map((match) => {
-          const tolminTeam = match.teams.find((t) => isTolminTeam(t));
-          const opponent = match.teams.find((t) => !isTolminTeam(t));
+          // const tolminTeam = match.teams.find((t) => isTolminTeam(t));
+          // const opponent = match.teams.find((t) => !isTolminTeam(t));
           const homeTeam = match.teams.find((t) => t.pos === 1);
           const awayTeam = match.teams.find((t) => t.pos === 2);
 
