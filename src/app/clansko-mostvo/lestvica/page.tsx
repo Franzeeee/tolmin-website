@@ -12,7 +12,6 @@ import { getTeamLogo } from '@/util/getTeamLogo';
 
 const TOLMIN_ID = '11156';
 
-// ===== Types for LiveScore tables payload (simplified to what we render) =====
 type TeamBadge = {
   high?: string;
   medium?: string;
@@ -41,8 +40,8 @@ type LeagueTeam = {
 type LeagueBlock = {
   kind: 'all' | 'home' | 'away' | 'form' | string;
   url: string;
-  name: string;       // e.g. "3.SNL: West"
-  tableName: string;  // e.g. "total" | "home" | "away"
+  name: string;
+  tableName: string;
   country: string;
   countryName: string;
   teams: LeagueTeam[];
@@ -78,7 +77,6 @@ function getBadgeUrl(team: LeagueTeam) {
   );
 }
 
-// Small helper to map the array to a dictionary by kind
 function indexByKind(blocks: LeagueBlock[]) {
   return blocks.reduce<Record<string, LeagueBlock>>((acc, blk) => {
     if (blk?.kind) acc[blk.kind] = blk;
@@ -90,7 +88,29 @@ export default function Page() {
   const pathname = usePathname();
   const [apiKey, setApiKey] = useState<string | null>(null);
 
-  // Top nav tabs across the squad section
+  const SEASONS = Array.from(
+    { length: new Date().getFullYear() - 1919 },
+    (_, i) => {
+      const year = 1920 + i;
+      const isLatest = year === new Date().getFullYear();
+      return {
+        label: isLatest ? 'Latest' : `${year}-${year + 1}`,
+        year,
+      };
+    }
+  ).reverse();
+
+  useEffect(() => {
+    fetch('/api/lestvica')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Fetched table data:', data);
+      })
+      .catch((err) => {
+        console.error('Error fetching table data:', err);
+      });
+  }, []);
+
   const tabs = useMemo(
     () => [
       { name: 'Epika', link: '/clansko-mostvo' },
@@ -104,6 +124,12 @@ export default function Page() {
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const currentTab = hoveredTab || activeTab;
 
+  const [selectedSeason, setSelectedSeason] = useState(SEASONS[0].year);
+  const isLatestSeason = selectedSeason === SEASONS[0].year;
+
+  const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
+  const selectedSeasonLabel =
+  SEASONS.find(s => s.year === selectedSeason)?.label ?? '';
 
   useEffect(() => {
     const getKey = async () => {
@@ -118,13 +144,9 @@ export default function Page() {
     if (found) setActiveTab(found.name);
   }, [pathname, tabs]);
 
-  // LiveScore tables state
   const [data, setData] = useState<LiveScoreTables | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-
-  // Which sub-table to show (all/home/away)
-  const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
 
   const url =
     `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579`;
@@ -138,7 +160,7 @@ export default function Page() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as LiveScoreTables;
         setData(json);
-            } catch (e) {
+      } catch (e) {
         if (e instanceof Error) {
           setErr(e.message);
         } else {
@@ -154,7 +176,6 @@ export default function Page() {
   const blocks = data?.pageProps?.initialData?.leagueTables?.league?.[''] || [];
   const byKind = indexByKind(blocks);
 
-  // Prefer the selected kind; fall back to 'all' if missing
   const selectedBlock =
     byKind[tableKind] || byKind['all'] || (blocks.length ? blocks[0] : undefined);
 
@@ -174,11 +195,9 @@ export default function Page() {
       </header>
 
       <main className="w-full h-fit max-w-[95rem] bg-gray-50 border-t-4 border-red-600">
-        {/* Top tabs (Epika / Tekme / Lestvica) */}
         <section className="w-full min-h-content max-h-[930px] p-2 px-5 pb-6 overflow-visible">
           <div className="relative w-full p-3 flex flex-row items-center justify-between">
             <div className="relative w-full p-3 flex flex-row items-center justify-between">
-              {/* Mobile dropdown */}
               <details className="w-full sm:hidden">
                 <summary className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer">
                   <span className="font-semibold text-gray-800">{currentTab}</span>
@@ -202,7 +221,6 @@ export default function Page() {
                 </div>
               </details>
 
-              {/* Desktop tabs */}
               <ul className="hidden w-full sm:flex relative gap-4 sm:gap-6 text-base sm:text-lg font-semibold text-gray-800 select-none overflow-x-auto whitespace-nowrap py-1 -mx-3 sm:mx-0 px-3 sm:px-0">
                 {tabs.map((tab) => (
                   <li
@@ -230,46 +248,44 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Kind switcher (All / Home / Away) */}
-        <section className="w-full px-5 pb-3 flex items-center justify-between poppins">
+        {/* Season & Table Kind Switcher */}
+        <section className="w-full px-5 pb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 poppins">
           <div className="flex gap-2">
-            {(['all', 'home', 'away'] as const).map((k) => (
+            {isLatestSeason ? (
+              (['all', 'home', 'away'] as const).map((k) => (
+                <button
+                  key={k}
+                  onClick={() => setTableKind(k)}
+                  className={`px-3 py-2 rounded text-sm font-semibold ${
+                    tableKind === k
+                      ? 'bg-red-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  {k === 'all' ? 'Skupaj' : k === 'home' ? 'Doma' : 'V gosteh'}
+                </button>
+              ))
+            ) : (
               <button
-                key={k}
-                onClick={() => setTableKind(k)}
-                className={`px-3 py-2 rounded text-sm font-semibold ${
-                  tableKind === k
-                    ? 'bg-red-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                }`}
+                disabled
+                className="px-3 py-2 rounded text-sm font-semibold bg-red-600 text-white"
               >
-                {k === 'all' ? 'Skupaj' : k === 'home' ? 'Doma' : 'V gosteh'}
+                Skupaj
               </button>
-            ))}
+            )}
           </div>
-            <div className="flex items-center gap-3">
-            <select
-              id="seasonYear"
-              defaultValue={new Date().getFullYear()}
-              onChange={(e) => {
-              // navigate to same page with a year query param (no additional fetch implemented here)
-              const year = e.target.value;
-              const url = new URL(window.location.href);
-              url.searchParams.set('year', year);
-              window.location.href = url.toString();
-              }}
-              className="px-3 py-2 rounded text-sm font-semibold bg-white text-gray-700 border outline-1 outline-red-500 border-gray-200 hover:bg-gray-50"
-            >
-              {Array.from({ length: 6 }).map((_, i) => {
-              const y = new Date().getFullYear() - i;
-              return (
-                <option key={y} value={y}>
-                {y}
-                </option>
-              );
-              })}
-            </select>
-            </div>
+
+          <select
+            value={selectedSeason}
+            onChange={(e) => setSelectedSeason(Number(e.target.value))}
+            className="px-3 py-2 rounded text-sm font-semibold bg-white text-gray-700 border outline-1 outline-red-500 border-gray-200 hover:bg-gray-50"
+          >
+            {SEASONS.map((season) => (
+              <option key={season.year} value={season.year}>
+                {season.label}
+              </option>
+            ))}
+          </select>
         </section>
 
         {/* Table */}
@@ -282,7 +298,8 @@ export default function Page() {
                     {stageName} — {tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}
                   </th>
                 </tr>
-                <tr className="bg-gray-200 text-gray-700 border-t border-gray-300 uppercase text-xs md:text-sm">
+                {isLatestSeason && (
+                  <tr className="bg-gray-200 text-gray-700 border-t border-gray-300 uppercase text-xs md:text-sm">
                   <th className="px-4 py-3">Ekipa</th>
                   <th className="px-2 py-3 text-center">M</th>
                   <th className="px-2 py-3 text-center">Z</th>
@@ -290,12 +307,29 @@ export default function Page() {
                   <th className="px-2 py-3 text-center">P</th>
                   <th className="px-2 py-3 text-center">DG</th>
                   <th className="px-2 py-3 text-center">Točke</th>
-                </tr>
+                  </tr>
+                )}
               </thead>
 
               <tbody>
-                {/* Loading */}
-                {loading && (
+                {/* NON-LATEST SEASON → BLANK TAB MESSAGE */}
+                {!isLatestSeason && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-10 text-center">
+                      <div className="flex flex-col items-center justify-center gap-1">
+                        <span className="text-lg font-semibold text-gray-800">
+                          {selectedSeasonLabel}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          Lestvica za to sezono trenutno ni na voljo.
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                {/* LATEST SEASON → ORIGINAL TABLE LOGIC (UNCHANGED) */}
+                {isLatestSeason && loading && (
                   <tr>
                     <td colSpan={7} className="px-4 py-6">
                       <div className="w-full flex justify-center items-center">
@@ -305,8 +339,7 @@ export default function Page() {
                   </tr>
                 )}
 
-                {/* Error */}
-                {!loading && err && (
+                {isLatestSeason && !loading && err && (
                   <tr>
                     <td colSpan={7} className="px-4 py-6 text-center text-red-600">
                       {err}
@@ -314,8 +347,7 @@ export default function Page() {
                   </tr>
                 )}
 
-                {/* Empty */}
-                {!loading && !err && teams.length === 0 && (
+                {isLatestSeason && !loading && !err && teams.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
                       Ni podatkov za prikaz.
@@ -323,8 +355,8 @@ export default function Page() {
                   </tr>
                 )}
 
-                {/* Rows */}
-                {!loading &&
+                {isLatestSeason &&
+                  !loading &&
                   !err &&
                   teams.map((team, idx) => {
                     const isTolmin = team.id === TOLMIN_ID || /tolmin/i.test(team.name || '');
@@ -335,7 +367,10 @@ export default function Page() {
                     const logoSrc = getBadgeUrl(team);
 
                     return (
-                      <tr key={`${team.id}-${idx}`} className={`border-b border-gray-200 ${rowClass}`}>
+                      <tr
+                        key={`${team.id}-${idx}`}
+                        className={`border-b border-gray-200 ${rowClass}`}
+                      >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Image
@@ -354,7 +389,6 @@ export default function Page() {
                         <td className="px-2 py-3 text-center">{team?.draws ?? '-'}</td>
                         <td className="px-2 py-3 text-center">{team?.losses ?? '-'}</td>
                         <td className="px-2 py-3 text-center">
-                          {/* DG = goal difference */}
                           {typeof team?.goalsDiff === 'number' ? team.goalsDiff : '-'}
                         </td>
                         <td className="px-2 py-3 text-center">{team?.points ?? '-'}</td>
@@ -362,6 +396,7 @@ export default function Page() {
                     );
                   })}
               </tbody>
+
             </table>
           </div>
         </section>

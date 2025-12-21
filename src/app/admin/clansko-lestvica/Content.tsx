@@ -7,6 +7,7 @@ type LestvicaItem = {
   _id: string
   season_start: string
   season_end: string
+  league: string
   image: string
 }
 
@@ -54,6 +55,26 @@ const Content = () => {
           </div>
 
           <label style="font-weight:600; color:#374151; margin-top:18px; display:block;">
+            League Name
+          </label>
+
+          <input
+            id="league-name"
+            type="text"
+            class="swal2-input"
+            placeholder="Enter league name"
+            style="
+              width:100%;
+              margin:6px 5px 0 0;
+              padding: 25px 10px;
+              border:1px solid red;
+              font-size:14px;
+              outline:none;
+              box-sizing:border-box;
+            "
+          />
+
+          <label style="font-weight:600; color:#374151; margin-top:18px; display:block;">
             Season Stats Image
           </label>
 
@@ -92,6 +113,11 @@ const Content = () => {
       preConfirm: () => {
         const start = (document.getElementById('season-start') as HTMLSelectElement).value
         const end = (document.getElementById('season-end') as HTMLSelectElement).value
+        const league = (document.getElementById('league-name') as HTMLInputElement).value.trim()
+        if (!league) {
+          Swal.showValidationMessage('League name is required')
+          return
+        }
         const file = (document.getElementById('season-image') as HTMLInputElement).files?.[0]
 
         if (Number(end) !== Number(start) + 1) {
@@ -102,7 +128,7 @@ const Content = () => {
           Swal.showValidationMessage('Please upload an image')
           return
         }
-        return { season: `${start}-${end}`, imageFile: file }
+        return { season: `${start}-${end}`, league, imageFile: file }
       },
       showCancelButton: true,
       confirmButtonText: 'Save Season',
@@ -120,6 +146,7 @@ const Content = () => {
     try {
       const formData = new FormData()
       formData.append('season', value.season)
+      formData.append('league', value.league)
       formData.append('image', value.imageFile)
 
       const res = await fetch('/api/lestvica', { method: 'POST', body: formData })
@@ -184,16 +211,24 @@ const Content = () => {
         {items.map(item => (
           <div key={item._id} className="bg-white rounded-xl shadow border overflow-hidden">
             <img src={item.image} className="w-full h-48 object-cover" />
-            <div className="p-4 flex items-center justify-between">
-              <span className="font-semibold text-black">
-                {item.season_start} – {item.season_end}
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+              <span className="font-semibold text-red-600 text-lg">
+                {item.league ?? 'Unknown League'}
               </span>
-              <button
+                <button
                 onClick={() => handleDelete(item._id)}
-                className="text-red-600 hover:text-red-800 text-sm font-medium cursor-pointer"
-              >
-                Delete
-              </button>
+                className="text-red-600 hover:text-red-800 cursor-pointer"
+                title="Delete"
+                >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                </button>
+              </div>
+              <span className="text-gray-600 text-sm">
+              {item.season_start} – {item.season_end}
+              </span>
             </div>
           </div>
         ))}

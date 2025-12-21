@@ -24,6 +24,7 @@ cloudinary.config({
 type ResultDocument = {
   season_start: string;
   season_end: string;
+  league: string;
   image: string;
   createdAt: Date;
 };
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const formData = await req.formData();
 
     const season = formData.get('season');
+    const league = formData.get('league');
     const image = formData.get('image');
 
     /* ---- Validation ---- */
@@ -138,6 +140,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const doc: ResultDocument = {
       season_start: parsedSeason.start,
       season_end: parsedSeason.end,
+      league: typeof league === 'string' ? league : 'Unknown',
       image: upload.secure_url,
       createdAt: new Date(),
     };

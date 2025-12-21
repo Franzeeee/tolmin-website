@@ -10,6 +10,10 @@ const resultSchema = new Schema(
       type: String,
       required: true,
     },
+    league: {
+      type: String,
+      required: true,
+    },
     image: {
       type: String,
       required: true,
