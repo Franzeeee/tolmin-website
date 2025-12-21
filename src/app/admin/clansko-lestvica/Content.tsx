@@ -36,6 +36,7 @@ const Content = () => {
   const handleAddTekme = async () => {
     const currentYear = new Date().getFullYear()
 
+    const oldestYear = 1921
     const { value } = await Swal.fire({
       title: 'Add Season Statistics',
       width: 600,
@@ -44,11 +45,11 @@ const Content = () => {
         <div style="text-align:left">
           <label style="font-weight:600; color:#374151;">Season</label>
           <div style="display:flex; gap:12px; margin-top:6px;">
-            <select id="season-start" class="swal2-input" style="flex:1;">
-              ${Array.from({ length: 8 }, (_, i) => `<option value="${currentYear + i}">${currentYear + i}</option>`).join('')}
+            <select id="season-start" class="swal2-input" style="flex:1; border: 1px solid red; outline: none;">
+              ${Array.from({ length: currentYear - oldestYear + 1 }, (_, i) => `<option value="${oldestYear + i}">${oldestYear + i}</option>`).join('')}
             </select>
-            <select id="season-end" class="swal2-input" style="flex:1;">
-              ${Array.from({ length: 8 }, (_, i) => `<option value="${currentYear + i + 1}">${currentYear + i + 1}</option>`).join('')}
+            <select id="season-end" class="swal2-input" style="flex:1; border: 1px solid red; outline: none;">
+              ${Array.from({ length: currentYear - oldestYear + 2 }, (_, i) => `<option value="${oldestYear + i + 1}">${oldestYear + i + 1}</option>`).join('')}
             </select>
           </div>
 
@@ -184,12 +185,12 @@ const Content = () => {
           <div key={item._id} className="bg-white rounded-xl shadow border overflow-hidden">
             <img src={item.image} className="w-full h-48 object-cover" />
             <div className="p-4 flex items-center justify-between">
-              <span className="font-semibold">
+              <span className="font-semibold text-black">
                 {item.season_start} – {item.season_end}
               </span>
               <button
                 onClick={() => handleDelete(item._id)}
-                className="text-red-600 hover:text-red-800 text-sm font-medium"
+                className="text-red-600 hover:text-red-800 text-sm font-medium cursor-pointer"
               >
                 Delete
               </button>
