@@ -130,8 +130,9 @@ const Content = () => {
       await fetchLestvica()
 
       Swal.fire('Saved!', 'Season added successfully.', 'success')
-    } catch (err: any) {
-      Swal.fire('Error', err.message || 'Failed to save season', 'error')
+    } catch (err) {
+      const errorMessage = (err as Error).message || 'Failed to save season';
+      Swal.fire('Error', errorMessage, 'error')
     }
   }
 
