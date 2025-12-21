@@ -155,3 +155,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 }
+
+
+/* ---------------- DELETE ---------------- */
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+    }
+
+    const collection = await getCollection('results') as any;
+
+    await collection.deleteOne({
+      _id: new (require('mongodb').ObjectId)(id),
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('DELETE /lestvica error', error)
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
+  }
+}
