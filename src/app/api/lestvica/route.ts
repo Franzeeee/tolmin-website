@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { v2 as cloudinary } from 'cloudinary';
+import { ObjectId } from 'mongodb';
 
 /* ---------------- ENV VALIDATION ---------------- */
 const {
@@ -177,7 +178,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await collection.deleteOne({
-      _id: new (require('mongodb').ObjectId)(id),
+      _id: new ObjectId(id),
     })
 
     return NextResponse.json({ success: true })
