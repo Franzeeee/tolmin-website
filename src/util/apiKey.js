@@ -12,7 +12,7 @@ export async function fetchAndStoreApiKey() {
     // Store securely in localStorage
     localStorage.setItem("api_key", apiKey);
 
-    console.log("✅ API key stored in localStorage");
+    // console.log("✅ API key stored in localStorage");
     return apiKey;
   } catch (err) {
     console.error("❌ Error fetching/storing API key:", err);
