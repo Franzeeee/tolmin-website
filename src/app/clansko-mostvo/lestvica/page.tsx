@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Loading from '@/components/Loading';
 import { fetchAndStoreApiKey } from "@/util/apiKey";
 import { getTeamLogo } from '@/util/getTeamLogo';
+import Swal from 'sweetalert2';
 
 const TOLMIN_ID = '11156';
 
@@ -69,6 +70,14 @@ type LiveScoreTables = {
   };
 };
 
+type history = {
+  season_end: string;
+  season_start: string;
+  year: number;
+  league: string;
+  image?: string;
+};
+
 function getBadgeUrl(team: LeagueTeam) {
   return (
     team?.teamBadge?.medium ||
@@ -100,14 +109,21 @@ export default function Page() {
     }
   ).reverse();
 
+  const [history, setHistory] = useState<history[]>([]);
+
   useEffect(() => {
     fetch('/api/lestvica')
       .then((res) => res.json())
       .then((data) => {
-        console.log('Fetched table data:', data);
+        setHistory(data || []);
       })
       .catch((err) => {
         console.error('Error fetching table data:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Napaka',
+          text: 'Pri nalaganju zgodovine lestvice je prišlo do napake.',
+        });
       });
   }, []);
 
@@ -128,8 +144,31 @@ export default function Page() {
   const isLatestSeason = selectedSeason === SEASONS[0].year;
 
   const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
-  const selectedSeasonLabel =
-  SEASONS.find(s => s.year === selectedSeason)?.label ?? '';
+  const [selectedSeasonLabel, setSelectedSeasonLabel] = useState(
+    SEASONS.find(s => s.year === selectedSeason)?.label ?? ''
+  );
+
+  const [activeHistory, setActiveHistory] = useState<history | null>(null);
+
+  
+
+  useEffect(() => {
+    setSelectedSeasonLabel(
+      SEASONS.find(s => s.year === selectedSeason)?.label ?? ''
+    );
+
+    // Get the start year and end year from label
+    history.forEach((h) => {
+      if (parseInt(h.season_start, 10) === selectedSeason) {
+        // console.log('Found matching history:', h);
+        setActiveHistory(h);
+      } else {
+        // console.log('No matching history for season:', selectedSeason);
+        setActiveHistory(null);
+      }
+    });
+  }, [selectedSeason, SEASONS]);
+  
 
   useEffect(() => {
     const getKey = async () => {
@@ -320,17 +359,38 @@ export default function Page() {
                 {!isLatestSeason && (
                   <tr>
                     <td colSpan={7} className="px-4 py-10 text-center">
-                      <div className="flex flex-col items-center justify-center gap-1">
-                        <span className="text-lg font-semibold text-gray-800">
-                          {selectedSeasonLabel}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          Lestvica za to sezono trenutno ni na voljo.
-                        </span>
-                      </div>
+                      {activeHistory?.image ? (
+                        /* IMAGE EXISTS */
+                        <div className="flex flex-col items-center gap-4">
+                          {/* <span className="text-lg font-semibold text-gray-800">
+                            {selectedSeasonLabel}
+                          </span> */}
+
+                          <div className="relative w-full max-w-3xl h-[500px] bg-gray-100 rounded-lg overflow-hidden">
+                            <Image
+                              src={activeHistory.image}
+                              alt={`Lestvica ${selectedSeasonLabel}`}
+                              fill
+                              className="object-contain"
+                              sizes="(max-width: 768px) 100vw, 900px"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        /* NO DATA */
+                        <div className="flex flex-col items-center justify-center gap-1">
+                          <span className="text-lg font-semibold text-gray-800">
+                            {selectedSeasonLabel}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            Lestvica za to sezono trenutno ni na voljo.
+                          </span>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )}
+
 
                 {/* LATEST SEASON → ORIGINAL TABLE LOGIC (UNCHANGED) */}
                 {isLatestSeason && loading && (
