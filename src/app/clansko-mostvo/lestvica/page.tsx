@@ -295,7 +295,11 @@ export default function Page() {
               <thead>
                 <tr className="bg-gray-900 text-white">
                   <th colSpan={7} className="text-left px-4 py-3 text-sm md:text-base">
-                    {stageName} — {tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}
+                      {
+                        !isLatestSeason
+                          ? `Lestvica za sezono ${selectedSeasonLabel}`
+                          : `${stageName} - ${tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}`
+                      }
                   </th>
                 </tr>
                 {isLatestSeason && (
