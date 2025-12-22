@@ -309,9 +309,9 @@ export default function Page() {
                         transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                         viewport={{ once: true, amount: .3 }}
                       >
-                        <h1 className="absolute top-2 right-3 text-red-600 z-2 text-5xl font-bold poppins uppercase player-number">
+                        {/* <h1 className="absolute top-2 right-3 text-red-600 z-2 text-5xl font-bold poppins uppercase player-number">
                           {player.number ?? '01'}
-                        </h1>
+                        </h1> */}
                         <Image
                           src={player.img || '/player1.png'}
                           alt={`${player.firstName ?? ''} ${player.lastName ?? ''}`.trim() || 'Player'}
@@ -380,7 +380,7 @@ export default function Page() {
             {/* Header Title */}
               <div className='border-b-2 border-gray-300 mb-4 pb-2'>
                 <h1 className="text-3xl font-bold text-left text-black mt-2 uppercase">
-                  Team Picture of Season {activeSeason}
+                  Ekipa v Sezoni {activeSeason}
                 </h1>
               </div>
                 <div className="w-full flex justify-center items-center py-6">

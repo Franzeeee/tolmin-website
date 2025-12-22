@@ -592,7 +592,7 @@ export default function Page() {
 
       {/* Desktop: home team name anchored at bottom of left pane */}
       <div className="hidden md:block text-3xl font-extrabold max-w-full truncate mt-auto md:text-transparent text-black">
-      {left?.o_name || left?.name || 'Home'}
+      {/* {left?.o_name || left?.name || 'Home'} */}
       </div>
     </div>
     </div>
@@ -631,7 +631,7 @@ export default function Page() {
     {/* RIGHT (away team name on desktop) */}
     <div className="hidden md:flex md:col-start-3 md:row-start-1 items-end justify-end md:text-transparent text-black">
     <span className="text-3xl max-w-full truncate">
-      {right?.o_name || right?.name || 'Away'}
+      {/* {right?.o_name || right?.name || 'Away'} */}
     </span>
     </div>
 

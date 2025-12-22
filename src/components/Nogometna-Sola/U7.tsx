@@ -106,7 +106,7 @@ export default function U7() {
                 href={`mailto:${fetchedData?.coaches?.[0]?.email ?? 'fitim.zabeljaj@example.com'}`}
                 className="bg-red-700 text-white w-fit px-4 rounded-md mx-auto mt-2 inline-block cursor-pointer"
               >
-                začeti
+                začni
               </a>
             </div>
           </div>
