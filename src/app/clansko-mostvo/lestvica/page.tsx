@@ -97,7 +97,7 @@ export default function Page() {
   const pathname = usePathname();
   const [apiKey, setApiKey] = useState<string | null>(null);
 
-  let [SEASONS, setSEASONS] = useState(
+  const [SEASONS, setSEASONS] = useState(
     Array.from(
       { length: new Date().getFullYear() - 1919 },
       (_, i) => {
