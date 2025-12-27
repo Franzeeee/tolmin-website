@@ -97,17 +97,19 @@ export default function Page() {
   const pathname = usePathname();
   const [apiKey, setApiKey] = useState<string | null>(null);
 
-  const SEASONS = Array.from(
-    { length: new Date().getFullYear() - 1919 },
-    (_, i) => {
-      const year = 1920 + i;
-      const isLatest = year === new Date().getFullYear();
-      return {
-        label: isLatest ? 'Latest' : `${year}-${year + 1}`,
-        year,
-      };
-    }
-  ).reverse();
+  let [SEASONS, setSEASONS] = useState(
+    Array.from(
+      { length: new Date().getFullYear() - 1919 },
+      (_, i) => {
+        const year = 1920 + i;
+        const isLatest = year === new Date().getFullYear();
+        return {
+          label: isLatest ? 'Latest' : `${year}-${year + 1}`,
+          year,
+        };
+      }
+    ).reverse()
+  );
 
   const [history, setHistory] = useState<history[]>([]);
 
@@ -149,6 +151,7 @@ export default function Page() {
   );
 
   const [activeHistory, setActiveHistory] = useState<history | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   
 
@@ -162,6 +165,8 @@ export default function Page() {
       if (parseInt(h.season_start, 10) === selectedSeason) {
         // console.log('Found matching history:', h);
         setActiveHistory(h);
+        console.log('Active history set for season:', selectedSeason, h);
+        setImageUrl(h.image || null);
       } else {
         // console.log('No matching history for season:', selectedSeason);
         setActiveHistory(null);
@@ -198,6 +203,21 @@ export default function Page() {
         const res = await fetch(`/api/fetch?url=${encodeURIComponent(url)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as LiveScoreTables;
+        
+        // Extract seasons that have data
+        const seasonsWithData = new Set<number>();
+        history.forEach((h) => {
+          seasonsWithData.add(parseInt(h.season_start, 10));
+        });
+        
+        // Filter seasons to only include latest and those with data
+        setSEASONS((prevSeasons) => {
+          const latestSeasonYear = new Date().getFullYear();
+          return prevSeasons.filter(
+            (s) => s.year === latestSeasonYear || seasonsWithData.has(s.year)
+          );
+        });
+        
         setData(json);
       } catch (e) {
         if (e instanceof Error) {
@@ -209,8 +229,10 @@ export default function Page() {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [pathname, url]);
+    if (apiKey) {
+      fetchData();
+    }
+  }, [pathname, url, apiKey]);
 
   const blocks = data?.pageProps?.initialData?.leagueTables?.league?.[''] || [];
   const byKind = indexByKind(blocks);
@@ -336,7 +358,7 @@ export default function Page() {
                   <th colSpan={7} className="text-left px-4 py-3 text-sm md:text-base">
                       {
                         !isLatestSeason
-                          ? `Lestvica za sezono ${selectedSeasonLabel}`
+                          ? `Lestvica za sezono ${selectedSeasonLabel} - ${activeHistory?.league || ''}`
                           : `${stageName} - ${tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}`
                       }
                   </th>
@@ -359,7 +381,7 @@ export default function Page() {
                 {!isLatestSeason && (
                   <tr>
                     <td colSpan={7} className="px-4 py-10 text-center">
-                      {activeHistory?.image ? (
+                      {activeHistory?.image || imageUrl ? (
                         /* IMAGE EXISTS */
                         <div className="flex flex-col items-center gap-4">
                           {/* <span className="text-lg font-semibold text-gray-800">
@@ -368,7 +390,7 @@ export default function Page() {
 
                           <div className="relative w-full max-w-3xl h-[500px] bg-gray-100 rounded-lg overflow-hidden">
                             <Image
-                              src={activeHistory.image}
+                              src={imageUrl!}
                               alt={`Lestvica ${selectedSeasonLabel}`}
                               fill
                               className="object-contain"
