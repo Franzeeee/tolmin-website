@@ -343,7 +343,7 @@ function formatMatchDate(ms?: number) {
  * ------------------------------------------------ */
 export default function Page() {
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState('Epika');
+  const [activeTab, setActiveTab] = useState('Ekipa');
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState<string | null>(null);
 
@@ -357,7 +357,7 @@ export default function Page() {
 
   const tabs = useMemo(
     () => [
-      { name: 'Epika', link: '/clansko-mostvo' },
+      { name: 'Ekipa', link: '/clansko-mostvo' },
       { name: 'Tekme', link: '/clansko-mostvo/tekme' },
       { name: 'Lestvica', link: '/clansko-mostvo/lestvica' },
     ],
