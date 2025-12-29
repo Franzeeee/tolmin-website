@@ -152,7 +152,7 @@ export default function Page() {
 
   const [activeHistory, setActiveHistory] = useState<history | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+  const [leagueName, setLeagueName] = useState<string>('');
   
 
   useEffect(() => {
@@ -165,8 +165,8 @@ export default function Page() {
       if (parseInt(h.season_start, 10) === selectedSeason) {
         // console.log('Found matching history:', h);
         setActiveHistory(h);
-        console.log('Active history set for season:', selectedSeason, h);
         setImageUrl(h.image || null);
+        setLeagueName(h.league || '');
       } else {
         // console.log('No matching history for season:', selectedSeason);
         setActiveHistory(null);
@@ -358,7 +358,7 @@ export default function Page() {
                   <th colSpan={7} className="text-left px-4 py-3 text-sm md:text-base">
                       {
                         !isLatestSeason
-                          ? `Lestvica za sezono ${selectedSeasonLabel} - ${activeHistory?.league || ''}`
+                          ? `Lestvica za sezono ${selectedSeasonLabel} - ${leagueName|| ''}`
                           : `${stageName} - ${tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}`
                       }
                   </th>
