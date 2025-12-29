@@ -1,6 +1,6 @@
 // utils/getTeamLogo.js
 const logos = [
-  "IB-1975-Ljubljana.png",
+  "NK-IB-1975-Ljubljana.png",
   "Idrija.png",
   "ND-Bistrc.png",
   "NK-Dren-Vrhnika.png",
