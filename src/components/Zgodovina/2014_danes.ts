@@ -83,8 +83,28 @@ export const data = [
         image: '/zgodovina/sezona-img/2020-2021.jpeg',
     },
     {
+        title: 'SEZONA 2021/2022',
+        content: [],
+        image: '/zgodovina/sezona-img/2021-2022.jpg',
+    },
+    {
+        title: 'SEZONA 2022/2023',
+        content: [],
+        image: '/zgodovina/sezona-img/2022-2023.jpg',
+    },
+    {
         title: 'SEZONA 2023/2024',
         content: [''],
         image: '/zgodovina/sezona-img/2023-2024.jpeg',
+    },
+    {
+        title: 'SEZONA 2024/2025',
+        content: [''],
+        image: '/zgodovina/sezona-img/2024-2025.jpg',
+    },
+    {
+        title: 'SEZONA 2025/2026',
+        content: [''],
+        image: '/zgodovina/sezona-img/2025-2026.jpeg',
     }
 ];
