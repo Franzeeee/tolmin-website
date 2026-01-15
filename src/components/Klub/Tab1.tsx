@@ -58,8 +58,8 @@ export default function Tab1() {
               </a>
             </li>
             <li>
-              <a href="mailto:nktolmin.mladi@gmail.com" className="text-red-600 hover:underline">
-                nktolmin.mladi@gmail.com
+              <a href="mailto:ns.hidriatolmin@gmail.com" className="text-red-600 hover:underline">
+                ns.hidriatolmin@gmail.com
               </a>
             </li>
             <li>
