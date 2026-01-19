@@ -1015,7 +1015,7 @@ export default function Page() {
                 {/* Red gradient overlay */}
                 <div className="absolute left-0 bottom-0 w-full h-full pointer-events-none z-0 transition-all duration-500 bg-gradient-to-t from-red-600/50 via-black/50 to-transparent opacity-70 group-hover:from-red-600/90 group-hover:opacity-90"></div>
                 <div className="relative z-10">
-                  <h1 className="text-4xl font-bold poppins max-w-[80%] leading-snug">
+                  <h1 className="text-4xl sm:text-2xl md:text-4xl font-bold poppins max-w-[80%] leading-snug line-clamp-4">
                     {news[0]?.title || 'News Title'}
                   </h1>
                   <p className="text-right py-2">
