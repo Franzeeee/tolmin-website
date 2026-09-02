@@ -10,25 +10,46 @@ const tekmeSchema = new Schema(
       type: String,
       required: true,
     },
+    round: {
+      type: String,
+      required: false,
+    },
     datetime: {
       type: Date,
+      required: true,
+    },
+    venue: {
+      type: String,
+      enum: ['HOME', 'AWAY'],
       required: true,
     },
     place: {
       type: String,
       required: true,
     },
-    enemy: {
+    opponent: {
       type: String,
       required: true,
     },
-    enemyLogo: {
+    opponentLogo: {
       type: String,
-      required: true,
+      required: false,
     },
-    score: {
+    status: {
       type: String,
+      enum: ['SCHEDULED', 'FINISHED'],
       required: true,
+      default: 'SCHEDULED',
+    },
+    tolminScore: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    opponentScore: {
+      type: Number,
+      required: false,
+      default: null,
     },
   },
   { timestamps: true }

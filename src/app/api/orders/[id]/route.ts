@@ -73,3 +73,26 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
   }
 }
+
+export async function DELETE(request: Request) {
+  const url = new URL(request.url);
+  const id = url.pathname.split('/').pop();
+
+  const ordersCollection = await getCollection('orders');
+  if (!ordersCollection) {
+    return NextResponse.json({ error: 'Failed to connect to DB' }, { status: 500 });
+  }
+
+  try {
+    const result = await ordersCollection.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Order deleted' }, { status: 200 });
+  } catch (err) {
+    console.error('❌ Error in DELETE /api/orders/[id]:', err);
+    return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+  }
+}

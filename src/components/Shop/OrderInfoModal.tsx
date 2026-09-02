@@ -366,7 +366,7 @@ const fetchOrders = async () => {
                     </div>
                     <div className="mb-2 sm:mb-0">
                       <span className="block text-xs text-gray-500">Delivery Method</span>
-                      <span className="text-sm text-gray-700 font-medium">{order?.customer?.address !== "" ? "Home Delivery" : "Pick Up"}</span>
+                      <span className="text-sm text-gray-700 font-medium">{order?.deliveryMethod || 'N/A'}</span>
                     </div>
                   </div>
                 </div>
@@ -392,8 +392,8 @@ const fetchOrders = async () => {
                       </div>
                       <div>
                         <span className="block text-xs text-gray-500">Address</span>
-                        <span className="text-sm text-gray-700 font-medium">
-                          {order?.customer?.address || 'N/A'}
+                        <span className={`text-sm font-medium ${order?.customer?.address ? 'text-gray-700' : 'text-gray-400 italic'}`}>
+                          {order?.customer?.address || 'No Address Added'}
                         </span>
                       </div>
                     </div>

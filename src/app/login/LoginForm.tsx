@@ -9,24 +9,41 @@ import Link from 'next/link'
 export default function LoginForm() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const res = await axios.post('/api/login', { email, password })
       if (res.status === 200) {
-        Swal.fire({
+        await Swal.fire({
           title: "Login Successful!",
           text: "Welcome back!",
-          icon: "success"
+          icon: "success",
+          timer: 1200,
+          showConfirmButton: false,
         })
-        // ✅ redirect on client if you like:
         window.location.href = '/admin/dashboard'
+        return
       }
-      setEmail('')
-      setPassword('')
     } catch (err) {
-      console.error(err)
+      const message = axios.isAxiosError(err)
+        ? (err.response?.data?.error as string | undefined) ??
+          (err.response?.status === undefined
+            ? 'Ni mogoče vzpostaviti povezave s strežnikom. Preveri internetno povezavo.'
+            : 'Napačen email ali geslo.')
+        : 'Prišlo je do nepričakovane napake. Poskusi znova.'
+
+      Swal.fire({
+        title: 'Prijava ni uspela',
+        text: message,
+        icon: 'error',
+        confirmButtonColor: '#dc2626',
+      })
+      setPassword('')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -89,9 +106,10 @@ export default function LoginForm() {
                 </div>
                     <button
                         type="submit"
-                        className="flex w-full justify-center rounded-md bg-red-400 cursor-pointer px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        disabled={loading}
+                        className="flex w-full justify-center rounded-md bg-red-400 cursor-pointer px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        Sign in
+                        {loading ? 'Prijavljanje...' : 'Sign in'}
                     </button>
                 <div>
               <div className="text-sm">

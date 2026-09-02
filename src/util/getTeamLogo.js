@@ -17,6 +17,27 @@ const logos = [
   "NK-Dob.png",
 ];
 
+// Known opponent clubs with logos that actually exist in /public/team_logo.
+// Used to populate the "enemy team" dropdown in the admin fixtures dashboard.
+export const KNOWN_TEAMS = [
+  "NK-IB-1975-Ljubljana.png",
+  "Idrija.png",
+  "MNK-Izola.png",
+  "ND-Bistrc.png",
+  "NK-Dob.png",
+  "NK-Dren-Vrhnika.png",
+  "NK-Skofja-Loka.png",
+  "NK-Svoboda-Ljubljana.png",
+  "NK-Vipava.png",
+  "NK-Ziri.png",
+  "NK-Šenčur.png",
+  "NK-Šobec-Lesce.png",
+  "Rudar-Trbovlje.png",
+].map((file) => ({
+  name: file.replace(/\.png$/, "").replace(/-/g, " "),
+  logo: `/team_logo/${file}`,
+}));
+
 // Basic string similarity function
 function similarity(a, b) {
   a = a.toLowerCase();

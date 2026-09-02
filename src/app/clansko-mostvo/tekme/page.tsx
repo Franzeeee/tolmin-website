@@ -1,321 +1,41 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import MainNav from '@/components/layout/MainNav';
 import Dropdown from '@/components/Dropdown';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import Loading from '@/components/Loading';
-import { fetchAndStoreApiKey } from "@/util/apiKey";
-import { getTeamLogo } from '@/util/getTeamLogo';
-
-
-interface LivescorePayload {
-  pageProps?: {
-    initialData?: {
-      eventsByMatchType?: Array<{
-        Snm?: string;
-        Sds?: string;
-        Events?: Array<{
-          Tr1?: string | number;
-          Tr2?: string | number;
-          Eps?: string;
-          T1?: Array<{
-            ID?: string | number;
-            Img?: string;
-            Nm?: string;
-            Abr?: string;
-          }>;
-          T2?: Array<{
-            ID?: string | number;
-            Img?: string;
-            Nm?: string;
-            Abr?: string;
-          }>;
-          Esd?: number | string;
-          Eid?: string | number;
-          Epr?: string | number;
-        }>;
-      }>;
-    };
-  };
-}
+import { fixtureToMatch, type Fixture, type Match } from '@/util/fixtures';
 
 /* ------------------------------------------------
- * Small generic fetch hook (works for JSON & binary)
+ * Tolmin helper (always left when HOME)
  * ------------------------------------------------ */
-function useFetched<T>(url?: string | null, opts?: AxiosRequestConfig) {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(!!url);
-  const [error, setError] = useState<unknown>(null);
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    isMounted.current = true;
-    if (!url) {
-      setData(null);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
-    axios
-      .get<T>(url, opts)
-      .then((res) => {
-        if (cancelled || !isMounted.current) return;
-        setData(res.data);
-      })
-      .catch((err) => {
-        if (cancelled || !isMounted.current) return;
-        setError(err);
-      })
-      .finally(() => {
-        if (cancelled || !isMounted.current) return;
-        setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-      isMounted.current = false;
-    };
-  }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return { data, loading, error };
-}
-
-/* ------------------------------------------------
- * Types
- * ------------------------------------------------ */
-type Match = {
-  id: string;
-  season: string;              // e.g. "2025/2026" derived from date
-  o_status: string;            // FINISHED | NOT_STARTED | LIVE
-  round: string;
-  stage: { st_name: string };
-  start: number;               // epoch ms
-  teams: Array<{
-    id: string;
-    img_id: string;            // LiveScore path e.g. "enet/287782.png"
-    name: string;
-    o_name: string;
-    pos: number;               // 1 home, 2 away
-    s_name: string;
-    scores: {
-      FINAL_RESULT: string;    // side score only (e.g. "2")
-      RUNNING: string;         // side score while live
-    };
-  }>;
-};
-
-/* ------------------------------------------------
- * Helpers (parsing & formatting)
- * ------------------------------------------------ */
-const normalizeStatus = (eps?: string) => {
-  switch (eps) {
-    case 'NS': return 'NOT_STARTED';
-    case 'FT': return 'FINISHED';
-    case 'HT':
-    case '1H':
-    case '2H':
-    case 'ET':
-    case 'PEN': return 'LIVE';
-    default: return eps || '';
-  }
-};
-
-const deriveSeasonFromMs = (ms: number) => {
-  const d = new Date(ms);
-  const y = d.getUTCFullYear();
-  const m = d.getUTCMonth();
-  const start = m >= 6 ? y : y - 1; // season starts in July
-  return `${start}/${start + 1}`;
-};
-
-function parseEsdToEpochMs(esd: number | string): number {
-  const s = esd.toString().padEnd(14, '0'); // yyyymmddHHMMSS
-  const y = Number(s.slice(0, 4));
-  const m = Number(s.slice(4, 6)) - 1;
-  const d = Number(s.slice(6, 8));
-  const H = Number(s.slice(8, 10));
-  const M = Number(s.slice(10, 12));
-  const S = Number(s.slice(12, 14));
-  return Date.UTC(y, m, d, H, M, S);
-}
-
-function safeScore(a?: string | number, b?: string | number): string {
-  const has = (v: string | number | undefined | null): boolean =>
-    v !== undefined && v !== null && v !== '';
-  return has(a) && has(b) ? `${a}-${b}` : '';
-}
-
-const toMatchArray = (payload: LivescorePayload): Match[] => {
-  const blocks = payload?.pageProps?.initialData?.eventsByMatchType ?? [];
-  const out: Match[] = [];
-
-  for (const block of blocks) {
-    const stageName: string = block?.Snm ?? '';
-
-    for (const ev of block?.Events ?? []) {
-      const finalScore = safeScore(ev?.Tr1, ev?.Tr2);
-      const runningScore = ev?.Eps && ev.Eps !== 'NS' ? finalScore : '';
-      const t1 = (ev?.T1 ?? [])[0] ?? {};
-      const t2 = (ev?.T2 ?? [])[0] ?? {};
-      const startMs = ev?.Esd ? parseEsdToEpochMs(ev.Esd) : 0;
-
-      const teams: Match['teams'] = [
-        {
-          id: String(t1.ID ?? ''),
-          img_id: String(t1.Img ?? ''),
-          name: String(t1.Nm ?? ''),
-          o_name: String(t1.Nm ?? ''),
-          pos: 1,
-          s_name: String(t1.Abr ?? ''),
-          scores: {
-            FINAL_RESULT: finalScore ? finalScore.split('-')[0] : '',
-            RUNNING: runningScore ? runningScore.split('-')[0] : '',
-          },
-        },
-        {
-          id: String(t2.ID ?? ''),
-          img_id: String(t2.Img ?? ''),
-          name: String(t2.Nm ?? ''),
-          o_name: String(t2.Nm ?? ''),
-          pos: 2,
-          s_name: String(t2.Abr ?? ''),
-          scores: {
-            FINAL_RESULT: finalScore ? finalScore.split('-')[1] : '',
-            RUNNING: runningScore ? runningScore.split('-')[1] : '',
-          },
-        },
-      ];
-
-      const normalized = normalizeStatus(ev?.Eps);
-      const season = deriveSeasonFromMs(startMs);
-
-      out.push({
-        id: String(ev?.Eid ?? ''),
-        season,
-        o_status: normalized,
-        round: ev?.Epr !== undefined ? String(ev?.Epr) : '',
-        stage: { st_name: stageName },
-        start: startMs,
-        teams,
-      });
-    }
-  }
-  return out;
-};
-
-/* ------------------------------------------------
- * Tolmin helpers (always left)
- * ------------------------------------------------ */
-const TOLMIN_IDS = new Set(['11156', '11005']);
 const TOLMIN_NAME_RX = /tolmin/i;
 
 const isTolminTeam = (t?: { id?: string; name?: string; o_name?: string }) => {
   if (!t) return false;
-  if (TOLMIN_IDS.has(String(t.id))) return true;
+  if (t.id === 'tolmin') return true;
   const n = (t.o_name || t.name || '').toString();
   return TOLMIN_NAME_RX.test(n);
 };
 
-// function orderTolminLeft(match: Match) {
-//   const a = match.teams[0];
-//   const b = match.teams[1];
-
-//   if (isTolminTeam(a)) {
-//     return {
-//       left: a,
-//       right: b,
-//       leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-//       rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-//     };
-//   }
-//   if (isTolminTeam(b)) {
-//     return {
-//       left: b,
-//       right: a,
-//       leftScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-//       rightScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-//     };
-//   }
-//   return {
-//     left: a,
-//     right: b,
-//     leftScore: a.scores.FINAL_RESULT || a.scores.RUNNING || '0',
-//     rightScore: b.scores.FINAL_RESULT || b.scores.RUNNING || '0',
-//   };
-// }
-
-/* ------------------------------------------------
- * Logo fetching (binary -> Blob URL) with fallback
- * ------------------------------------------------ */
-const objectUrlCache = new Map<string, string>();
-const livescoreLogoUrl = (img_id?: string) =>
-  img_id ? `https://storage.livescore.com/images/team/high/${img_id}` : '';
-
-function useOpponentLogo(imgId?: string) {
-  const lsUrl = livescoreLogoUrl(imgId);
-  const proxyUrl = lsUrl ? `/api/fetch?url=${encodeURIComponent(lsUrl)}` : null;
-
-  const cached = imgId ? objectUrlCache.get(imgId) : null;
-
-  const { data } = useFetched<ArrayBuffer>(cached || !proxyUrl ? null : proxyUrl, {
-    responseType: 'arraybuffer',
-  });
-
-  const placeholderTeam =
-    'https://res.cloudinary.com/du7efjkf3/image/upload/v1758985173/placeholder-team_wwfwbr.png';
-
-  const [src, setSrc] = useState<string>(cached || placeholderTeam);
-
-  useEffect(() => {
-    if (!imgId) {
-      setSrc(placeholderTeam);
-      return;
-    }
-    if (cached) {
-      setSrc(cached);
-      return;
-    }
-    if (!data) return;
-
-    try {
-      const blob = new Blob([data], { type: 'image/png' });
-      const url = URL.createObjectURL(blob);
-      objectUrlCache.set(imgId, url);
-      setSrc(url);
-    } catch {
-      setSrc(placeholderTeam);
-    }
-  }, [data, imgId, cached]);
-
-  return { src };
-}
-
 function OpponentLogo({
-  imgId,
+  logoUrl,
   alt,
   className = '',
-  teamName,
 }: {
-  imgId?: string;
+  logoUrl?: string;
   alt?: string;
   className?: string;
-  teamName?: string;
 }) {
-  const { src } = useOpponentLogo(imgId);
   const SIZE = 'flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-[60px] md:h-[60px]';
   return (
     <Image
-      src={getTeamLogo(teamName) || src}
+      src={logoUrl || '/logo/placeholder-team.png'}
       alt={alt || 'Team Logo'}
       width={60}
       height={60}
@@ -345,15 +65,6 @@ export default function Page() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('Ekipa');
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getKey = async () => {
-      const key = await fetchAndStoreApiKey();
-      setApiKey(key);
-    };
-    getKey();
-  }, []);
 
   const tabs = useMemo(
     () => [
@@ -371,42 +82,44 @@ export default function Page() {
 
   const currentTab = hoveredTab || activeTab;
 
-  /* -------- Fetch results & fixtures from LiveScore via proxy -------- */
-  const RESULTS_URL =
-    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/results.json?sport=football&teamName=tolmin&teamId=11156`;
-  const FIXTURES_URL =
-    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/fixtures.json?sport=football&teamName=tolmin&teamId=11156`;
+  /* -------- Fetch fixtures/results from our own admin-managed data -------- */
+  const [fixtures, setFixtures] = useState<Fixture[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>(null);
 
-  const { data: resultsJson, loading: resultsLoading, error: resultsError } = useFetched<LivescorePayload>(
-    `/api/fetch?url=${encodeURIComponent(RESULTS_URL)}`
-  );
-  const { data: fixturesJson, loading: fixturesLoading, error: fixturesError } = useFetched<LivescorePayload>(
-    `/api/fetch?url=${encodeURIComponent(FIXTURES_URL)}`
-  );
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
 
-  const parsedResults: Match[] = useMemo(
-    () => (resultsJson ? toMatchArray(resultsJson) : []),
-    [resultsJson]
-  );
-  const parsedFixtures: Match[] = useMemo(
-    () => (fixturesJson ? toMatchArray(fixturesJson) : []),
-    [fixturesJson]
-  );
+    axios
+      .get<Fixture[]>('/api/tekme')
+      .then((res) => {
+        if (cancelled) return;
+        setFixtures(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
+      });
 
-  const allMatches = useMemo(() => [...parsedResults, ...parsedFixtures], [parsedResults, parsedFixtures]);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  // 🔎 Filter out games that didn't start yet
-  const playedOrLiveMatches = useMemo(
-    () => allMatches.filter((m) => m.o_status !== 'NOT_STARTED'),
-    [allMatches]
-  );
+  const allMatches: Match[] = useMemo(() => fixtures.map(fixtureToMatch), [fixtures]);
 
-  // Seasons derived from dates (YYYY/YYYY+1) — latest first
+  // Seasons derived from the fixtures — latest first
   const seasons = useMemo(() => {
     const set = new Set<string>();
-    for (const m of playedOrLiveMatches) set.add(m.season);
+    for (const m of allMatches) set.add(m.season);
     return Array.from(set).sort((a, b) => parseInt(b) - parseInt(a));
-  }, [playedOrLiveMatches]);
+  }, [allMatches]);
 
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
   useEffect(() => {
@@ -415,8 +128,8 @@ export default function Page() {
 
   // Filter to chosen season
   const seasonMatches = useMemo(
-    () => (selectedSeason ? playedOrLiveMatches.filter((m) => m.season === selectedSeason) : []),
-    [playedOrLiveMatches, selectedSeason]
+    () => (selectedSeason ? allMatches.filter((m) => m.season === selectedSeason) : []),
+    [allMatches, selectedSeason]
   );
 
   // Group by Month YYYY, newest month on top; matches inside month newest → oldest
@@ -438,9 +151,6 @@ export default function Page() {
     entries.sort((a, b) => b.ts - a.ts);
     return entries;
   }, [seasonMatches]);
-
-  const loading = resultsLoading || fixturesLoading;
-  const error = resultsError || fixturesError;
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -555,6 +265,7 @@ export default function Page() {
           // Home team on left, away on right
           const left = homeTeam;
           const right = awayTeam;
+          const isFinished = match.o_status === 'FINISHED';
           const leftScore = left?.scores.FINAL_RESULT || left?.scores.RUNNING || '0';
           const rightScore = right?.scores.FINAL_RESULT || right?.scores.RUNNING || '0';
           const venue = isTolminTeam(left) ? 'HOME' : 'AWAY';
@@ -587,6 +298,11 @@ export default function Page() {
         >
         {venue}
         </span>
+        {!isFinished && (
+          <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold bg-yellow-100 text-yellow-700">
+            Predstoji
+          </span>
+        )}
       </div>
       </div>
 
@@ -603,23 +319,27 @@ export default function Page() {
       {/* Home team logo + name (name below logo on md+) */}
       <div className="flex flex-col items-center">
       <OpponentLogo
-        imgId={left?.img_id}
+        logoUrl={left?.logoUrl}
         alt={left?.o_name || left?.name || 'Home'}
-        teamName={left?.o_name || left?.name || undefined}
       />
       <span className="hidden md:block mt-1 text-base font-semibold text-black text-center max-w-[100px] truncate">
         {left?.o_name || left?.name || 'Home'}
       </span>
       </div>
       <div className="text-2xl sm:text-3xl md:text-4xl bg-gray-200 px-3 py-1 sm:px-4 sm:py-2 md:px-5 md:py-3 rounded leading-none">
-      {leftScore} <span className="mx-1">:</span> {rightScore}
+      {isFinished ? (
+        <>
+          {leftScore} <span className="mx-1">:</span> {rightScore}
+        </>
+      ) : (
+        <span className="text-lg sm:text-xl md:text-2xl font-semibold">VS</span>
+      )}
       </div>
       {/* Away team logo + name (name below logo on md+) */}
       <div className="flex flex-col items-center">
       <OpponentLogo
-        imgId={right?.img_id}
+        logoUrl={right?.logoUrl}
         alt={right?.o_name || right?.name || 'Away'}
-        teamName={right?.o_name || right?.name || undefined}
       />
       <span className="hidden md:block mt-1 text-base font-semibold text-black text-center max-w-[100px] truncate">
         {right?.o_name || right?.name || 'Away'}

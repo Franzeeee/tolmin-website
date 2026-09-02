@@ -59,6 +59,9 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | ''>('');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -112,14 +115,11 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     }
     if (step === 3) {
       if (!deliveryMethod) return Swal.fire('Izberite način dostave', '', 'warning');
-      const fields = deliveryMethod === 'pickup'
-        ? ['name', 'phone']
-        : ['country', 'name', 'phone', 'address', 'city'];
-      for (const f of fields) {
-        const el = document.querySelector(`[data-step="3"] [name="${f}"]`) as HTMLInputElement | null;
-        if (!el || !el.value.trim()) {
-          return Swal.fire('Izpolnite polja za dostavo', '', 'warning');
-        }
+      const requiredValues = deliveryMethod === 'pickup'
+        ? [name, phone]
+        : [country, name, phone, address, city];
+      if (requiredValues.some(v => !v.trim())) {
+        return Swal.fire('Izpolnite polja za dostavo', '', 'warning');
       }
       setStep(4);
       return;
@@ -140,24 +140,14 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       setStep(prev => prev + 1);
     } else {
       setStep(prev => prev + 1);
-      // Get full address fields if delivery
-      let fullAddress = null;
-      if (deliveryMethod === 'delivery') {
-        const addressEl = document.querySelector('[data-step="3"] [name="address"]') as HTMLInputElement | null;
-        const cityEl = document.querySelector('[data-step="3"] [name="city"]') as HTMLInputElement | null;
-        const countryEl = document.querySelector('[data-step="3"] [name="country"]') as HTMLInputElement | null;
-        fullAddress = {
-          address: addressEl?.value || '',
-          city: cityEl?.value || '',
-          country: countryEl?.value || '',
-        };
-      }
+      const fullAddress =
+        deliveryMethod === 'delivery' ? `${address}, ${city}, ${country}` : '';
       axios.post<void, void, OrderPayload>('/api/orders', {
         customer: {
           name: name || '',
           email,
           phone: phone || '',
-          address: fullAddress ? `${fullAddress.address}, ${fullAddress.city}, ${fullAddress.country}` : '',
+          address: fullAddress,
         },
         items: cart.map((item): OrderItem => ({
           productId: item.id, // should be ObjectId in DB
@@ -183,6 +173,11 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       });
       clearCart();
       setEmail('');
+      setName('');
+      setPhone('');
+      setCountry('');
+      setAddress('');
+      setCity('');
       setDeliveryMethod('');
       setPaymentMethod('');
       setClientSecret(null);
@@ -333,15 +328,15 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 ) : deliveryMethod === 'delivery' ? (
                   <form className="flex flex-col gap-3 w-full">
                     <label className="font-semibold">Država</label>
-                    <input name="country" id='country' placeholder="Država" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="country" id='country' onChange={(e) => setCountry(e.target.value)} placeholder="Država" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Ime in priimek</label>
-                    <input name="name" id='name' placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="name" id='name' onChange={(e) => setName(e.target.value)} placeholder="Ime in priimek" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Telefon</label>
-                    <input name="phone" id='phone' placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="phone" id='phone' onChange={(e) => setPhone(e.target.value)} placeholder="Telefon" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Naslov</label>
-                    <input name="address" id='address' placeholder="Naslov" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="address" id='address' onChange={(e) => setAddress(e.target.value)} placeholder="Naslov" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                     <label className="font-semibold">Mesto</label>
-                    <input name="city" id='city' placeholder="Mesto" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
+                    <input name="city" id='city' onChange={(e) => setCity(e.target.value)} placeholder="Mesto" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
                   </form>
                 ) : null}
               </div>

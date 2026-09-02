@@ -29,10 +29,22 @@ export async function PUT(
 ) {
   const { id } = await params
   const body = await request.json()
-  const { name, logoUrl } = body
+  const { name, logoUrl, categories } = body
 
-  if (!name || !logoUrl) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  const update: Record<string, unknown> = {}
+  if (name !== undefined) update.name = name
+  if (logoUrl !== undefined) update.logoUrl = logoUrl
+  if (categories !== undefined) {
+    if (!Array.isArray(categories) || categories.length === 0) {
+      return NextResponse.json({ error: 'categories must be a non-empty array' }, { status: 400 })
+    }
+    update.categories = categories
+    // Clear the legacy singular field once a sponsor is migrated to the array shape.
+    update.category = null
+  }
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
   }
 
   const sponsorsCollection = await getCollection('sponsors')
@@ -42,7 +54,7 @@ export async function PUT(
 
   const result = await sponsorsCollection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { name, logoUrl } }
+    { $set: update }
   )
 
   if (result.matchedCount === 0) {

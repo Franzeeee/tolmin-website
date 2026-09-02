@@ -19,7 +19,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, category, logoUrl } = body
+    const { name, categories, logoUrl } = body
+
+    if (!name || !Array.isArray(categories) || categories.length === 0) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
     const sponsorsCollection = await getCollection('sponsors')
     if (!sponsorsCollection) {
@@ -28,8 +32,8 @@ export async function POST(request: Request) {
 
     const newSponsor = await sponsorsCollection.insertOne({
       name,
-      category,         // e.g., 'Main', 'Partner', 'Support'
-      logoUrl,          // optional: URL/path of uploaded logo
+      categories,        // e.g., ['main'], ['main', 'gold']
+      logoUrl,           // optional: URL/path of uploaded logo
       createdAt: new Date(),
     })
 

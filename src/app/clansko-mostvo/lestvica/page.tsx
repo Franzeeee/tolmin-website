@@ -6,69 +6,12 @@ import MainNav from '@/components/layout/MainNav';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import axios from 'axios';
 import Loading from '@/components/Loading';
-import { fetchAndStoreApiKey } from "@/util/apiKey";
-import { getTeamLogo } from '@/util/getTeamLogo';
 import Swal from 'sweetalert2';
+import { goalsDiff, sortStandings, type StandingsRow } from '@/util/standings';
 
-const TOLMIN_ID = '11156';
-
-type TeamBadge = {
-  high?: string;
-  medium?: string;
-};
-
-type LeagueTeam = {
-  id: string;
-  name: string;
-  draws: number;
-  goalsAgainst: number;
-  goalsDiff: number;
-  goalsFor: number;
-  hasMatchInProgress: boolean;
-  losses: number;
-  lossesOT: number;
-  played: number;
-  points: number;
-  rank: number;
-  reg: number;
-  wins: number;
-  winsOT: number;
-  slug: string;
-  teamBadge?: TeamBadge;
-};
-
-type LeagueBlock = {
-  kind: 'all' | 'home' | 'away' | 'form' | string;
-  url: string;
-  name: string;
-  tableName: string;
-  country: string;
-  countryName: string;
-  teams: LeagueTeam[];
-  hideLeagueTableBadges?: boolean;
-};
-
-type LiveScoreTables = {
-  pageProps: {
-    initialData: {
-      basicInfo: {
-        id: string;
-        name: string;
-        country: string;
-        badge: {
-          high: string;
-          medium: string;
-        };
-      };
-      leagueTables: {
-        league: {
-          "": LeagueBlock[];
-        };
-      };
-    };
-  };
-};
+const TOLMIN_NAME_RX = /tolmin/i;
 
 type history = {
   season_end: string;
@@ -78,24 +21,8 @@ type history = {
   image?: string;
 };
 
-function getBadgeUrl(team: LeagueTeam) {
-  return (
-    team?.teamBadge?.medium ||
-    team?.teamBadge?.high ||
-    '/logo/placeholder-team.png'
-  );
-}
-
-function indexByKind(blocks: LeagueBlock[]) {
-  return blocks.reduce<Record<string, LeagueBlock>>((acc, blk) => {
-    if (blk?.kind) acc[blk.kind] = blk;
-    return acc;
-  }, {});
-}
-
 export default function Page() {
   const pathname = usePathname();
-  const [apiKey, setApiKey] = useState<string | null>(null);
 
   const [SEASONS, setSEASONS] = useState(
     Array.from(
@@ -145,7 +72,6 @@ export default function Page() {
   const [selectedSeason, setSelectedSeason] = useState(SEASONS[0].year);
   const isLatestSeason = selectedSeason === SEASONS[0].year;
 
-  const [tableKind, setTableKind] = useState<'all' | 'home' | 'away'>('all');
   const [selectedSeasonLabel, setSelectedSeasonLabel] = useState(
     SEASONS.find(s => s.year === selectedSeason)?.label ?? ''
   );
@@ -176,72 +102,46 @@ export default function Page() {
   
 
   useEffect(() => {
-    const getKey = async () => {
-      const key = await fetchAndStoreApiKey();
-      setApiKey(key);
-    }
-    getKey();
-  }, []);
-
-  useEffect(() => {
     const found = tabs.find((t) => t.link === pathname);
     if (found) setActiveTab(found.name);
   }, [pathname, tabs]);
 
-  const [data, setData] = useState<LiveScoreTables | null>(null);
+  /* -------- Fetch the current-season standings from our own admin-managed data -------- */
+  const [rows, setRows] = useState<StandingsRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
-  const url =
-    `https://www.livescore.com/_next/data/${apiKey}/en/football/team/tolmin/11156/tables/22579.json?sport=football&teamName=tolmin&teamId=11156&stageId=22579`;
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRows = async () => {
       try {
         setErr(null);
         setLoading(true);
-        const res = await fetch(`/api/fetch?url=${encodeURIComponent(url)}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = (await res.json()) as LiveScoreTables;
-        
-        // Extract seasons that have data
+        const res = await axios.get<StandingsRow[]>('/api/lestvica-tabela');
+
+        // Only keep seasons that have data (plus the current one, always shown).
         const seasonsWithData = new Set<number>();
         history.forEach((h) => {
           seasonsWithData.add(parseInt(h.season_start, 10));
         });
-        
-        // Filter seasons to only include latest and those with data
         setSEASONS((prevSeasons) => {
           const latestSeasonYear = new Date().getFullYear();
           return prevSeasons.filter(
             (s) => s.year === latestSeasonYear || seasonsWithData.has(s.year)
           );
         });
-        
-        setData(json);
+
+        setRows(Array.isArray(res.data) ? res.data : []);
       } catch (e) {
-        if (e instanceof Error) {
-          setErr(e.message);
-        } else {
-          setErr('Failed to load table.');
-        }
+        setErr(e instanceof Error ? e.message : 'Failed to load table.');
       } finally {
         setLoading(false);
       }
     };
-    if (apiKey) {
-      fetchData();
-    }
-  }, [pathname, url, apiKey]);
+    fetchRows();
+  }, [pathname, history]);
 
-  const blocks = data?.pageProps?.initialData?.leagueTables?.league?.[''] || [];
-  const byKind = indexByKind(blocks);
-
-  const selectedBlock =
-    byKind[tableKind] || byKind['all'] || (blocks.length ? blocks[0] : undefined);
-
-  const stageName = selectedBlock?.name || 'Table';
-  const teams = selectedBlock?.teams || [];
+  const sortedRows = useMemo(() => sortStandings(rows), [rows]);
+  const stageName = sortedRows[0]?.league || 'Lestvica';
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50">
@@ -309,33 +209,8 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Season & Table Kind Switcher */}
-        <section className="w-full px-5 pb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 poppins">
-          <div className="flex gap-2">
-            {isLatestSeason ? (
-              (['all', 'home', 'away'] as const).map((k) => (
-                <button
-                  key={k}
-                  onClick={() => setTableKind(k)}
-                  className={`px-3 py-2 rounded text-sm font-semibold ${
-                    tableKind === k
-                      ? 'bg-red-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  {k === 'all' ? 'Skupaj' : k === 'home' ? 'Doma' : 'V gosteh'}
-                </button>
-              ))
-            ) : (
-              <button
-                disabled
-                className="px-3 py-2 rounded text-sm font-semibold bg-red-600 text-white"
-              >
-                Skupaj
-              </button>
-            )}
-          </div>
-
+        {/* Season Switcher */}
+        <section className="w-full px-5 pb-3 flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 poppins">
           <select
             value={selectedSeason}
             onChange={(e) => setSelectedSeason(Number(e.target.value))}
@@ -359,7 +234,7 @@ export default function Page() {
                       {
                         !isLatestSeason
                           ? `Lestvica za sezono ${selectedSeasonLabel} - ${leagueName|| ''}`
-                          : `${stageName} - ${tableKind === 'all' ? 'Skupaj' : tableKind === 'home' ? 'Doma' : 'V gosteh'}`
+                          : stageName
                       }
                   </th>
                 </tr>
@@ -433,7 +308,7 @@ export default function Page() {
                   </tr>
                 )}
 
-                {isLatestSeason && !loading && !err && teams.length === 0 && (
+                {isLatestSeason && !loading && !err && sortedRows.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
                       Ni podatkov za prikaz.
@@ -444,40 +319,36 @@ export default function Page() {
                 {isLatestSeason &&
                   !loading &&
                   !err &&
-                  teams.map((team, idx) => {
-                    const isTolmin = team.id === TOLMIN_ID || /tolmin/i.test(team.name || '');
+                  sortedRows.map((row) => {
+                    const isTolmin = TOLMIN_NAME_RX.test(row.team || '');
                     const rowClass = isTolmin
                       ? 'bg-red-600 text-white'
                       : 'bg-transparent text-gray-800';
 
-                    const logoSrc = getBadgeUrl(team);
-
                     return (
                       <tr
-                        key={`${team.id}-${idx}`}
+                        key={row._id}
                         className={`border-b border-gray-200 ${rowClass}`}
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <Image
-                              src={getTeamLogo(team.name) || logoSrc}
-                              alt={team.name ?? 'Team'}
+                              src={row.teamLogo || '/logo/placeholder-team.png'}
+                              alt={row.team}
                               width={24}
                               height={24}
                               className="w-6 h-6 object-contain rounded bg-white"
                               unoptimized
                             />
-                            <span className="font-medium">{team?.name}</span>
+                            <span className="font-medium">{row.team}</span>
                           </div>
                         </td>
-                        <td className="px-2 py-3 text-center">{team?.played ?? '-'}</td>
-                        <td className="px-2 py-3 text-center">{team?.wins ?? '-'}</td>
-                        <td className="px-2 py-3 text-center">{team?.draws ?? '-'}</td>
-                        <td className="px-2 py-3 text-center">{team?.losses ?? '-'}</td>
-                        <td className="px-2 py-3 text-center">
-                          {typeof team?.goalsDiff === 'number' ? team.goalsDiff : '-'}
-                        </td>
-                        <td className="px-2 py-3 text-center">{team?.points ?? '-'}</td>
+                        <td className="px-2 py-3 text-center">{row.played}</td>
+                        <td className="px-2 py-3 text-center">{row.wins}</td>
+                        <td className="px-2 py-3 text-center">{row.draws}</td>
+                        <td className="px-2 py-3 text-center">{row.losses}</td>
+                        <td className="px-2 py-3 text-center">{goalsDiff(row)}</td>
+                        <td className="px-2 py-3 text-center">{row.points}</td>
                       </tr>
                     );
                   })}

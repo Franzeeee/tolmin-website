@@ -5,12 +5,12 @@ import { motion } from 'framer-motion'
 import MainNav from '@/components/layout/MainNav'
 import Image from 'next/image'
 import axios from 'axios'
+import { sponsorHasCategory, type SponsorLike } from '@/util/sponsorCategories'
 
-type Sponsor = {
+type Sponsor = SponsorLike & {
   _id: string;
   name: string;
   logoUrl?: string;
-  category: 'main' | 'partner' | 'support' | 'bronze';
 };
 
 export default function Page() {
@@ -28,10 +28,11 @@ export default function Page() {
     fetchSponsors();
   }, []);
 
-  const mainSponsors = sponsors.filter(s => s.category === 'main');
-  const partnerSponsors = sponsors.filter(s => s.category === 'partner');
-  const supportSponsors = sponsors.filter(s => s.category === 'support');
-  const bronzeSponsors = sponsors.filter(s => s.category === 'bronze');
+  const mainSponsors = sponsors.filter(s => sponsorHasCategory(s, 'main') || sponsorHasCategory(s, 'gold'));
+  const partnerSponsors = sponsors.filter(s => sponsorHasCategory(s, 'silver'));
+  const supportSponsors = sponsors.filter(s => sponsorHasCategory(s, 'support'));
+  const bronzeSponsors = sponsors.filter(s => sponsorHasCategory(s, 'bronze'));
+  const transporterSponsors = sponsors.filter(s => sponsorHasCategory(s, 'transporter'));
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 overflow-x-hidden">
@@ -147,6 +148,33 @@ export default function Page() {
             {bronzeSponsors.length === 0 ? (
               <p className="text-gray-500"></p>
             ) : bronzeSponsors.map(s => (
+              <div
+                key={s._id}
+                className='p-2 border-2 rounded-md shadow h-36 w-50 flex items-center justify-center'
+              >
+                <Image
+                  src={s.logoUrl || ''}
+                  alt={s.name}
+                  width={140}
+                  height={140}
+                  className="object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* OFFICIAL CLUB TRANSPORTER */}
+        <section className='w-full min-h-content p-2 px-5 pb-9'>
+          <div className='border-b-2 border-gray-300 pb-3'>
+            <h1 className="text-3xl font-bold text-left text-red-600 mt-4 uppercase">
+              Uradni prevoznik kluba
+            </h1>
+          </div>
+          <div className="w-full py-4 flex flex-wrap justify-center items-center gap-6 md:gap-12 px-4">
+            {transporterSponsors.length === 0 ? (
+              <p className="text-gray-500"></p>
+            ) : transporterSponsors.map(s => (
               <div
                 key={s._id}
                 className='p-2 border-2 rounded-md shadow h-36 w-50 flex items-center justify-center'

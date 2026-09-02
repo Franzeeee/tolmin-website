@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDownIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
+import { AdminLanguageProvider } from '@/context/AdminLanguageContext'
+import LanguageToggle from '@/components/admin/LanguageToggle'
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -228,6 +230,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="flex-1 mt-16 p-4 bg-gray-50 min-h-[calc(100vh-4rem)]">
         <div className="mx-auto max-w-7xl">{children}</div>
       </main>
+
+      <LanguageToggle />
     </div>
+  )
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminLanguageProvider>
+      <AdminLayoutInner>{children}</AdminLayoutInner>
+    </AdminLanguageProvider>
   )
 }

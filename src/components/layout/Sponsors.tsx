@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { sponsorHasCategory, type SponsorLike } from '@/util/sponsorCategories';
 
 export default function Sponsors() {
-  type Sponsor = {
+  type Sponsor = SponsorLike & {
     _id: string;
     name: string;
     logoUrl?: string;
-    category: 'main' | 'partner' | 'support' | 'bronze';
   };
 
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -24,9 +24,9 @@ export default function Sponsors() {
     fetchSponsors();
   }, []);
 
-  // Filter main and partner sponsors
-  const mainSponsors = sponsors.filter((s) => s.category === 'main');
-  const partnerSponsors = sponsors.filter((s) => s.category === 'partner');
+  // Filter main+gold and silver sponsors
+  const mainSponsors = sponsors.filter((s) => sponsorHasCategory(s, 'main') || sponsorHasCategory(s, 'gold'));
+  const partnerSponsors = sponsors.filter((s) => sponsorHasCategory(s, 'silver'));
 
   // Find TKK sponsor and place it in the middle
   const tkkIndex = mainSponsors.findIndex((s) => s.name.includes('TKK'));
