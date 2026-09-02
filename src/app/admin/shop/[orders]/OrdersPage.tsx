@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import OrderInfoModal from '@/components/Shop/OrderInfoModal';
 import axios from 'axios';
-import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
 
 interface OrderCustomer {
   name: string;
@@ -58,7 +56,7 @@ export default function OrdersPage() {
     setSelectedOrderId(orderId);
   };
 
-  const fetchOrders = useCallback(() => {
+  useEffect(() => {
     axios.get('/api/orders')
       .then(response => {
         const ordersWithId = response.data.map((order: Order, idx: number) => ({
@@ -71,33 +69,6 @@ export default function OrdersPage() {
         console.error('Error fetching orders:', error);
       });
   }, []);
-
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-
-  const handleDeleteOrder = (order: Order) => {
-    setOpenMenuId(null);
-    Swal.fire({
-      title: `Delete order #${order.id}?`,
-      text: 'This action cannot be undone.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#aaa',
-      confirmButtonText: 'Yes, delete it!',
-    }).then(async (result) => {
-      if (!result.isConfirmed) return;
-      try {
-        await axios.delete(`/api/orders/${order._id}`);
-        Swal.fire({ icon: 'success', title: 'Deleted!', showConfirmButton: false, timer: 1200 });
-        fetchOrders();
-      } catch (error) {
-        console.error('Error deleting order:', error);
-        Swal.fire({ icon: 'error', title: 'Delete failed', text: 'Please try again.' });
-      }
-    });
-  };
 
   // Filtering logic
   const filteredOrders = orders?.filter(order => {
@@ -163,10 +134,7 @@ export default function OrdersPage() {
                   <i className="fa fa-eye text-gray-500" aria-hidden="true"></i>
                   View
                 </button>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 flex items-center gap-2 cursor-pointer" onClick={() => handleDeleteOrder(row)}>
-                  <i className="fa fa-trash text-red-500" aria-hidden="true"></i>
-                  Delete
-                </button>
+
               </div>
             )}
           </div>
