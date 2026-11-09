@@ -6,12 +6,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/Loading';
 import Swal from 'sweetalert2';
-
-// type PageProps = {
-//   name: string;
-//   content: string;
-//   img: string;
-// };
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 const Editor = dynamic(() =>
   import('@tinymce/tinymce-react').then(mod => mod.Editor),
@@ -20,7 +15,6 @@ const Editor = dynamic(() =>
 
 export default function Content() {
   const id = '6884cbeef71ec698fd833ebc'; // Your football school document ID
-//   const [data, setData] = useState<PageProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editorContent, setEditorContent] = useState('');
@@ -112,10 +106,10 @@ export default function Content() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-700">Nogometni Kamp - 6. do 9. razred</h2>
-      <p className="text-gray-600">
-        This section is dedicated to the management and organization of the coaching staff and leadership of the NŠ Hidria Tolmin football club.
-      </p>
+      <AdminPageHeader
+        title="Nogometni Kamp - 6. do 9. razred"
+        subtitle="This section is dedicated to the management and organization of the coaching staff and leadership of the NŠ Hidria Tolmin football club."
+      />
 
       {loading ? (
         <Loading />

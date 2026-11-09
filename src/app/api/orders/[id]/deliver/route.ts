@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 export async function PUT(request: Request) {
   // Extract the order ID from the URL
   const url = new URL(request.url);
-  const id = url.pathname.split('/').filter(Boolean).at(-3); // 'orders/[id]/deliver'
+  const id = url.pathname.split('/').filter(Boolean).at(-2); // 'orders/[id]/deliver'
   const body = await request.json();
 
   // Ensure we have something to update

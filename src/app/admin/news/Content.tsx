@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import axios from 'axios'
 import Loading from '@/components/Loading'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
 interface News {
   id: number
@@ -16,7 +17,7 @@ interface News {
   image: string
 }
 
-export default function ShopPage() {
+export default function Content() {
     const [news, setNews] = useState<News[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -69,14 +70,11 @@ export default function ShopPage() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome & Stats */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome to News Page! 👋</h1>
-        <p className="text-gray-600 mt-1">
-          This is the admin section where you can manage your club&#39;s news articles.
-        </p>
-      </div>
-      {/* Products Grid */}
+      <AdminPageHeader
+        title="News"
+        subtitle="Manage your club's news articles."
+      />
+      {/* News Grid */}
       <div className="flex items-center justify-between lg:mb-8">
         <h2 className="text-2xl font-semibold text-gray-700">Novice</h2>
         <a
@@ -98,13 +96,13 @@ export default function ShopPage() {
                   src={item.image}
                   alt={item.title}
                   fill
-                  className="object-contain rounded-lg shado"
+                  className="object-contain rounded-lg shadow"
                   sizes="(max-width: 640px) 100vw, 33vw"
                   priority
                   />
                 </div>
-              <h3 className="font-semibold text-gray-900 text-lg mb-1 text-center">{item.title}</h3>
-              <p className="text-gray-600 text-sm mb-4 text-center">{item.description || <span className="italic">No description available</span>}</p>
+              <h3 className="font-semibold text-gray-900 text-lg mb-1 text-center line-clamp-2">{item.title}</h3>
+              <p className="text-gray-600 text-sm mb-4 text-center line-clamp-2">{item.description || <span className="italic">No description available</span>}</p>
               <a
                 href={`/admin/news/edit/${item.id}`}
                 className="mt-auto bg-red-600 text-center text-white px-6 py-2 rounded-lg font-medium shadow hover:bg-red-700 transition w-full cursor-pointer"
@@ -121,7 +119,7 @@ export default function ShopPage() {
           ))
         ) : (
             <div className="col-span-3 text-center text-gray-500">
-                {isLoading ? <Loading /> : 'No products available.'}
+                {isLoading ? <Loading /> : 'No news available.'}
             </div>
         )}
       </div>

@@ -16,6 +16,7 @@ type CartModalProps = {
   orderId: string | null;
   isOpen: boolean;
   onClose: () => void;
+  onStatusChange?: (orderId: string, status: string) => void;
 };
 
 type OrderData = {
@@ -42,7 +43,7 @@ type OrderData = {
 
 
 
-export default function CartModal({ orderId, isOpen, onClose }: CartModalProps) {
+export default function CartModal({ orderId, isOpen, onClose, onStatusChange }: CartModalProps) {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -69,14 +70,15 @@ const handleShipStatus = async (orderId: string) => {
           status: 'Shipped',
         });
 
+        setOrder((prev) => (prev ? { ...prev, status: 'Shipped' } : prev));
+        onStatusChange?.(orderId, 'Shipped');
+
         Swal.fire({
           title: 'Order Shipped',
           text: response.data.message,
           icon: 'success',
-        })
-        .then(() => {
-          onClose();
-          fetchOrders();
+          timer: 1200,
+          showConfirmButton: false,
         });
       } catch (error) {
         console.error('❌ Error updating order:', error);
@@ -105,14 +107,15 @@ const handleDeliveredStatus = async (orderId: string) => {
           status: 'Delivered',
         });
 
+        setOrder((prev) => (prev ? { ...prev, status: 'Delivered' } : prev));
+        onStatusChange?.(orderId, 'Delivered');
+
         Swal.fire({
           title: 'Order Delivered',
           text: response.data.message,
           icon: 'success',
-        })
-        .then(() => {
-          onClose();
-          fetchOrders();
+          timer: 1200,
+          showConfirmButton: false,
         });
       } catch (error) {
         console.error('❌ Error updating order:', error);
@@ -141,14 +144,15 @@ const handleCancelStatus = async (orderId: string) => {
           status: 'Cancelled',
         });
 
+        setOrder((prev) => (prev ? { ...prev, status: 'Cancelled' } : prev));
+        onStatusChange?.(orderId, 'Cancelled');
+
         Swal.fire({
           title: 'Order Cancelled',
           text: response.data.message,
           icon: 'success',
-        })
-        .then(() => {
-          onClose();
-          fetchOrders();
+          timer: 1200,
+          showConfirmButton: false,
         });
       } catch (error) {
         console.error('❌ Error updating order:', error);

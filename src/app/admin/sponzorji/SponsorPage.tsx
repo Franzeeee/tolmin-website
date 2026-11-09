@@ -7,6 +7,7 @@ import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import axios from 'axios'
 import { getSponsorCategories, sponsorHasCategory, CATEGORY_LABELS, type SponsorCategory } from '@/util/sponsorCategories'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
 type Sponsor = {
   _id: string;
@@ -226,7 +227,7 @@ export default function SponsorPage() {
     ) => {
         const list = sponsors.filter(s => categories.some(c => sponsorHasCategory(s, c)));
         return (
-            <div className="bg-white rounded-lg shadow p-6 space-y-4">
+            <div className="bg-white rounded-2xl shadow p-6 space-y-4">
                 <div className="flex items-center justify-between">
                     <h3 className="text-md font-semibold text-gray-800">{title}</h3>
                     <button
@@ -287,11 +288,10 @@ export default function SponsorPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page heading */}
-      <h2 className="text-lg font-semibold text-gray-700">Club Sponsors Overview</h2>
-      <p className="text-gray-600">
-        Manage and view the sponsors that support your club. A sponsor can belong to more than one tier (e.g. Main &amp; Gold).
-      </p>
+      <AdminPageHeader
+        title="Club Sponsors Overview"
+        subtitle="Manage and view the sponsors that support your club. A sponsor can belong to more than one tier (e.g. Main & Gold)."
+      />
 
       {renderLogoSection('Main & Gold Sponsors', ['main', 'gold'], 'Main & Gold Sponsors', [
         { value: 'main', label: 'Glavni (Main)' },
@@ -311,7 +311,7 @@ export default function SponsorPage() {
       ])}
 
       {/* Support Sponsors card */}
-      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+      <div className="bg-white rounded-2xl shadow p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-md font-semibold text-gray-800">Support Sponsors</h3>
           <button

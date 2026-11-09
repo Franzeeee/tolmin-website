@@ -10,6 +10,7 @@ import { KNOWN_TEAMS } from '@/util/getTeamLogo'
 import type { Fixture } from '@/util/fixtures'
 import { useAdminLanguage } from '@/context/AdminLanguageContext'
 import { tekmeText } from './translations'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
 const OTHER_VALUE = '__other__'
 
@@ -279,19 +280,19 @@ export default function Content() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">{t.pageTitle}</h1>
-          <p className="text-gray-600 mt-1">{t.pageSubtitle}</p>
-        </div>
-        <button
-          onClick={() => openFixtureModal()}
-          className="flex items-center gap-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-red-700 transition"
-        >
-          <PlusIcon className="h-4 w-4" />
-          {t.addButton}
-        </button>
-      </div>
+      <AdminPageHeader
+        title={t.pageTitle}
+        subtitle={t.pageSubtitle}
+        action={
+          <button
+            onClick={() => openFixtureModal()}
+            className="flex items-center gap-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-red-700 transition"
+          >
+            <PlusIcon className="h-4 w-4" />
+            {t.addButton}
+          </button>
+        }
+      />
 
       <div className="bg-white rounded-2xl shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 text-sm">

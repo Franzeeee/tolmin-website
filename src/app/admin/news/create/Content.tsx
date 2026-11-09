@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 
 const Editor = dynamic(() =>
@@ -88,10 +89,10 @@ export default function Content() {
   return (
     <div className="space-y-6">
       <a href="/admin/news" className='text-red-600'><FontAwesomeIcon icon={faArrowLeft} /> Go to News Overviews</a>
-      <h2 className="text-lg font-semibold text-gray-700 mt-3">Novice - Ustvari</h2>
-      <p className="text-gray-600">
-        Uporabite ta obrazec za ustvarjanje in objavo nove novice za Tolmin.
-      </p>
+      <AdminPageHeader
+        title="Novice - Ustvari"
+        subtitle="Uporabite ta obrazec za ustvarjanje in objavo nove novice za Tolmin."
+      />
 
         <div className="space-y-6">
           {/* Image Upload Card */}

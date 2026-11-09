@@ -10,6 +10,8 @@ import { TOLMIN_LOGO } from '@/util/fixtures'
 import { goalsDiff, sortStandings, type StandingsRow } from '@/util/standings'
 import { useAdminLanguage } from '@/context/AdminLanguageContext'
 import { lestvicaText } from './translations'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import Loading from '@/components/Loading'
 
 type LestvicaItem = {
   _id: string
@@ -429,14 +431,11 @@ const Content = () => {
 
   /* ================= UI ================= */
   return (
-    <div>
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">{t.pageTitle}</h1>
-        <p className="text-gray-600 mt-1">{t.pageSubtitle}</p>
-      </div>
+    <div className="space-y-6">
+      <AdminPageHeader title={t.pageTitle} subtitle={t.pageSubtitle} />
 
       {/* CURRENT SEASON STANDINGS TABLE */}
-      <div className="mt-6 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-semibold text-gray-700">{t.standings.title}</h2>
           <p className="text-gray-500 text-sm">{t.standings.subtitle}</p>
@@ -449,7 +448,7 @@ const Content = () => {
         </button>
       </div>
 
-      <div className="mt-4 bg-white rounded-2xl shadow overflow-x-auto">
+      <div className="bg-white rounded-2xl shadow overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50">
             <tr>
@@ -518,7 +517,7 @@ const Content = () => {
       </div>
 
       {/* SEASON ARCHIVE (past seasons, shown as an uploaded image) */}
-      <div className="flex items-center justify-between mt-10">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-gray-700">{t.archive.title}</h2>
         <button
           onClick={handleAddSeason}
@@ -529,9 +528,11 @@ const Content = () => {
       </div>
 
       {/* LIST */}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {loading && <p>{t.archive.loading}</p>}
-        {!loading && items.length === 0 && (
+      {loading ? (
+        <Loading />
+      ) : (
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.length === 0 && (
           <p className="text-gray-500">{t.archive.empty}</p>
         )}
 
@@ -560,6 +561,7 @@ const Content = () => {
           </div>
         ))}
       </div>
+      )}
     </div>
   )
 }

@@ -5,6 +5,9 @@ import DataTable, { TableColumn } from 'react-data-table-component';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import OrderInfoModal from '@/components/Shop/OrderInfoModal';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 interface OrderCustomer {
   name: string;
@@ -56,6 +59,33 @@ export default function OrdersPage() {
     setSelectedOrderId(orderId);
   };
 
+  const handleStatusChange = (orderId: string, status: string) => {
+    setOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status } : o)));
+  };
+
+  const handleDeleteOrder = (order: Order) => {
+    setOpenMenuId(null);
+    Swal.fire({
+      title: `Delete order #${order.id}?`,
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
+      try {
+        await axios.delete(`/api/orders/${order._id}`);
+        setOrders((prev) => prev.filter((o) => o._id !== order._id));
+        Swal.fire({ icon: 'success', title: 'Deleted!', showConfirmButton: false, timer: 1200 });
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        Swal.fire({ icon: 'error', title: 'Delete failed', text: 'Please try again.' });
+      }
+    });
+  };
+
   useEffect(() => {
     axios.get('/api/orders')
       .then(response => {
@@ -80,6 +110,8 @@ export default function OrdersPage() {
     const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const totalRevenue = orders.reduce((sum, order) => sum + Number(order.totalPrice ?? 0), 0);
 
   // Helper to format date as "Jul, 10"
   const formatDate = (dateString: string) => {
@@ -134,7 +166,10 @@ export default function OrdersPage() {
                   <i className="fa fa-eye text-gray-500" aria-hidden="true"></i>
                   View
                 </button>
-
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 flex items-center gap-2 cursor-pointer" onClick={() => handleDeleteOrder(row)}>
+                  <i className="fa fa-trash text-red-500" aria-hidden="true"></i>
+                  Delete
+                </button>
               </div>
             )}
           </div>
@@ -144,39 +179,34 @@ export default function OrdersPage() {
   ];
 
   return (
-    
-  <div className="space-y-6 max-w-6xl m-auto">
-      {/* Welcome message */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome back, Orders Page! 👋</h1>
-        <p className="text-gray-600 mt-1">
-          Here you can manage all orders, view details, and update statuses.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <AdminPageHeader
+        title="Orders"
+        subtitle="Manage all orders, view details, and update statuses."
+      />
 
       {/* Top 4 cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Total Orders</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.length || 0}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Revenue</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">0</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">€{totalRevenue.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Pending Orders</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.filter(order => order.status === 'Pending').length || 0}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Delivered Orders</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">{orders?.filter(order => order.status === 'Delivered').length || 0}</p>
         </div>
       </div>
 
-    <div className="max-w-6xl mx-auto px-4 py-6 border-2 rounded-lg bg-white relative overflow-visible" onClick={handleClickOutside}>
+    <div className="px-4 py-6 border border-gray-200 rounded-2xl bg-white relative overflow-visible" onClick={handleClickOutside}>
 
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">Orders</h1>
         <div className="flex flex-col justify-between md:flex-row gap-4 mb-4">
           <div className="relative w-full md:w-1/3">
             <input
@@ -216,7 +246,12 @@ export default function OrdersPage() {
           striped
         />
       </div>
-      <OrderInfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} orderId={selectedOrderId} />
+      <OrderInfoModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        orderId={selectedOrderId}
+        onStatusChange={handleStatusChange}
+      />
     </div>
   );
 }

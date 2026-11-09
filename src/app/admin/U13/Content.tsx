@@ -6,12 +6,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/Loading';
 import Swal from 'sweetalert2';
-
-// type PageProps = {
-//   name: string;
-//   content: string;
-//   img: string;
-// };
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 const Editor = dynamic(() =>
   import('@tinymce/tinymce-react').then(mod => mod.Editor),
@@ -20,7 +15,6 @@ const Editor = dynamic(() =>
 
 export default function Content() {
   const id = '6884cbecf71ec698fd833eb5'; // Your football school document ID
-//   const [data, setData] = useState<PageProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editorContent, setEditorContent] = useState('');
@@ -129,10 +123,10 @@ export default function Content() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-700">Mladinske Ekipe - U13</h2>
-      <p className="text-gray-600">
-        This section is dedicated to the management and organization of the coaching staff and leadership of the NŠ Hidria Tolmin football club.
-      </p>
+      <AdminPageHeader
+        title="Mladinske Ekipe - U13"
+        subtitle="This section is dedicated to the management and organization of the coaching staff and leadership of the NŠ Hidria Tolmin football club."
+      />
 
       {loading ? (
         <Loading />
@@ -196,7 +190,11 @@ export default function Content() {
             }}
         />
 
-        <h1 className='text-xl text-red-600 font-bold lg:mt-6'>Coach Information:</h1>
+        </div>
+
+          {/* Coach Information Card */}
+          <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+            <h2 className="text-xl font-semibold text-black">Coach Information</h2>
 
         <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>

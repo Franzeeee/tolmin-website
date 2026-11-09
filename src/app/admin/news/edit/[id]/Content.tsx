@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'next/navigation';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 
 const Editor = dynamic(() =>
@@ -113,7 +114,9 @@ useEffect(() => {
   return (
     <div className="space-y-6">
       <a href="/admin/news" className='text-red-600'><FontAwesomeIcon icon={faArrowLeft} /> Go to News Overviews</a>
-      <h2 className="text-lg font-semibold text-gray-700 mt-3">Novica - Posodobi - <span className='text-red-600'>{newsTitle}</span></h2>
+      <AdminPageHeader
+        title={<>Novica - Posodobi - <span className="text-red-600">{newsTitle}</span></>}
+      />
       <p className="text-gray-600">
         Uporabite ta obrazec za posodobitev in objavo nove novice za Tolmin.
       </p>

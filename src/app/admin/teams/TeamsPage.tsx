@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import axios from 'axios'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
 type Team = {
   _id: string;
@@ -254,10 +255,10 @@ export default function TeamsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-700">Team Management</h2>
-      <p className="text-gray-600">
-        Manage and organize your teams by their respective roles in the club.
-      </p>
+      <AdminPageHeader
+        title="Team Management"
+        subtitle="Manage and organize your teams by their respective roles in the club."
+      />
 
       <div className='w-full flex gap-2'>
         <button onClick={handleAddOldSeasonTeam} className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded'>

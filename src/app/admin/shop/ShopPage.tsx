@@ -6,6 +6,11 @@ import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import axios from 'axios'
 import Loading from '@/components/Loading'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
+
+type OrderSummary = {
+  totalPrice?: number
+}
 
 interface Product {
   id: number
@@ -29,12 +34,16 @@ export default function ShopPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [newSizes, setNewSizes] = useState<string[]>([]);
     const [sizeInput, setSizeInput] = useState('');
+    const [orders, setOrders] = useState<OrderSummary[]>([])
 
     useEffect(() => {
         // Fetch products from API
         fetchProducts()
+        axios.get('/api/orders')
+            .then(res => setOrders(Array.isArray(res.data) ? res.data : []))
+            .catch(error => console.error('Error fetching orders:', error))
     }, [])
-    
+
         const fetchProducts = async () => {
             setIsLoading(true)
             try {
@@ -53,6 +62,8 @@ export default function ShopPage() {
                 setIsLoading(false)
             }
         }
+
+        const totalRevenue = orders.reduce((sum, o) => sum + Number(o.totalPrice ?? 0), 0)
 
 const handleEdit = (product: Product) => {
     setSelectedProductId(product.id)
@@ -103,26 +114,6 @@ const handleSave = async () => {
     }
 
 }
-
-//   const handleSave = () => {
-//     if (selectedProductId === null) return
-
-//     setProducts(prev =>
-//       prev.map(product =>
-//         product.id === selectedProductId
-//           ? { ...product, name: editedName, price: Number(editedPrice) }
-//           : product
-//       )
-//     )
-//     setIsModalOpen(false)
-//     setSelectedProductId(null)
-//     Swal.fire({
-//       icon: 'success',
-//       title: 'Updated!',
-//       text: 'Merch item has been successfully updated.',
-//       confirmButtonColor: '#2563EB'
-//     })
-//   }
 
   const handleAddProduct = async () => {
     if (!newName || !newPrice) {
@@ -221,30 +212,23 @@ const handleSave = async () => {
 
   return (
     <div className="space-y-6">
-      {/* Welcome & Stats */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome to Shop Page! 👋</h1>
-        <p className="text-gray-600 mt-1">
-          This is the admin section where you can manage your club&#39;s merchandise, view sales statistics, and handle customer inquiries.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Shop"
+        subtitle="Manage your club's merchandise and view sales statistics."
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Total Products</h3>
           <p className="mt-2 text-2xl font-bold text-gray-800">{products.length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Orders</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">56</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">{orders.length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow p-4">
           <h3 className="text-sm font-semibold text-gray-500">Revenue</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">€1,200</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-sm font-semibold text-gray-500">Customer Inquiries</h3>
-          <p className="mt-2 text-2xl font-bold text-gray-800">5</p>
+          <p className="mt-2 text-2xl font-bold text-gray-800">€{totalRevenue.toFixed(2)}</p>
         </div>
       </div>
 
