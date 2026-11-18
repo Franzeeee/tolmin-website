@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import { sendCustomerEmailById } from '@/lib/orderEmails';
 
 export async function PUT(request: Request) {
   // Extract the order ID from the URL
@@ -35,8 +36,10 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'Order not found' }, { status: 404 });
   }
 
+  await sendCustomerEmailById(id, 'delivered');
+
   return NextResponse.json({
-    message: 'Order Status Changed To Shipped',
+    message: 'Order Status Changed To Delivered',
     updatedCount: result.modifiedCount,
   });
 }

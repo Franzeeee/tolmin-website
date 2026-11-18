@@ -2,9 +2,12 @@
 // Requires EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID and EMAILJS_PUBLIC_KEY.
 // EMAILJS_PRIVATE_KEY is required too — EmailJS blocks calls made outside a
 // browser (like this Next.js API route) unless a private key is sent.
-export async function sendEmailJs(templateParams: Record<string, string | number>) {
+export async function sendEmailJs(
+  templateParams: Record<string, string | number>,
+  templateIdOverride?: string
+) {
   const serviceId = process.env.EMAILJS_SERVICE_ID;
-  const templateId = process.env.EMAILJS_TEMPLATE_ID;
+  const templateId = templateIdOverride || process.env.EMAILJS_TEMPLATE_ID;
   const publicKey = process.env.EMAILJS_PUBLIC_KEY;
   const privateKey = process.env.EMAILJS_PRIVATE_KEY;
 
@@ -31,4 +34,5 @@ export async function sendEmailJs(templateParams: Record<string, string | number
   }
 }
 
-export const ORDER_NOTIFICATION_TO = 'bastygarcela19@gmail.com';
+export const ORDER_NOTIFICATION_TO =
+  process.env.ORDER_NOTIFICATION_TO || 'bastygarcela19@gmail.com';

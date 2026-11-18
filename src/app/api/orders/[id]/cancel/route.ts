@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import { sendCustomerEmailById } from '@/lib/orderEmails';
 
 export async function PUT(request: Request) {
   const url = new URL(request.url);
@@ -33,6 +34,8 @@ export async function PUT(request: Request) {
   if (result.matchedCount === 0) {
     return NextResponse.json({ error: 'Order not found' }, { status: 404 });
   }
+
+  await sendCustomerEmailById(id, 'cancelled');
 
   return NextResponse.json({
     message: 'Order Status Changed To Cancelled',

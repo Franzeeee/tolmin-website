@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { sendEmailJs, ORDER_NOTIFICATION_TO } from '@/lib/emailjs';
+import { sendCustomerEmail } from '@/lib/orderEmails';
 
 type OrderItem = {
   name: string;
@@ -117,6 +118,11 @@ export async function POST(request: Request) {
       // Never fail order creation because the notification email didn't send.
       console.error('❌ Failed to send order notification email:', emailError);
     }
+
+    await sendCustomerEmail(
+      { _id: newOrder.insertedId, customer, items, totalPrice, deliveryMethod },
+      'confirmation'
+    );
 
     return NextResponse.json(
       { message: 'Order created!', orderId: newOrder.insertedId },
