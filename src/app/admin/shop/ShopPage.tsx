@@ -228,7 +228,7 @@ const handleSave = async () => {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Shop`"
+        title="Shop"
         subtitle="Manage your club's merchandise and view sales statistics."
       />
 
