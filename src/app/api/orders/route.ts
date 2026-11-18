@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import { sendEmailJs, ORDER_NOTIFICATION_TO } from '@/lib/emailjs';
-import { sendCustomerEmail } from '@/lib/orderEmails';
+import { sendCustomerEmail, toSlovenianLabel } from '@/lib/orderEmails';
 
 type OrderItem = {
   name: string;
@@ -41,8 +41,8 @@ function buildOrderEmailParams(params: {
     items_text: itemsText,
     total_items: totalItems,
     total_price: `${Number(totalPrice).toFixed(2)} €`,
-    payment_method: paymentMethod,
-    delivery_method: deliveryMethod,
+    payment_method: toSlovenianLabel(paymentMethod),
+    delivery_method: toSlovenianLabel(deliveryMethod),
     customer_name: customer.name || 'N/A',
     customer_email: customer.email,
     customer_phone: customer.phone || 'N/A',

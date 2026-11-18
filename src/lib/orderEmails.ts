@@ -44,6 +44,19 @@ const COPY: Record<CustomerEmailKind, { subject: string; heading: string; messag
   },
 };
 
+// Orders store English labels ("Pickup", "Credit Card", ...); emails are Slovenian.
+const SL_LABELS: Record<string, string> = {
+  'Pickup': 'Osebni prevzem',
+  'Home Delivery': 'Dostava na dom',
+  'Cash on Delivery': 'Plačilo z gotovino',
+  'Credit Card': 'Plačilo s kartico',
+};
+
+export function toSlovenianLabel(value?: string | null) {
+  if (!value) return '';
+  return SL_LABELS[value] ?? value;
+}
+
 export function buildCustomerEmailParams(order: OrderLike, kind: CustomerEmailKind) {
   const copy = COPY[kind];
   const items = order.items ?? [];
@@ -63,7 +76,7 @@ export function buildCustomerEmailParams(order: OrderLike, kind: CustomerEmailKi
     order_id: String(order._id ?? ''),
     items_text: itemsText,
     total_price: `${Number(order.totalPrice ?? 0).toFixed(2)} €`,
-    delivery_method: order.deliveryMethod || '',
+    delivery_method: toSlovenianLabel(order.deliveryMethod),
     customer_address: order.customer?.address || '',
   };
 }
