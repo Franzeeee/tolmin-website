@@ -35,6 +35,8 @@ export default function ShopPage() {
     const [newSizes, setNewSizes] = useState<string[]>([]);
     const [sizeInput, setSizeInput] = useState('');
     const [orders, setOrders] = useState<OrderSummary[]>([])
+    const [editedSizes, setEditedSizes] = useState<string[]>([])
+    const [editSizeInput, setEditSizeInput] = useState('')
 
     useEffect(() => {
         // Fetch products from API
@@ -54,6 +56,7 @@ export default function ShopPage() {
                     name: item.name,
                     price: item.price,
                     img: item.img,
+                    sizes: item.sizes ?? [],
                   }))
                 )
             } catch (error) {
@@ -65,10 +68,18 @@ export default function ShopPage() {
 
         const totalRevenue = orders.reduce((sum, o) => sum + Number(o.totalPrice ?? 0), 0)
 
+// Split "s, m  l" into unique, uppercase sizes and merge into an existing list
+const mergeSizes = (existing: string[], input: string) => {
+    const parsed = input.split(/[,\s]+/).map(s => s.trim().toUpperCase()).filter(Boolean)
+    return Array.from(new Set([...existing, ...parsed]))
+}
+
 const handleEdit = (product: Product) => {
     setSelectedProductId(product.id)
     setEditedName(product.name)
     setEditedPrice(product.price.toString())
+    setEditedSizes(product.sizes ?? [])
+    setEditSizeInput('')
     setIsModalOpen(true)
 }
 
@@ -76,16 +87,18 @@ const handleSave = async () => {
     if (selectedProductId === null) return
 
     try {
+        const sizes = mergeSizes(editedSizes, editSizeInput)
         // Update product in backend
         await axios.put(`/api/products/${selectedProductId}`, {
             name: editedName,
             price: Number(editedPrice),
+            sizes,
         })
 
         setProducts(prev =>
             prev.map(product =>
                 product.id === selectedProductId
-                    ? { ...product, name: editedName, price: Number(editedPrice) }
+                    ? { ...product, name: editedName, price: Number(editedPrice), sizes }
                     : product
             )
         )
@@ -131,13 +144,15 @@ const handleSave = async () => {
       name: newName,
       price: Number(newPrice),
       img: newImage,
-      sizes: newSizes,
+      sizes: mergeSizes(newSizes, sizeInput),
     }
 
     setProducts(prev => [...prev, newProduct])
     setIsAddModalOpen(false)
     setNewName('')
     setNewPrice('')
+    setNewSizes([])
+    setSizeInput('')
     setNewImage('/Merch/item1.png')
 
     // Upload the image to cloudinary first
@@ -305,6 +320,49 @@ const handleSave = async () => {
                 className="w-full border rounded-lg px-3 py-2"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Available Sizes (Optional)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={editSizeInput}
+                  onChange={(e) => setEditSizeInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      setEditedSizes(mergeSizes(editedSizes, editSizeInput));
+                      setEditSizeInput('');
+                    }
+                  }}
+                  placeholder="e.g. S, M, L"
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditedSizes(mergeSizes(editedSizes, editSizeInput));
+                    setEditSizeInput('');
+                  }}
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {editedSizes.map((size, index) => (
+                  <span key={index} className="bg-gray-200 text-sm px-3 py-1 rounded-full flex items-center gap-2">
+                    {size}
+                    <button
+                      type="button"
+                      onClick={() => setEditedSizes(editedSizes.filter((_, i) => i !== index))}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
             <div className="flex justify-end gap-2 mt-4">
               <button
                 className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
@@ -386,16 +444,21 @@ const handleSave = async () => {
                   type="text"
                   value={sizeInput}
                   onChange={(e) => setSizeInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      setNewSizes(mergeSizes(newSizes, sizeInput));
+                      setSizeInput('');
+                    }
+                  }}
                   placeholder="e.g. S, M, L"
                   className="w-full border rounded-lg px-3 py-2"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    if (sizeInput && !newSizes.includes(sizeInput)) {
-                      setNewSizes([...newSizes, sizeInput]);
-                      setSizeInput('');
-                    }
+                    setNewSizes(mergeSizes(newSizes, sizeInput));
+                    setSizeInput('');
                   }}
                   className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >

@@ -58,6 +58,14 @@ useEffect(() => {
       // Optionally show a message to select size or wait for item to load
       return;
     }
+    if (sizes && sizes.length > 0 && !selectedSize) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Izberite velikost',
+        confirmButtonColor: '#dc2626',
+      });
+      return;
+    }
     // Add selected size to the product object
     useCartStore.getState().addToCart({
       ...item,

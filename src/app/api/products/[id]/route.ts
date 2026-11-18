@@ -28,7 +28,7 @@ export async function PUT(
 ) {
   const { id } = await params
   const body = await request.json()
-  const { name, price } = body
+  const { name, price, sizes } = body
 
   if (!name || !price) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -41,7 +41,7 @@ export async function PUT(
 
   const result = await productsCollection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { name, price } }
+    { $set: { name, price, ...(Array.isArray(sizes) ? { sizes } : {}) } }
   )
 
   if (result.matchedCount === 0) {
