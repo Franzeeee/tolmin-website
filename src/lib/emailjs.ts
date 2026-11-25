@@ -35,4 +35,4 @@ export async function sendEmailJs(
 }
 
 export const ORDER_NOTIFICATION_TO =
-  process.env.ORDER_NOTIFICATION_TO || 'bastygarcela19@gmail.com';
+  process.env.ORDER_NOTIFICATION_TO || 'nktolmin1921@gmail.com';
