@@ -206,42 +206,8 @@ export default function Page() {
         });
 
         // 2) FACEBOOK NEWS
-        const fbRes = await fetch(
-          "https://graph.facebook.com/v19.0/246298295547553/posts?fields=id,message,created_time,full_picture&access_token=EAAZASw9eWtiYBSeHye13tTPAadZBJA8fWy806GAatEvKmEKvlnseKXt8yA8ZCtyy0IfUbKZB3LMd5iVzQXE1LIqSxZCGfvZCiUnOKOqQyMcZAXsIZA1QT2tcFIy2UiES0dXTqAAm0OFAespyKMCZCI4PAli71fb9HmLo1Btf9WyIjzZCUc0ZB7WtVXgkk1kKpIiH8COoZClMgNiIQoVui31VH0vO7sbc5cvEddgGLEsZAIS9lQ2uNM9tei8K2VQZDZD"
-        );
-        const fbJson = await fbRes.json();
-
-        interface FbPost {
-          id?: string;
-          message?: string;
-          created_time?: string;
-          full_picture?: string;
-        }
-
-        const fbData: FbPost[] = (fbJson as { data?: FbPost[] })?.data ?? [];
-
-        const fbNews: NewsArticle[] = fbData.map((post) => {
-          const msg = post.message ?? '';
-          const [title, ...bodyParts] = msg.split('\n');
-          const body = bodyParts.join('\n');
-
-          const idStr = post.id ?? '';
-          const [pageId = '', postId = ''] = idStr.split('_');
-
-          const numericId = postId ? Number(postId) || 0 : Number(idStr) || 0;
-
-          return {
-            id: numericId,
-            _id: idStr,
-            title: title || '(ni naslova)',
-            description: body,
-            content: msg,
-            image: post.full_picture ?? '/news.png',
-            publishedAt: post.created_time ?? new Date().toISOString(),
-            source: 'facebook',
-            fbLink: pageId && postId ? `https://www.facebook.com/${pageId}/posts/${postId}` : undefined,
-          };
-        });
+        const fbRes = await fetch('/api/facebook');
+        const fbNews: NewsArticle[] = fbRes.ok ? await fbRes.json() : [];
 
         // 3) MERGE & SORT RESULTS
         const combined = [...websiteNews, ...fbNews].sort(

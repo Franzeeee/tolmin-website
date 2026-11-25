@@ -40,30 +40,10 @@ export default function Page() {
       }));
 
       // Fetch Facebook posts
-      const fbRes = await fetch("https://graph.facebook.com/v19.0/246298295547553/posts?fields=id,message,created_time,full_picture&access_token=EAAZASw9eWtiYBQFszCz9r44eb3v2gAxID4ZCKqgXOMcc1qLRA1rmYI7HFrpAbeMKN3zfWCsOFllcFTvNZBHHLfooKb0uTCseHSZAeaunZAZAIrWZBykNk83b5Y9iTGbKNhZB2bRMUyMOHuchSk8Q04Xgtwvt5O7SFgqBisTZAc5SFHEJXB6h4mOGxMO5ZBZCOdzLV4IIxGHK8Y562NtVyXWhDcZD");
-      const fbJson = await fbRes.json();
-
-      const fbPosts: News[] = ((fbJson?.data as Array<{
-        id?: string;
-        message?: string;
-        created_time?: string;
-        full_picture?: string;
-      }>) || []).map((post, index) => {
-        const msg = post.message ?? "";
-        const [title, ...bodyParts] = msg.split("\n");
-        const body = bodyParts.join("\n") || "";
-
-        return {
-          _id: post.id ?? `fb-${index}`,
-          title: title || "(no title)",
-          description: body,
-          image: post.full_picture ?? "/news.png",
-          content: msg,
-          publishedAt: post.created_time ? new Date(post.created_time) : new Date(),
-          source: "facebook",
-          fbLink: `https://www.facebook.com/${post.id}`
-        };
-      });
+      const fbRes = await fetch('/api/facebook');
+      const fbPosts: News[] = fbRes.ok
+        ? (await fbRes.json()).map((p: News) => ({ ...p, publishedAt: new Date(p.publishedAt) }))
+        : [];
 
       // Merge + sort by date
       const merged = [...websiteNews, ...fbPosts].sort(
